@@ -58,6 +58,8 @@ Config.Panels = {
 -- Phase 0 greybox only (DECISIONS.md, Phase 0 greybox panels). Replaced by real layer meshes later.
 Config.Greybox = {
 	panelThickness = 0.2, -- studs
+	ripLineWidth = 0.15, -- studs
+	ripLineColor = "#2B1E14",
 }
 
 -- The Tick is a side box in one middle-third layer; 40% of nests fuse it across the lid seam.
@@ -78,6 +80,7 @@ Config.Tear = {
 	pitchVariance = 0.1,
 	chainsawShakeSeconds = 0.1,
 	maxRequestsPerSecond = 8, -- server-enforced
+	reachStuds = 20, -- server-enforced: max distance from the character to a panel it tears
 }
 
 -- Mechanics B: rarity

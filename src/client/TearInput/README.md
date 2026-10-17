@@ -10,7 +10,9 @@ Must never: Decide that a panel is gone.
 
 ## Public API
 
-_None yet._ List each public function here as it lands: signature, one line of what it does.
+- `TearInput.init()` — press (touch or left mouse) on a panel sends `TearRequest("Begin", …)`; release
+  sends `"End"`. Draws one rip line per panel from `TearState`: it grows from the touch point to both
+  panel edges over the panel time and stays where it stopped on release. Greybox line: `Config.Greybox`.
 
 ## Invariants and rules
 

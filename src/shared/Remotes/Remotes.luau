@@ -13,7 +13,7 @@ local Remotes = {}
 Remotes.Up = { "TearRequest", "LidLift", "ShopBuy", "ClassSpin", "StealRequest", "Revive" }
 
 -- Server → client: replicated state.
-Remotes.Down = { "RunState", "LootEvent", "NightState", "ShelfState" }
+Remotes.Down = { "RunState", "LootEvent", "NightState", "ShelfState", "TearState" }
 
 local FOLDER_NAME = "RemoteEvents"
 

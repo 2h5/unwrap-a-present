@@ -64,7 +64,7 @@ SERVER SYSTEMS (ServerScriptService), 8:
 
 REMOTES (ReplicatedStorage.Shared.Remotes):
   Client to server: TearRequest, LidLift, ShopBuy, ClassSpin, StealRequest, Revive
-  Server to client: RunState, LootEvent, NightState, ShelfState
+  Server to client: RunState, LootEvent, NightState, ShelfState, TearState
 
 TWO PLACES (lobby place and run place):
   Pads teleport the party into a private reserved server of the run place.

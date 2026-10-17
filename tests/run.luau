@@ -9,6 +9,7 @@ local process = require("@lune/process")
 
 local SPECS = {
 	{ name = "Tear/PanelGrid", run = require("./Tear/PanelGrid.spec") },
+	{ name = "Tear/TearSession", run = require("./Tear/TearSession.spec") },
 }
 
 local passed, failed = 0, 0

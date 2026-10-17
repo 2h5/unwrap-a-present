@@ -175,7 +175,7 @@ tells Loot and Night what happened; Steal and Loot both end in Economy and Data.
 client can change a number.
 
 **Remotes** (`ReplicatedStorage/Shared/Remotes`) — Up: `TearRequest`, `LidLift`, `ShopBuy`,
-`ClassSpin`, `StealRequest`, `Revive`. Down: `RunState`, `LootEvent`, `NightState`, `ShelfState`.
+`ClassSpin`, `StealRequest`, `Revive`. Down: `RunState`, `LootEvent`, `NightState`, `ShelfState`, `TearState`.
 
 **Two places.** The game is a lobby place and a run place. Pads teleport the party into a private
 reserved server of the run place. The run place accepts only players whose teleport data carries a
@@ -678,7 +678,7 @@ the first layer drop. Waiting times in PLAN-TABLES.txt, Diagram E.
 One paper layer on one cube, no textures, no loot.
 
 - [x] Panel grid generated from a layer definition, 4×4 per face
-- [ ] Hold-to-tear with a growing rip line, server-validated, progress kept on early release
+- [x] Hold-to-tear with a growing rip line, server-validated, progress kept on early release
 - [ ] Torn-edge mesh swap, physics flutter, pool of 40, recycle oldest
 - [ ] Three tear sounds, pitch randomized
 - [ ] Works with touch on a phone-sized viewport

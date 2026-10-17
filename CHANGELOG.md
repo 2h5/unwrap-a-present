@@ -2,6 +2,7 @@
 
 Date · change · who. Newest first. Prune monthly.
 
+- 2026-10-17 · Phase 0: hold-to-tear, server-timed with kept progress, reach and rate checks, growing rip line for every player (TearSession, RateLimit, TearInput, TearState remote) · Claude Code
 - 2026-10-17 · Phase 0: PanelGrid (layer → 4×4 per face, bitfield, placement) with Lune tests; greybox paper cube in Tear · Claude Code
 - 2026-10-17 · Night and Steal tables (20, 21) added to PLAN-TABLES; Loot, Night, Steal, Shelf READMEs repointed; test setup moved to Phase 0 (F6–F8) · Claude Code
 - 2026-10-17 · Human decisions N1–N24 and repo fixes F1–F5: track prices, repeat prestige, full rarity tables, Lucky roll-twice, launch rule, two-place rules, Config without Roblox types, stale PNGs removed · Claude Code

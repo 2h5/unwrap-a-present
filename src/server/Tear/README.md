@@ -15,11 +15,25 @@ Must never: Trust a client position or timer.
 - [PanelGrid.luau](PanelGrid.luau) (pure, tested in `tests/Tear`): `fromLayer(layer, tier, Config.Panels)`,
   `gridPerFace`, `panelId`, `locate`, `isTorn`, `setTorn`, `encode`/`decode` (bitfield as a string),
   `placement(grid, id, size)` (panel centre, normal, width on a cube centred at the origin).
+- [TearSession.luau](TearSession.luau) (pure, tested): `new(grid)`, `begin(session, holder, panelId, seconds, now)`
+  returns seconds still needed or nil + reason, `release(session, holder, now)` keeps progress or tears,
+  `fraction`, `holding`. [RateLimit.luau](RateLimit.luau) (pure, tested): `new(perSecond)`, `allow`, `forget`.
+
+## TearRequest and TearState
+
+- Up `TearRequest("Begin", depth, panelId, u, v)` and `TearRequest("End")`. Rate-limited to
+  `Config.Tear.maxRequestsPerSecond`. Begin is refused unless the panel exists, is whole, is not held by
+  another player, and is within `Config.Tear.reachStuds` of the server's character position.
+- The server times every hold with its own clock and tears the panel when the time is reached; `u, v`
+  (the touch point, 0..1 on the panel) only place the rip line, and the first touch point is kept.
+- Down `TearState { depth, panelId, state = "Holding" | "Released" | "Torn", progress, seconds, u, v }`
+  to every client.
 
 ## Invariants and rules
 
 - Invariant 7: the server decides; the client only asks and animates.
 - Must never: Trust a client position or timer.
+- One holder per panel, one panel per holder. Early release keeps the seconds already torn.
 
 ## How to add a new one
 
