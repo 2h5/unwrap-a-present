@@ -680,7 +680,7 @@ One paper layer on one cube, no textures, no loot.
 - [x] Panel grid generated from a layer definition, 4×4 per face
 - [x] Hold-to-tear with a growing rip line, server-validated, progress kept on early release
 - [x] Torn-edge mesh swap, physics flutter, pool of 40, recycle oldest
-- [ ] Three tear sounds, pitch randomized
+- [x] Three tear sounds, pitch randomized
 - [ ] Works with touch on a phone-sized viewport
 - [ ] **Gate A playtest:** three people tap for one minute each and want to keep going
 

@@ -13,7 +13,8 @@ Must never: Exceed the budget.
 - `Debris.init()` — creates the local `Workspace.Debris` folder.
 - `Debris.spawn(panel)` — swaps a torn panel for a piece: impulse away from the present, random spin,
   reduced gravity for `Config.Tear.flutterSeconds`, then it settles (anchored, no collision) and stays
-  until recycled. Called by TearInput on `TearState` "Torn".
+  until recycled. Called by TearInput on `TearState` "Torn". Plays one soft thud (`Config.Sounds.paperLand`) on its first
+  contact with anything but the present or a player.
 - `Debris.liveCount()` — live pieces, never above `Config.Tear.maxLiveDebris`.
 - [DebrisPool.luau](DebrisPool.luau) (pure, tested in `tests/Debris`): `new(max)`, `acquire` (oldest
   recycled first), `release`, `liveCount`.

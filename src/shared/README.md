@@ -7,6 +7,7 @@ the client: no secrets, no server-only rules, no docs modules.
 - [Config](Config/Config.luau) — every tunable number from [PLAN-TABLES.txt](../../docs/PLAN-TABLES.txt).
   Change a number there and here in the same commit, never inline.
 - [Remotes](Remotes/Remotes.luau) — RemoteEvent names. Up = requests, Down = replicated state.
+- [Sfx](Sfx/Sfx.luau) — client-side: plays one `Config.Sounds` clip at a position, pitch randomized; preloads all.
 
 ## Rules
 

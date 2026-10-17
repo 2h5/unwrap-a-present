@@ -16,6 +16,7 @@ local UserInputService = game:GetService("UserInputService")
 local Config = require(ReplicatedStorage.Shared.Config.Config)
 local Remotes = require(ReplicatedStorage.Shared.Remotes.Remotes)
 local Debris = require(script.Parent.Parent.Debris.Debris)
+local Sfx = require(ReplicatedStorage.Shared.Sfx.Sfx)
 
 local RAY_LENGTH = 1000 -- camera ray only; the server enforces reach
 
@@ -88,6 +89,7 @@ local function onTearState(state: { [string]: any })
 		end
 		local panel = findPanel(state.depth, state.panelId)
 		if panel then
+			Sfx.playAt(Config.Sounds.tearRelease, panel.Position)
 			Debris.spawn(panel)
 		end
 		return
@@ -113,7 +115,11 @@ local function onTearState(state: { [string]: any })
 	l.from = state.progress
 	l.seconds = state.seconds
 	l.at = os.clock()
+	local wasHolding = l.holding
 	l.holding = state.state == "Holding"
+	if l.holding and not wasHolding then
+		Sfx.playAt(Config.Sounds.tearHoldStart, l.panel.Position)
+	end
 	draw(l, l.from)
 end
 
@@ -154,6 +160,7 @@ function TearInput.init()
 	end)
 
 	Remotes.get("TearState").OnClientEvent:Connect(onTearState)
+	task.spawn(Sfx.preload)
 
 	RunService.RenderStepped:Connect(function()
 		local now = os.clock()

@@ -4,7 +4,8 @@
 	Must never: Exceed the budget (Config.Tear.maxLiveDebris). Pieces are local to this client.
 	On a tear: swaps the panel for a torn-edge piece (ReplicatedStorage.Assets.TornPanel if it
 	exists, else a greybox part), pushes it away from the present, flutters it, then it settles and
-	stays until the pool recycles it, oldest first. Slot logic is pure and tested: DebrisPool.luau.
+	stays until the pool recycles it, oldest first; a soft thud plays on first landing.
+	Slot logic is pure and tested: DebrisPool.luau.
 	Read first: src/client/Debris/README.md
 ]=]
 
@@ -12,8 +13,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Config = require(ReplicatedStorage.Shared.Config.Config)
 local DebrisPool = require(script.Parent.DebrisPool)
+local Sfx = require(ReplicatedStorage.Shared.Sfx.Sfx)
 
-type Piece = { part: BasePart, lift: VectorForce, token: number }
+type Piece = { part: BasePart, lift: VectorForce, token: number, landed: boolean }
 
 local Debris = {}
 
@@ -47,7 +49,24 @@ local function newPiece(): Piece
 	lift.ApplyAtCenterOfMass = true
 	lift.Enabled = false
 	lift.Parent = part
-	return { part = part, lift = lift, token = 0 }
+	local piece: Piece = { part = part, lift = lift, token = 0, landed = true }
+	-- First contact with anything but the present or a player (other debris counts): one soft thud.
+	part.Touched:Connect(function(other)
+		if piece.landed then
+			return
+		end
+		local present = workspace:FindFirstChild("Present")
+		if present and other:IsDescendantOf(present) then
+			return
+		end
+		local model = other:FindFirstAncestorWhichIsA("Model")
+		if model and model:FindFirstChildOfClass("Humanoid") then
+			return -- a player, including their accessories
+		end
+		piece.landed = true
+		Sfx.playAt(Config.Sounds.paperLand, part.Position)
+	end)
+	return piece
 end
 
 local function spin(): number
@@ -70,7 +89,9 @@ function Debris.spawn(panel: BasePart)
 	part.Size = panel.Size
 	part.CFrame = panel.CFrame
 	part.CanCollide = true
+	part.CanTouch = true
 	part.Transparency = 0
+	piece.landed = false
 	part.Parent = folder
 	part.Anchored = false
 
@@ -86,6 +107,8 @@ function Debris.spawn(panel: BasePart)
 		piece.lift.Enabled = false
 		part.Anchored = true
 		part.CanCollide = false
+		part.CanTouch = false
+		piece.landed = true
 	end)
 end
 

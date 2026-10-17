@@ -87,6 +87,14 @@ Config.Tear = {
 	reachStuds = 20, -- server-enforced: max distance from the character to a panel it tears
 }
 
+-- Sounds (PLAN-TABLES.txt TABLE 14, SFX launch set). Three variants each; pitch randomized by Config.Tear.pitchVariance.
+-- Roblox-licensed ProSoundEffects clips, free for any experience.
+Config.Sounds = {
+	tearHoldStart = { "rbxassetid://9113248978", "rbxassetid://9113249956", "rbxassetid://9113249814" },
+	tearRelease = { "rbxassetid://9125724621", "rbxassetid://9117624703", "rbxassetid://9117624735" },
+	paperLand = { "rbxassetid://9114121637", "rbxassetid://9113562807", "rbxassetid://9118732737" },
+}
+
 -- Mechanics B: rarity
 Config.RarityOrder = { "Common", "Uncommon", "Rare", "Epic", "Mythic", "Secret" }
 
