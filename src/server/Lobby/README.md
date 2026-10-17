@@ -5,7 +5,7 @@ Must never: Hold any loot or cash logic.
 
 - **Built in:** Phase 3, build order in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E
 - **Rules:** [PLAN.md](../../../docs/PLAN.md), Player journey; Art bible B
-- **Numbers:** [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt), Table 2 (player journey), Diagram D (lobby plan)
+- **Numbers:** [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt), Table 2 (player journey), Diagram D (lobby plan), Table 19 (keeping players playing)
 - **Code reads numbers from:** [Config.luau](../../shared/Config/Config.luau), never inline
 
 ## Public API

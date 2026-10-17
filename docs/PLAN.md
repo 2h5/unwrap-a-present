@@ -117,7 +117,8 @@ renames it back.
 | Panel | One tearable piece of a layer. A paper layer is a grid of panels; a box lid is one panel. | `Panel` |
 | Depth | How many layers deep the team is. Depth 0 is the outside. | `depth` |
 | Nest | The ordered list of layers in this present, generated at run start from a seed. | `Nest`, `seed` |
-| Tool | What the player holds. Each tool has an action set and a tier. | `Tool`, `tier` |
+| Tool | What the player holds. Each tool has an action set and a grade. | `Tool`, `grade` |
+| Grade | A tool's strength: Grade 0 hands, 1 scissors, 2 box cutter, 3 chainsaw. | `grade` |
 | Action | Tear, Cut, Snip, Pop, Chip, Lift. Each layer type accepts exactly one. | `Action` |
 | Side-gift | A loot item dropped by a layer. Has a rarity. Goes to the run bag. | `SideGift` |
 | Core gift | The item at the center of the present. One per run, rolled on the server. | `CoreGift` |
@@ -129,10 +130,10 @@ renames it back.
 | Jack | The entity released by the Tick. Hunts the team during Night. | `Jack` |
 | Naughty | A per-player meter raised by stealing. Decays daily. Krampus targets by it. | `naughty` |
 | Krampus | Lobby-side entity that visits at lobby night and takes from the naughtiest shelves. | `Krampus` |
-| Tier | Prestige level: Birthday, Christmas, Wedding, The Package. Sets layer count and loot table. | `tier` |
+| Tier | Prestige level only: Birthday 1, Christmas 2, Wedding 3, The Package 4, then The Package +1, +2, … Sets layer count and loot table. | `tier` |
 | Wipe | All players in a run down at once. Run bag lost, present gone. | `Wipe` |
 | Bank | Converting the run bag to shelf and index at run end. | `Bank` |
-| Class | A rolled perk set a player picks before a run. | `Class` |
+| Class | A perk set. A player owns every class they have rolled and picks one before a run. | `Class` |
 | Cash, Gems | Run currency and meta currency. Cash buys tools and upgrades; gems buy class spins and cosmetics. | `cash`, `gems` |
 
 ---
@@ -222,7 +223,7 @@ meshes; it never decides what a layer is.
 
 **Layer table.** Weights are per depth band; a type can repeat but never twice in a row.
 
-| Layer type | Action | Tool tier needed | Outer third | Middle third | Inner third |
+| Layer type | Action | Tool grade needed | Outer third | Middle third | Inner third |
 |---|---|---|---|---|---|
 | Paper | Tear | 0 (hands) | 50 | 30 | 20 |
 | Ribbon and bow | Snip | 1 | 20 | 20 | 10 |
@@ -234,25 +235,25 @@ meshes; it never decides what a layer is.
 
 **Tape overlay rules.** A Paper layer is taped with chance by depth band: outer third 40%, middle
 third 60%, inner third 80%. A taped paper layer tapes 25% to 50% of its seams, chosen from the seed.
-Each tape strip is one panel: action Cut, tool tier 1 (scissors), 0.8 s per strip with scissors, 0.6 s
+Each tape strip is one panel: action Cut, tool grade 1 (scissors), 0.8 s per strip with scissors, 0.6 s
 with box cutter, 0.3 s with chainsaw. A strip blocks the two paper panels it spans until it is cut.
 BoxLid layers are taped always at tier 2 and above, never at tier 1; the lid cannot lift until its
 tape is cut. No other layer type takes tape.
 
-**Panels.** A paper layer is a 4×4 grid per face (6 faces, 96 panels) at tier 1, 6×6 at tier 3+.
+**Panels.** A paper layer is a 4×4 grid per face (6 faces, 96 panels) at tiers 1–2, 6×6 at tiers 3–4.
 Tape panels sit on seams and must be cut before the two paper panels beside them can tear; this is
 the ordering puzzle. Panel state is a bitfield on the server; the client renders from it.
 
-**Tools.** Hands → Scissors → Box cutter → Chainsaw. Each tool has a tier, an action set, a per-panel
+**Tools.** Hands → Scissors → Box cutter → Chainsaw. Each tool has a grade, an action set, a per-panel
 time, and a hold-to-use input. Tools are bought with cash in the run room shop (prices in Mechanics D)
 and found as glowing pickups in the room at a fixed depth so a fresh party is never stuck.
 
-| Tool | Tier | Actions | Seconds per panel | Notes |
+| Tool | Grade | Actions | Seconds per panel | Notes |
 |---|---|---|---|---|
 | Hands | 0 | Tear, Pop, Lift | 1.2 | Always equipped as fallback |
 | Scissors | 1 | Cut, Snip, Tear at 1.0 | 0.8 | First pickup, depth 1 |
 | Box cutter | 2 | Cut, Chip, Tear at 0.6 | 0.6 | Shop only |
-| Chainsaw | 3 | Everything at 0.3, tears a 2×2 of panels | 0.3 | Shop, tier 2+, loud |
+| Chainsaw | 3 | Everything at 0.3, tears a 2×2 of panels | 0.3 | Shop, prestige tier 2+, loud |
 
 **The Tear, feel spec.** This is pillar one and gets the most polish time.
 
@@ -285,7 +286,9 @@ more than doubles a band.
 **Side-gifts.** When a layer's last panel goes, the server rolls 1–3 side-gifts from that tier's table
 and spawns them as physical items that fly into the nearest player's run bag after 1 second. The bag
 is shared by the party. Side-gifts are small toy objects (see Art bible A) in 8 families at launch:
-plush, vehicle, figure, candy, trinket, tech, odd, seasonal.
+plush, vehicle, figure, candy, trinket, tech, odd, seasonal. Going deeper pays more: layers in the
+inner third roll the next tier's table instead of the current one (exact rule in PLAN-TABLES.txt,
+TABLE 6).
 
 **Core gift.** Rolled when the core lid lifts, using the same bands with the tier's core table. The
 lid lift is a 3-second shared animation: all living players hold the lid, light spills from the box,
@@ -302,15 +305,19 @@ screen. A first-ever run is seeded to land Uncommon or better.
 | Secret | Prismatic | 0.1% | 1% | 4 | One per tier, lore items, never shown in the index until found |
 
 **Index.** Every gift type the player has ever found, with a count and the depth it was first seen.
-The index never loses entries, even when the shelf item is stolen. Index completion per family
-unlocks a cosmetic, which gives collectors a goal that stealing cannot touch.
+The index never loses entries, even when the shelf item is stolen. Side-gifts and core gifts share one
+Index; core gifts are starred. Completing a family unlocks a wrapping-paper pattern for the shelf and a
+badge, which gives collectors a goal that stealing cannot touch.
 
 **Shelf.** Each player has a shelf in the lobby with 12 slots at start, upgradeable to 24 with gems
-and to 36 with a gamepass. Items occupy slots by rarity. A full shelf forces a choice at the bank
-screen: replace or sell. Sold items become cash at a flat rate per rarity.
+and to 36 with a gamepass. Items occupy slots by rarity. Duplicates stack on the slot they already
+hold, up to ×9. A full shelf forces a choice at the bank screen: replace or sell. Sold items become
+cash at a flat rate per rarity. Each shelf has one like button; the lobby shows a board of the
+most-liked shelves. No comments.
 
 **Bank.** At run end the run bag converts: side-gifts and the core gift go to shelf and index, cash is
-kept, gems are awarded (3 for a completed run, 5 with no downs, 8 with the Tick survived). On a wipe
+kept, gems are awarded (3 for a completed run, 5 with no downs, 8 with the Tick survived; a flat 1 at
+any tier below your highest unlocked tier). On a wipe
 the run bag is gone and the index still records what was seen, so even a wiped run teaches the player
 what exists.
 
@@ -352,8 +359,8 @@ is lost, the index keeps what was seen.
 > Note for implementers: "holding E" must also be a hold-to-use touch button (invariant 3).
 
 **Steal.** In the lobby, any player can walk to another player's shelf and tear into a displayed gift,
-6 seconds of holding, interruptible by the owner tapping it. A successful steal moves the item to the
-thief's shelf and raises the thief's Naughty by the item's rarity band (Common 1 to Mythic 5). Secret
+6 seconds of holding, interruptible by the owner tapping it. A successful steal moves the item (one
+from a stack) to the thief's shelf and raises the thief's Naughty by the item's rarity band (Common 1 to Mythic 5). Secret
 items cannot be stolen. Offline players' shelves can be stolen from, but only Common and Uncommon
 items, so a returning player never finds their best thing gone.
 
@@ -379,33 +386,46 @@ run start, so every run begins with hands.
 
 | Shop item | Cost | Effect |
 |---|---|---|
-| Scissors | 30 | Tier 1 tool, if not picked up |
-| Box cutter | 120 | Tier 2 tool |
-| Chainsaw | 400, tier 2+ only | Tier 3 tool |
+| Scissors | 30 | Grade 1 tool, if not picked up |
+| Box cutter | 120 | Grade 2 tool |
+| Chainsaw | 400, prestige tier 2+ only | Grade 3 tool |
 | Grip tape | 60 | Panel time −15% for this run |
 | Flashlight | 40 | Night lighting 30% → 60% for the holder |
 | Spare lid | 80 | One extra shutter prop |
 | Lucky bow | 150 | Next layer rolls one extra side-gift |
 
 **Gems (meta currency).** 3–8 per completed run (Mechanics B), 35 from the daily reward every 6 hours,
-100 one-time for joining the group and liking. Spent on class spins (25), shelf slots (50 per 4 slots,
-to 24), and cosmetics (50–500).
+a login streak, a bring-a-friend bonus, 100 one-time for joining the group and liking. Spent on class
+spins (25), shelf slots (50 per 4 slots, to 24), the permanent track, and cosmetics (50–500). Amounts
+in PLAN-TABLES.txt, TABLES 7 and 19.
 
-**Classes.** Rolled, not chosen; one active per run; the spin is 25 gems. Copying the shape that works
-in Sell Fries.
+**Permanent track.** Gem upgrades that never reset: Pockets (more starting cash) and Night Eyes
+(brighter Night). There is never a permanent tear-speed upgrade: tear speed comes only from the run's
+tools and grip tape (invariant 5).
+
+**Classes.** Rolled with a 25-gem spin. A player owns every class they have rolled and picks one before
+each run; a duplicate roll refunds gems. Copying the shape that works in Sell Fries.
 
 | Class | Rarity, odds | Passive | Starts with |
 |---|---|---|---|
 | Kid | Common, 40% | +5% cash | Nothing |
-| Wrapper | Uncommon, 28% | Tape panels take tier 0 | 20 cash |
+| Wrapper | Uncommon, 28% | Tape panels take grade 0 | 20 cash |
 | Sprinter | Rare, 16% | +3 walk speed, Jack lunges 25% slower at you | A flashlight |
 | Collector | Epic, 10% | +1 side-gift on every box lid, +10% gems | Scissors, 50 cash |
 | Heir | Legendary, 4.5% | Core gift rolls twice, keep the better | Box cutter, 100 cash |
 | Krampus's Kid | Mythic, 1.5% | Immune to Krampus, Naughty does not rise from your steals | Nothing, and everyone can see it |
 
-**Prestige.** Unlocked after 3 completed runs at the current tier. Prestiging resets cash upgrades and
-the shelf to 12 slots (items go to a vault, reclaimable one per run), and unlocks the next tier's
-present, loot table and lobby decoration.
+**Prestige.** Unlocked after a number of completed runs at the current tier that grows each tier (no
+Index requirement). Prestiging only shrinks the shelf to 12 slots; the rest go to a vault shown as a
+crate on the porch, so items look stored, not gone, and a few can be reclaimed each run. Index, gems,
+classes, passes, stats and the permanent track are never touched. It unlocks the next tier's present,
+loot table and lobby decoration. Players can run any tier they have unlocked; full gems only at the
+highest.
+
+**After The Package.** Prestige repeats forever (The Package +1, +2, …). Each repeat slightly raises
+Secret odds, the mutation chance and Night length, up to caps, and adds a star to the nameplate. It
+never adds layers, so runs stay 8–12 minutes (invariant 5). The game has no end. Numbers in
+PLAN-TABLES.txt, TABLE 9.
 
 | Tier | Layers | Night length | Loot table shift | Lobby change |
 |---|---|---|---|---|
@@ -428,16 +448,41 @@ present, loot table and lobby decoration.
 **Data schema** (ProfileService or equivalent, one profile per player, server-only):
 
 - `tier`, `prestigeCount`, `gems`, `naughty`, `naughtyUpdatedAt`
-- `shelf`: array of `{giftId, rarity, mutation, slotIndex}`
+- `shelf`: array of `{giftId, rarity, mutation, slotIndex, count}` (count stacks duplicates, up to 9)
 - `vault`: array of the same shape
 - `index`: map of `giftId → {count, firstDepth, firstSeenAt}`
 - `classes`: array of owned class ids; `activeClass`
 - `passes`: map of gamepass id → boolean, re-checked on join
-- `stats`: `runs`, `completions`, `wipes`, `ticksSurvived`, `stolen`, `stolenFrom`
+- `stats`: `runs`, `completions`, `wipes`, `ticksSurvived`, `stolen`, `stolenFrom`, `mythicsFound`, `fastestBirthdayRunSeconds`
+- `upgrades`: `{pockets, nightEyes}` levels
+- `streak`: `{days, lastLoginDay}`
+- `likesReceived`, `likedShelves`
 - `dailyClaimedAt`, `groupClaimed`
 
 Run state (`RunBag`, panel bitfields, Nest, Night timer) lives in server memory only and is never
 written to the profile.
+
+---
+
+## Mechanics E: keeping players playing
+
+The game has no end. Every feature here gives a reason to come back without adding a second map, a
+quest board or anything else invariant 9 rules out. Numbers in PLAN-TABLES.txt, TABLE 19.
+
+- **Featured present of the day.** One modifier per calendar day, the same on every server (All Ice,
+  Double Tick, Tape Everywhere, Giant, Tiny, Golden Hour, Silent Night). Still one present per run. The
+  first retention feature to build.
+- **Login streak.** Gems for each day in a row, capped at a week.
+- **Bring-a-friend.** Extra gems for every player in a party of 2 or more.
+- **Leaderboards.** Fastest Birthday run, most Mythics, longest streak.
+- **Shelf likes.** See Mechanics B, Shelf.
+- **Lore.** Each Secret item is one line of the Sender's letter. Draft in [LORE.md](LORE.md).
+- **Limited gift families.** Available for a while, then retired; retired entries stay in the Index.
+- **Server-wide counter event.** Comes with post-launch content.
+- **Repeatable prestige.** See Mechanics D, After The Package.
+
+Start pads are **solo**, **party** (friends) and **join anyone** (matchmakes strangers). Most players
+come alone, so join anyone matters most.
 
 ---
 
@@ -636,6 +681,7 @@ One paper layer on one cube, no textures, no loot.
 - [ ] Side-gift spawn, fly-to-bag, shared RunBag
 - [ ] Core lid reveal animation and core roll, first-run seed to Uncommon or better
 - [ ] Bank screen, shelf with 12 slots, index, duplicate mutation roll
+- [ ] Shelf duplicates stack to ×9; one Index with core gifts starred; inner-third side-gifts roll the next tier's table
 - [ ] ProfileService profile with the schema in Mechanics D, session lock, rejoin test
 - [ ] **Gate B playtest:** a party of 2 completes a run end to end and sees their shelf
 
@@ -645,6 +691,10 @@ One paper layer on one cube, no textures, no loot.
 - [ ] Gamepasses and dev products wired, with the invariant 6 check in code review
 - [ ] HUD complete per the table in Art bible B
 - [ ] Prestige to Christmas tier
+- [ ] Start pads: solo, party, join anyone
+- [ ] Owned classes with pick-before-run and duplicate refund
+- [ ] Permanent track (Pockets, Night Eyes), login streak, bring-a-friend gems
+- [ ] Prestige run counts per tier, vault crate with reclaims, replay any unlocked tier at reduced gems
 
 ### Phase 4: Night and Jack
 - [ ] Tick placement and ticking audio ramp
@@ -670,10 +720,14 @@ Starts right after launch.
 - [ ] Naughty meter, nameplate display, daily decay
 - [ ] Krampus lobby clock, walk, sack, rules from Mechanics C
 - [ ] Offline shelf protection for Rare and above
+- [ ] Featured present of the day, server-synced, with the seed modifier list
+- [ ] Leaderboards: fastest Birthday run, most Mythics, longest streak
+- [ ] Shelf likes and the most-liked board
 
 ### Post-launch content
-One layer type and one gift family per update, Wedding tier, then The Package, as
-listed in Content list.
+One layer type and one gift family per update, Wedding tier, then The Package, as listed in Content
+list. Also: limited gift families, repeatable prestige once The Package ships, and the server-wide
+counter event (Mechanics E).
 
 ---
 
@@ -792,3 +846,9 @@ Runs append to docs/DECISIONS.md, newest first. The table below is the seed copy
 - [ ] Which test runner the repo adopts
 - [ ] Who owns art assets: in-house, commissioned, or a mix per tier
 - [ ] In-app search for "unwrap" and "present" done and clear
+- [ ] Gem cost per level of Pockets and Night Eyes
+- [ ] Completed runs needed per repeat of The Package, and the mutation-chance step per repeat
+- [ ] How tier shifts (Christmas, Wedding) and the Lucky gamepass take odds from the lower bands
+- [ ] How a party "routes around" the Tick box inside a nested present
+- [ ] Lobby and run as one place or two (TeleportService between places)
+- [ ] ProfileService or its successor ProfileStore for the Data system

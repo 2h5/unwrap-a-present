@@ -15,26 +15,30 @@ Config.Tiers = {
 	Christmas = { layers = 9, nightSeconds = 110 },
 	Wedding = { layers = 12, nightSeconds = 130 },
 	ThePackage = { layers = 16, nightSeconds = 150, presentStuds = 28 },
-	completedRunsToPrestige = 3,
+	-- Prestige (PLAN-TABLES.txt TABLE 9). Tier numbers: Birthday 1, Christmas 2, Wedding 3, The Package 4.
+	completedRunsToPrestige = { Birthday = 3, Christmas = 6, Wedding = 10 },
+	vaultReclaimsPerRun = 3,
+	shelfSlotsAfterPrestige = 12,
+	lowerTierGemsPerRun = 1, -- any tier below your highest unlocked tier
 }
 
--- Layer table: action, tool tier needed, weight per depth band (outer, middle, inner third).
+-- Layer table: action, tool grade needed, weight per depth band (outer, middle, inner third).
 -- A type can repeat but never twice in a row. The last two layers are always BoxLid.
 Config.LayerTable = {
-	Paper = { action = "Tear", toolTier = 0, weights = { 50, 30, 20 } },
-	Ribbon = { action = "Snip", toolTier = 1, weights = { 20, 20, 10 } },
-	BubbleWrap = { action = "Pop", toolTier = 0, weights = { 0, 20, 20 } },
-	Foil = { action = "Tear", toolTier = 0, weights = { 0, 15, 15 } },
-	Chains = { action = "Cut", toolTier = 2, weights = { 0, 5, 20 } },
-	Ice = { action = "Chip", toolTier = 2, weights = { 0, 5, 15 } },
-	BoxLid = { action = "Lift", toolTier = 0, twoPlayerFromTier = 2 },
+	Paper = { action = "Tear", grade = 0, weights = { 50, 30, 20 } },
+	Ribbon = { action = "Snip", grade = 1, weights = { 20, 20, 10 } },
+	BubbleWrap = { action = "Pop", grade = 0, weights = { 0, 20, 20 } },
+	Foil = { action = "Tear", grade = 0, weights = { 0, 15, 15 } },
+	Chains = { action = "Cut", grade = 2, weights = { 0, 5, 20 } },
+	Ice = { action = "Chip", grade = 2, weights = { 0, 5, 15 } },
+	BoxLid = { action = "Lift", grade = 0, twoPlayerFromTier = 2 }, -- prestige tier
 }
 
 -- Tape overlay (PLAN-TABLES.txt Table 4, TAPE OVERLAY RULES). Tape is never its own layer.
 -- Each strip is one panel that blocks the two panels it spans until cut.
 Config.TapeOverlay = {
 	action = "Cut",
-	toolTier = 1,
+	grade = 1,
 	stripSeconds = { Scissors = 0.8, BoxCutter = 0.6, Chainsaw = 0.3 },
 	paperChanceByBand = { 0.4, 0.6, 0.8 }, -- outer, middle, inner third
 	seamFraction = { 0.25, 0.5 }, -- min, max share of a taped paper layer's seams, chosen from the seed
@@ -46,19 +50,19 @@ Config.TapeOverlay = {
 Config.LaunchLayerTypes = { "Paper", "Ribbon", "BoxLid" }
 
 Config.Panels = {
-	gridPerFaceLowTier = 4, -- 4x4 per face, 6 faces = 96 panels
-	gridPerFaceHighTier = 6, -- 6x6 at tier 3+
+	gridPerFaceLowTier = 4, -- 4x4 per face, 6 faces = 96 panels, tiers 1-2
+	gridPerFaceHighTier = 6, -- 6x6 at tiers 3-4
 	highTierFrom = 3,
 }
 
 Config.TickAlternateSeamChance = 0.6
 
--- Tools: tier, per-panel seconds, and actions with optional per-action override seconds.
+-- Tools: grade (0 hands to 3 chainsaw), per-panel seconds, and actions with optional per-action override seconds.
 Config.Tools = {
-	Hands = { tier = 0, seconds = 1.2, actions = { Tear = 1.2, Pop = 1.2, Lift = 1.2 } },
-	Scissors = { tier = 1, seconds = 0.8, actions = { Cut = 0.8, Snip = 0.8, Tear = 1.0 }, pickupDepth = 1 },
-	BoxCutter = { tier = 2, seconds = 0.6, actions = { Cut = 0.6, Chip = 0.6, Tear = 0.6 } },
-	Chainsaw = { tier = 3, seconds = 0.3, actions = "All", areaPanels = 2 }, -- tears a 2x2
+	Hands = { grade = 0, seconds = 1.2, actions = { Tear = 1.2, Pop = 1.2, Lift = 1.2 } },
+	Scissors = { grade = 1, seconds = 0.8, actions = { Cut = 0.8, Snip = 0.8, Tear = 1.0 }, pickupDepth = 1 },
+	BoxCutter = { grade = 2, seconds = 0.6, actions = { Cut = 0.6, Chip = 0.6, Tear = 0.6 } },
+	Chainsaw = { grade = 3, seconds = 0.3, actions = "All", areaPanels = 2 }, -- tears a 2x2
 }
 
 -- The Tear feel spec
@@ -101,6 +105,8 @@ Config.Loot = {
 	coreRevealSeconds = 3,
 	firstRunMinRarity = "Uncommon",
 	mutationChance = 0.2, -- duplicate core gift of Rare or above
+	innerThirdRollsNextTier = true, -- side-gifts in the inner third roll the next tier's table
+	packageInnerSecretPercent = 2, -- The Package inner third rolls its core table with Secret at 2%
 	mutationMinRarity = "Rare",
 	families = { "plush", "vehicle", "figure", "candy", "trinket", "tech", "odd", "seasonal" },
 }
@@ -110,6 +116,7 @@ Config.Shelf = {
 	gemSlotsMax = 24,
 	passSlotsMax = 36,
 	gemsPer4Slots = 50,
+	stackMax = 9, -- duplicates stack on one slot; a steal takes one
 }
 
 Config.BankGems = { completed = 3, noDowns = 5, tickSurvived = 8 }
@@ -144,7 +151,7 @@ Config.Krampus = {
 Config.Shop = {
 	Scissors = { cost = 30 },
 	BoxCutter = { cost = 120 },
-	Chainsaw = { cost = 400, minTier = 2 },
+	Chainsaw = { cost = 400, minTier = 2 }, -- prestige tier
 	GripTape = { cost = 60, panelTimeScale = 0.85 },
 	Flashlight = { cost = 40, nightLightingScale = 0.6 },
 	SpareLid = { cost = 80 },
@@ -156,9 +163,13 @@ Config.Gems = {
 	dailyIntervalSeconds = 6 * 60 * 60,
 	groupOneTime = 100,
 	classSpin = 25,
+	classDuplicateRefund = 10,
+	streakPerDay = 10,
+	streakCapDays = 7,
+	friendBonusPerPlayer = 2, -- per run, party of 2 or more
 }
 
--- Passives and starting kit: PLAN.md › Mechanics D › Classes.
+-- Passives and starting kit: PLAN.md › Mechanics D › Classes. Players own every class they roll.
 Config.Classes = {
 	Kid = { rarity = "Common", odds = 40 },
 	Wrapper = { rarity = "Uncommon", odds = 28 },
@@ -174,5 +185,24 @@ Config.Gamepasses = {
 	ExtraToolSlot = { robux = 149 },
 	Lucky = { robux = 399 }, -- side-gifts only, never the core (invariant 6)
 }
+
+-- Mechanics E: keeping players playing (PLAN-TABLES.txt TABLE 19)
+Config.PermanentTrack = {
+	Pockets = { startCashPerLevel = 10, maxLevel = 10 },
+	NightEyes = { lightingPerLevel = 0.05, maxBonus = 0.3 },
+	-- Gem cost per level: not set yet (open question in PLAN.md).
+}
+
+Config.RepeatPrestige = {
+	secretOddsStepPercent = 0.5,
+	secretOddsCapPercent = 3,
+	mutationChanceCap = 0.3, -- step per repeat not set yet
+	nightSecondsStep = 10,
+	nightSecondsCap = 180,
+}
+
+Config.FeaturedModifiers = { "AllIce", "DoubleTick", "TapeEverywhere", "Giant", "Tiny", "GoldenHour", "SilentNight" }
+
+Config.Leaderboards = { "FastestBirthdayRun", "MostMythics", "LongestStreak" }
 
 return Config

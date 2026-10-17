@@ -21,7 +21,10 @@ export type Action = "Tear" | "Cut" | "Snip" | "Pop" | "Chip" | "Lift"
 
 export type Rarity = "Common" | "Uncommon" | "Rare" | "Epic" | "Mythic" | "Secret"
 
+-- Tier is prestige only (1 Birthday … 4 The Package, then repeats). Tools use Grade.
 export type Tier = "Birthday" | "Christmas" | "Wedding" | "ThePackage"
+
+export type Grade = number -- 0 hands, 1 scissors, 2 box cutter, 3 chainsaw
 
 export type Mutation = "Giant" | "Golden" | "Frosted" | "Glitched"
 

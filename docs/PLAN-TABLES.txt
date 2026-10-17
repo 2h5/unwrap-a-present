@@ -12,7 +12,8 @@ Overlay: tape strips laid over a layer's seams; each strip is its own panel with
 Panel: one tearable piece of a layer; a paper layer is a grid of panels; a box lid is one panel; code=Panel
 Depth: how many layers deep the team is; depth 0 is the outside; code=depth
 Nest: the ordered list of layers in this present, generated at run start from a seed; code=Nest, seed
-Tool: what the player holds; each tool has an action set and a tier; code=Tool, tier
+Tool: what the player holds; each tool has an action set and a grade; code=Tool, grade
+Grade: a tool's strength, Grade 0 hands to Grade 3 chainsaw; code=grade
 Action: Tear, Cut, Snip, Pop, Chip, Lift; each layer type accepts exactly one; code=Action
 Side-gift: a loot item dropped by a layer, has a rarity, goes to the run bag; code=SideGift
 Core gift: the item at the center of the present, one per run, rolled on the server; code=CoreGift
@@ -24,10 +25,10 @@ Night: the phase after the Tick opens, until the entity is shut or the team reac
 Jack: the entity released by the Tick, hunts the team during Night; code=Jack
 Naughty: a per-player meter raised by stealing, decays daily, Krampus targets by it; code=naughty
 Krampus: lobby-side entity that visits at lobby night and takes from the naughtiest shelves; code=Krampus
-Tier: prestige level (Birthday, Christmas, Wedding, The Package), sets layer count and loot table; code=tier
+Tier: prestige level only, Birthday=1, Christmas=2, Wedding=3, The Package=4 (then The Package +1, +2, ...); sets layer count and loot table; code=tier
 Wipe: all players in a run down at once; run bag lost, present gone; code=Wipe
 Bank: converting the run bag to shelf and index at run end; code=Bank
-Class: a rolled perk set a player picks before a run; code=Class
+Class: a perk set; a player owns every class they have rolled and picks one before a run; code=Class
 Cash: run currency, buys tools and upgrades; code=cash
 Gems: meta currency, buys class spins and cosmetics; code=gems
 
@@ -134,25 +135,25 @@ Note: the Tick is the only branch. A party that routes around it (possible in 60
 ==================================================================
 TABLE 4. LAYER TABLE (Mechanics A). Weights per depth band; a type can repeat but never twice in a row.
 ==================================================================
-Paper; action=Tear; tool tier needed=0 (hands); weight outer third=50; middle third=30; inner third=20
-Ribbon and bow; action=Snip; tool tier=1; outer=20; middle=20; inner=10
-Bubble wrap; action=Pop; tool tier=0; outer=0; middle=20; inner=20
-Foil; action=Tear; tool tier=0; outer=0; middle=15; inner=15
-Chains; action=Cut; tool tier=2 (box cutter); outer=0; middle=5; inner=20
-Ice; action=Chip; tool tier=2; outer=0; middle=5; inner=15
-Box lid; action=Lift; tool tier=0, two players on tier 2 and above; placement=always the last two layers of every nest; notes=taped at tier 2 and above
+Paper; action=Tear; tool grade needed=0 (hands); weight outer third=50; middle third=30; inner third=20
+Ribbon and bow; action=Snip; tool grade=1; outer=20; middle=20; inner=10
+Bubble wrap; action=Pop; tool grade=0; outer=0; middle=20; inner=20
+Foil; action=Tear; tool grade=0; outer=0; middle=15; inner=15
+Chains; action=Cut; tool grade=2 (box cutter); outer=0; middle=5; inner=20
+Ice; action=Chip; tool grade=2; outer=0; middle=5; inner=15
+Box lid; action=Lift; tool grade=0, two players on tier 2 and above; placement=always the last two layers of every nest; notes=taped at tier 2 and above
 Layer count by tier: Birthday=6; Christmas=9; Wedding=12; The Package=16
 Tick placement: random depth in the middle third.
-Panels: paper layer is a 4x4 grid per face (6 faces, 96 panels) at tier 1, 6x6 at tier 3 and above. Tape panels sit on seams and must be cut before the two paper panels beside them can tear.
-TAPE OVERLAY RULES: a Paper layer is taped with chance by depth band: outer third=40%; middle third=60%; inner third=80%. A taped paper layer tapes 25% to 50% of its seams, chosen from the seed. Each tape strip is one panel: action=Cut; tool tier=1 (scissors); seconds per strip=0.8 with scissors, 0.6 with box cutter, 0.3 with chainsaw. A strip blocks the two paper panels it spans until it is cut. BoxLid layers are taped always at tier 2 and above, never at tier 1; the lid cannot lift until its tape is cut. No other layer type takes tape.
+Panels: paper layer is a 4x4 grid per face (6 faces, 96 panels) at tiers 1 and 2, 6x6 at tiers 3 and 4. Tape panels sit on seams and must be cut before the two paper panels beside them can tear.
+TAPE OVERLAY RULES: a Paper layer is taped with chance by depth band: outer third=40%; middle third=60%; inner third=80%. A taped paper layer tapes 25% to 50% of its seams, chosen from the seed. Each tape strip is one panel: action=Cut; tool grade=1 (scissors); seconds per strip=0.8 with scissors, 0.6 with box cutter, 0.3 with chainsaw. A strip blocks the two paper panels it spans until it is cut. BoxLid layers are taped always at tier 2 and above, never at tier 1; the lid cannot lift until its tape is cut. No other layer type takes tape.
 
 ==================================================================
-TABLE 5. TOOLS (tool; tier; actions; seconds per panel; notes)
+TABLE 5. TOOLS (tool; grade; actions; seconds per panel; notes)
 ==================================================================
-Hands; tier=0; actions=Tear, Pop, Lift; seconds per panel=1.2; notes=always equipped as fallback
-Scissors; tier=1; actions=Cut, Snip, Tear at 1.0 s; seconds per panel=0.8; notes=first pickup, at depth 1
-Box cutter; tier=2; actions=Cut, Chip, Tear at 0.6 s; seconds per panel=0.6; notes=shop only
-Chainsaw; tier=3; actions=everything at 0.3 s, tears a 2x2 of panels; seconds per panel=0.3; notes=shop, tier 2 and above, loud
+Hands; grade=0; actions=Tear, Pop, Lift; seconds per panel=1.2; notes=always equipped as fallback
+Scissors; grade=1; actions=Cut, Snip, Tear at 1.0 s; seconds per panel=0.8; notes=first pickup, at depth 1
+Box cutter; grade=2; actions=Cut, Chip, Tear at 0.6 s; seconds per panel=0.6; notes=shop only
+Chainsaw; grade=3; actions=everything at 0.3 s, tears a 2x2 of panels; seconds per panel=0.3; notes=shop, prestige tier 2 and above, loud
 
 Tear feel spec: press-and-hold grows a tear line for the panel time, then release; early release keeps the rip line (progress never lost). On release: torn-edge mesh swap, small impulse away from the present, 2 s physics flutter, return to pool. Max 40 live debris per client, oldest recycled first. Audio: crinkle on hold start, rip on release, soft thud on landing; 3 variants each, pitch randomized within 10%. No camera shake on single panels; one 0.1 s shake on a chainsaw 2x2. One light haptic tap on release (mobile). Other players see the growing rip line.
 
@@ -166,25 +167,27 @@ Epic; color=Purple; odds Birthday=4%; odds Package=12%; shelf slots=2; examples=
 Mythic; color=Gold; odds Birthday=0.9%; odds Package=5%; shelf slots=3; examples=golden goose, rocket, the Jack's own box
 Secret; color=Prismatic (animated hue sweep); odds Birthday=0.1%; odds Package=1%; shelf slots=4; examples=one per tier, lore items, hidden in the index until found
 Rules: 1 to 3 side-gifts per cleared layer; 8 side-gift families at launch (plush, vehicle, figure, candy, trinket, tech, odd, seasonal); first-ever run seeded to Uncommon or better; shelf starts at 12 slots, 24 with gems, 36 with gamepass; gems per completed run = 3, or 5 with no downs, or 8 with the Tick survived; duplicate core gift of Rare or above = 20% mutation roll (frosted, giant, glitched, golden), each mutation is its own index entry.
+Depth rule: side-gifts in the outer and middle thirds roll the current tier's table; the inner third rolls the next tier's table; The Package's inner third rolls its core table with Secret at 2%.
+Shelf and Index: duplicates stack on their existing shelf slot up to x9; selling a duplicate gives cash; a steal takes one from the stack. One Index for side-gifts and core gifts, core gifts starred. Completing an Index family gives a wrapping-paper pattern for the shelf plus a badge.
 
 ==================================================================
 TABLE 7. RUN ROOM SHOP (item; cost in cash; effect). Cash resets to 0 at run start.
 ==================================================================
-Scissors; cost=30; effect=tier 1 tool, if not picked up
-Box cutter; cost=120; effect=tier 2 tool
-Chainsaw; cost=400, tier 2 and above only; effect=tier 3 tool
+Scissors; cost=30; effect=grade 1 tool, if not picked up
+Box cutter; cost=120; effect=grade 2 tool
+Chainsaw; cost=400, prestige tier 2 and above only; effect=grade 3 tool
 Grip tape; cost=60; effect=panel time -15% for this run
 Flashlight; cost=40; effect=Night lighting 30% to 60% for the holder
 Spare lid; cost=80; effect=one extra shutter prop
 Lucky bow; cost=150; effect=next layer rolls one extra side-gift
 Cash sources: per panel torn (1 at tier 1, scaling with tier); per side-gift banked (5 to 200 by rarity); selling shelf overflow.
-Gem sources: 3 to 8 per completed run; 35 from the daily reward every 6 hours; 100 one-time for group join and like. Gem sinks: class spin 25; shelf slots 50 per 4 slots up to 24; cosmetics 50 to 500.
+Gem sources: 3 to 8 per completed run at your highest unlocked tier, a flat 1 per completed run at any lower tier; 35 from the daily reward every 6 hours; login streak +10 per consecutive day, capped at day 7; bring-a-friend +2 per run for every player in a party of 2 or more; 100 one-time for group join and like; 10 back for a duplicate class roll. Gem sinks: class spin 25; shelf slots 50 per 4 slots up to 24; permanent track (see TABLE 19); cosmetics 50 to 500.
 
 ==================================================================
-TABLE 8. CLASSES (class; rarity and spin odds; passive; starts with). Rolled, not chosen; one active per run; spin = 25 gems.
+TABLE 8. CLASSES (class; rarity and spin odds; passive; starts with). Spin = 25 gems. You own every class you roll and pick one before each run; a duplicate roll refunds 10 gems.
 ==================================================================
 Kid; rarity=Common, 40%; passive=+5% cash; starts with=nothing
-Wrapper; rarity=Uncommon, 28%; passive=tape panels take tier 0; starts with=20 cash
+Wrapper; rarity=Uncommon, 28%; passive=tape panels take grade 0; starts with=20 cash
 Sprinter; rarity=Rare, 16%; passive=+3 walk speed, Jack lunges 25% slower at you; starts with=a flashlight
 Collector; rarity=Epic, 10%; passive=+1 side-gift on every box lid, +10% gems; starts with=scissors, 50 cash
 Heir; rarity=Legendary, 4.5%; passive=core gift rolls twice, keep the better; starts with=box cutter, 100 cash
@@ -197,7 +200,8 @@ Birthday; layers=6; Night=90 s; loot shift=base; lobby=balloons on the porch
 Christmas; layers=9; Night=110 s; loot shift=Rare +6%, Epic +3%; lobby=snow, tree, lights
 Wedding; layers=12; Night=130 s; loot shift=Rare +10%, Epic +6%, Mythic +2%; lobby=white drapes, cake on the porch
 The Package; layers=16; Night=150 s; loot shift=core table only, Secret 1%; lobby=brown paper, barcode, no decoration
-Prestige rule: unlocked after 3 completed runs at the current tier; resets cash upgrades and the shelf to 12 slots (items go to a vault, reclaimable one per run); unlocks the next tier's present, loot table and lobby decoration.
+Prestige rule: completed runs needed at the current tier = 3 (Birthday to Christmas), 6 (Christmas to Wedding), 10 (Wedding to The Package); no Index requirement. Prestige shrinks the shelf to 12 slots; the rest go to a vault, shown as a crate on the porch, and 3 items per run can be reclaimed. Index, gems, classes, passes, stats and the permanent track are never touched. Unlocks the next tier's present, loot table and lobby decoration. Players can run any unlocked tier.
+Repeatable prestige after The Package (The Package +1, +2, ...), completed runs needed per repeat not set yet: Secret odds +0.5% (cap 3%); mutation chance rises from 20% toward a 30% cap (step per repeat not set yet); Night +10 s (cap 180 s); one star on the nameplate per repeat. Never adds layers (invariant 5).
 
 ==================================================================
 TABLE 10. MONETIZATION (product; type; price in Robux; what it does). Invariant 6: the core gift is never purchasable.
@@ -211,12 +215,15 @@ Paper packs; type=dev product; price=49 to 199; effect=cosmetic wrapping pattern
 
 DATA SCHEMA (one profile per player, server-only):
   tier, prestigeCount, gems, naughty, naughtyUpdatedAt
-  shelf: array of {giftId, rarity, mutation, slotIndex}
+  shelf: array of {giftId, rarity, mutation, slotIndex, count}; count stacks duplicates up to 9
   vault: array of the same shape
   index: map giftId -> {count, firstDepth, firstSeenAt}
   classes: array of owned class ids; activeClass
   passes: map gamepass id -> boolean, re-checked on join
-  stats: runs, completions, wipes, ticksSurvived, stolen, stolenFrom
+  stats: runs, completions, wipes, ticksSurvived, stolen, stolenFrom, mythicsFound, fastestBirthdayRunSeconds
+  upgrades: {pockets, nightEyes} levels
+  streak: {days, lastLoginDay}
+  likesReceived; likedShelves: set of shelf owner ids this player has liked
   dailyClaimedAt, groupClaimed
   Run state (RunBag, panel bitfields, Nest, Night timer) lives in server memory only, never in the profile.
 
@@ -263,14 +270,14 @@ DIAGRAM D. LOBBY PLAN (top-down)
 Field: one open area. Spawn is center-bottom, facing the Start a Run pads 12 studs away on the right. Shelf row and porch are on the left. Booths are straight ahead along the top. Update board is beside the pads.
 
 Zones:
-  House and porch (top-left): demo present half torn, paper on the ground; tier decoration swaps here
-  Shelf row (left, below the house): one shelf per player; Naughty 10+ glows red; steal prompt on approach
+  House and porch (top-left): demo present half torn, paper on the ground; tier decoration swaps here; each player's vault crate sits on the porch
+  Shelf row (left, below the house): one shelf per player; Naughty 10+ glows red; steal prompt on approach; one like button per shelf, no comments
   Krampus walk: a path along the front of the shelf row, left to right; every 20 minutes, 60 seconds
   Rewards booth (top, left of center): daily, group
   Classes booth (top center): 25-gem spin; odds board
   Shop booth (top, right of center): gems, passes, paper packs
-  Update board (top-right corner): "??? arrives in" countdown and poster
-  Start a Run (right side, tall zone): four pads stacked vertically: solo pad, solo pad, party pad (4), party pad (4)
+  Update board (top-right corner): "??? arrives in" countdown and poster; beside it the most-liked shelves board and the three leaderboards (TABLE 19)
+  Start a Run (right side, tall zone): three pads stacked vertically: solo pad, party pad (friends, up to 4), join-anyone pad (matchmakes strangers up to 4)
   Spawn (center-bottom): faces the pads
 Zone count is 7: house and porch, shelf row, rewards, classes, shop, update board, Start a Run. Spawn and the Krampus walk are markers, not zones.
 
@@ -345,8 +352,8 @@ DIAGRAM E. BUILD ORDER (no fixed dates; a phase starts when the one before it is
 7. Phase 4, Night and Jack, and Phase 5, Art and polish, in parallel
 8. Icon countdown swap, a few days before launch
 9. Launch
-10. Phase 6, Steal and Krampus, right after launch
-11. Post-launch content: one layer type and one gift family per update; Wedding tier, then The Package
+10. Phase 6, Steal and Krampus, featured present of the day, leaderboards, shelf likes; right after launch
+11. Post-launch content: one layer type and one gift family per update; limited gift families; Wedding tier, then The Package, then repeatable prestige; server-wide counter event
 12. Returns update, once the holiday season is over
 (Acceptance criteria per phase are the checklists under "Production roadmap" in PLAN.md; they are plain lists and export cleanly.)
 
@@ -359,6 +366,20 @@ Median run length; target=8 to 12 min, party of 2; why=invariant 5; logged=run_e
 Day-1 return; target=over 30%; why=the Reveal is working; logged=Roblox analytics
 Clip rate proxy; target=over 5% of runs end with a Mythic, Night survival, or a steal; why=pillar three, marketing; logged=run_end flags
 Events to log, server-side: join, first_tear, layer_cleared (depth, type, seconds), tick_opened, player_down, revive, wipe, core_reveal (rarity), bank (gems, items), steal (rarity, success), krampus_take, purchase, class_spin, prestige.
+
+==================================================================
+TABLE 19. KEEPING PLAYERS PLAYING (feature; numbers; when)
+==================================================================
+Permanent track (gems, never resets); Pockets=+10 starting cash per level, 10 levels; Night Eyes=+5% Night lighting per level, cap 30%; cost per level=not set yet; when=Phase 3. No permanent tear-speed line (invariant 5).
+Login streak; +10 gems per consecutive day, capped at day 7; when=Phase 3
+Bring-a-friend; +2 gems per run for every player in a party of 2 or more; when=Phase 3
+Featured present of the day; one modifier per calendar day, server-synced; modifiers=All Ice, Double Tick, Tape Everywhere, Giant (2x panels), Tiny (half panels), Golden Hour (Mythic odds 2x), Silent Night (Night from depth 1); when=Phase 6, first retention feature built
+Leaderboards; fastest Birthday run, most Mythics, longest streak; when=Phase 6
+Shelf likes; one like button per shelf, one lobby board of most-liked shelves, no comments; when=Phase 6
+Secret items as lore; each Secret is one line of the Sender's letter (docs/LORE.md, draft); when=ships with the first Secret
+Limited gift families; available for a limited time, then retired; retired entries stay in the Index; when=post-launch content
+Server-wide counter event; needs a global counter the launch build does not have; when=post-launch content
+Repeatable prestige; see TABLE 9; when=after The Package tier ships
 
 ==================================================================
 TABLE 18. DECISIONS LOG

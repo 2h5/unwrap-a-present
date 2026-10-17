@@ -4,8 +4,8 @@ Cash, gems, shop, classes, prestige, gamepass checks, daily and group rewards.
 Must never: Grant a gift for Robux.
 
 - **Built in:** Phase 3, build order in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E
-- **Rules:** [PLAN.md](../../../docs/PLAN.md), Mechanics D
-- **Numbers:** [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt), Table 7 (shop, cash, gems), Table 8 (classes), Table 9 (prestige), Table 10 (monetization)
+- **Rules:** [PLAN.md](../../../docs/PLAN.md), Mechanics D, Mechanics E
+- **Numbers:** [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt), Table 7 (shop, cash, gems), Table 8 (classes), Table 9 (prestige), Table 10 (monetization), Table 19 (keeping players playing)
 - **Code reads numbers from:** [Config.luau](../../shared/Config/Config.luau), never inline
 
 ## Public API
