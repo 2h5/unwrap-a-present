@@ -3,7 +3,7 @@
 Panel bitfields per layer, tool and action validation, panel timing, layer-cleared events.
 Must never: Trust a client position or timer.
 
-- **Built in:** Phase 0 (Oct 19–25), dates in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E
+- **Built in:** Phase 0, build order in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E
 - **Rules:** [PLAN.md](../../../docs/PLAN.md), Mechanics A (panels, tools, the Tear feel spec)
 - **Numbers:** [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt), Table 4 (layer actions, panel grid), Table 5 (tools), Table 15 (TearRequest rate)
 - **Code reads numbers from:** [Config.luau](../../shared/Config/Config.luau), never inline

@@ -3,7 +3,7 @@
 Hold detection, rip-line preview, TearRequest.
 Must never: Decide that a panel is gone.
 
-- **Built in:** Phase 0 (Oct 19–25), dates in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E
+- **Built in:** Phase 0, build order in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E
 - **Rules:** [PLAN.md](../../../docs/PLAN.md), Mechanics A (the Tear feel spec)
 - **Numbers:** [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt), Table 5 (tools, feel spec), Table 13 (Tool hold ring)
 - **Code reads numbers from:** [Config.luau](../../shared/Config/Config.luau), never inline

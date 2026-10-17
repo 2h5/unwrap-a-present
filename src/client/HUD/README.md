@@ -3,7 +3,7 @@
 Cash, depth, Night timer, bank, shop, classes, rewards screens.
 Must never: Compute a value it displays.
 
-- **Built in:** Phase 3 (Nov 9–15), dates in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E
+- **Built in:** Phase 3, build order in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E
 - **Rules:** [PLAN.md](../../../docs/PLAN.md), Art bible B (UI style, HUD)
 - **Numbers:** [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt), Table 13 (HUD), Table 12 (rarity and layer colors)
 - **Code reads numbers from:** [Config.luau](../../shared/Config/Config.luau), never inline

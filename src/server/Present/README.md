@@ -3,7 +3,7 @@
 Seed, Nest generation, layer table, Tick placement.
 Must never: Be called by the client.
 
-- **Built in:** Phase 1 (Oct 26–Nov 1), dates in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E
+- **Built in:** Phase 1, build order in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E
 - **Rules:** [PLAN.md](../../../docs/PLAN.md), Mechanics A (present generation)
 - **Numbers:** [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt), Table 4 (layer table), Diagram C (cross-section), Table 9 (layers per tier)
 - **Code reads numbers from:** [Config.luau](../../shared/Config/Config.luau), never inline

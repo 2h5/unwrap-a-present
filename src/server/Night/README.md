@@ -3,7 +3,7 @@
 Tick open, Jack AI, line of sight, downs, revives, wipe detection.
 Must never: Run in the lobby.
 
-- **Built in:** Phase 4 (Nov 16–21), dates in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E
+- **Built in:** Phase 4, build order in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E
 - **Rules:** [PLAN.md](../../../docs/PLAN.md), Mechanics C (Tick, Night, Jack, downs and wipes)
 - **Numbers:** [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt), Diagram B (run flow), Table 9 (Night length), Table 7 (Flashlight, Spare lid)
 - **Code reads numbers from:** [Config.luau](../../shared/Config/Config.luau), never inline

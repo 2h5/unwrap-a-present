@@ -239,7 +239,7 @@ Ring 5: Chains; action=cut with box cutter; look=dark iron
 Ring 6: Ice; action=chip; look=pale blue, glowing inside
 Ring 7 (innermost): Cardboard box (tape seals the lid at tier 2 and above); action=lift the lid; look=kraft brown
 Center: Core gift, lit by its rarity color, visible only during the 3 s reveal.
-Launch ships rings 1, 2 and 7 plus the tape overlay. December adds 3 to 6, one per week. The Tick is any ring in the middle third, same look as its neighbors, ticking.
+Launch ships rings 1, 2 and 7 plus the tape overlay. Post-launch updates add 3 to 6, one per update. The Tick is any ring in the middle third, same look as its neighbors, ticking.
 (Drawing note: the diagram shows a Christmas-tier present with one of each type for illustration; a real nest draws types from TABLE 4 and can repeat types.)
 
 ==================================================================
@@ -315,40 +315,39 @@ TearRequest rate per player; limit=8 per second, server-enforced; checked by=Tea
 Place file size; limit=25 MB; checked by=CI check
 
 ==================================================================
-TABLE 16. CONTENT LIST (content; at launch Nov 25; by Dec 31; notes)
+TABLE 16. CONTENT LIST (content; at launch; after the post-launch updates; notes)
 ==================================================================
-Layer types; launch=3 (paper, ribbon, box lid) plus the tape overlay; Dec 31=7 (adds bubble wrap, foil, chains, ice); notes=one new type per December week
-Paper patterns; launch=6; Dec 31=14; notes=one 512 px tile each, each owns a color family
-Tools; launch=3 (hands, scissors, box cutter); Dec 31=4 (adds chainsaw); notes=chainsaw lands with chains
-Side-gift models; launch=32 (8 families x 4); Dec 31=64; notes=chunky toy style, dots allowed
-Core gift models; launch=18 (3 per rarity band); Dec 31=36; notes=Secret is 1 per tier
-Mutations; launch=2 (giant, golden); Dec 31=4 (adds frosted, glitched); notes=visual variants only
-Tiers; launch=2 (Birthday, Christmas); Dec 31=4 (adds Wedding, The Package); notes=Wedding lands Dec 12, The Package Dec 26
-Entities; launch=Jack; Dec 31=Jack, Krampus; notes=Krampus in week 2 if not ready at launch
-Classes; launch=6; Dec 31=6; notes=balance only
-Lobby decorations; launch=Birthday, Christmas; Dec 31=4; notes=swap with tier
-Shop items; launch=7; Dec 31=9; notes=adds two Night items
-Gamepasses; launch=4; Dec 31=4; notes=no new passes in December
-Paper packs (cosmetic); launch=3; Dec 31=8; notes=weekly drop
-Sound set; launch=24 clips; Dec 31=40; notes=tear 9, lid 3, gift 6, Jack 6 at launch
-UI screens; launch=6 (HUD, shop, bank, shelf, classes, rewards); Dec 31=8 (adds index, settings); notes=index can wait, players ask for it by week 2
+Layer types; launch=3 (paper, ribbon, box lid) plus the tape overlay; after updates=7 (adds bubble wrap, foil, chains, ice); notes=one new type per update
+Paper patterns; launch=6; after updates=14; notes=one 512 px tile each, each owns a color family
+Tools; launch=3 (hands, scissors, box cutter); after updates=4 (adds chainsaw); notes=chainsaw lands with chains
+Side-gift models; launch=32 (8 families x 4); after updates=64; notes=chunky toy style, dots allowed
+Core gift models; launch=18 (3 per rarity band); after updates=36; notes=Secret is 1 per tier
+Mutations; launch=2 (giant, golden); after updates=4 (adds frosted, glitched); notes=visual variants only
+Tiers; launch=2 (Birthday, Christmas); after updates=4 (adds Wedding, The Package); notes=Wedding first, then The Package
+Entities; launch=Jack; after updates=Jack, Krampus; notes=Krampus in the first update if not ready at launch
+Classes; launch=6; after updates=6; notes=balance only
+Lobby decorations; launch=Birthday, Christmas; after updates=4; notes=swap with tier
+Shop items; launch=7; after updates=9; notes=adds two Night items
+Gamepasses; launch=4; after updates=4; notes=no new passes in the post-launch updates
+Paper packs (cosmetic); launch=3; after updates=8; notes=one per update
+Sound set; launch=24 clips; after updates=40; notes=tear 9, lid 3, gift 6, Jack 6 at launch
+UI screens; launch=6 (HUD, shop, bank, shelf, classes, rewards); after updates=8 (adds index, settings); notes=index can wait, players ask for it soon after launch
 
 ==================================================================
-DIAGRAM E. BUILD TIMELINE (phase; start; end; gate)
+DIAGRAM E. BUILD ORDER (no fixed dates; a phase starts when the one before it is done and its gate passes)
 ==================================================================
-Phase 0, Tear greybox; start=2026-10-19; end=2026-10-25
-Gate A, Tear feels good; date=2026-10-25; human playtest, three people tap for one minute each and want to keep going; the only cheap cancel point
-Phase 1, Nest and tools; start=2026-10-26; end=2026-11-01
-Phase 2, Loot, bank, data; start=2026-11-02; end=2026-11-08
-Gate B, full run works; date=2026-11-08; human playtest, party of 2 completes a run end to end and sees their shelf; after this, art and content run in parallel with systems
-Phase 3, Lobby and economy; start=2026-11-09; end=2026-11-15
-Phase 4, Night and Jack; start=2026-11-16; end=2026-11-21
-Phase 5, Art and polish; start=2026-11-16; end=2026-11-24; runs in parallel with Phase 4
-Icon countdown swap; date=2026-11-20
-Launch; date=2026-11-25
-Phase 6, Steal and Krampus; start=2026-11-26; end=2026-12-04
-December content; start=2026-12-05; end=2026-12-31; one layer type and one gift family per week; Wedding tier 2026-12-12; The Package 2026-12-26
-Returns update; date=2027-01-08
+1. Phase 0, Tear greybox
+2. Gate A, Tear feels good; human playtest, three people tap for one minute each and want to keep going; the only cheap cancel point
+3. Phase 1, Nest and tools
+4. Phase 2, Loot, bank, data
+5. Gate B, full run works; human playtest, party of 2 completes a run end to end and sees their shelf; after this, art and content run in parallel with systems
+6. Phase 3, Lobby and economy
+7. Phase 4, Night and Jack, and Phase 5, Art and polish, in parallel
+8. Icon countdown swap, a few days before launch
+9. Launch
+10. Phase 6, Steal and Krampus, right after launch
+11. Post-launch content: one layer type and one gift family per update; Wedding tier, then The Package
+12. Returns update, once the holiday season is over
 (Acceptance criteria per phase are the checklists under "Production roadmap" in PLAN.md; they are plain lists and export cleanly.)
 
 ==================================================================

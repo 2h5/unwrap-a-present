@@ -33,7 +33,7 @@ the plan does not describe, check Art bible B budgets, play one full run on a ph
 3. `docs/DECISIONS.md` — anything **Proposed** waiting on a human.
 4. The `README.md` inside the system folder you are touching (`src/server/<System>/`, etc.).
 
-Current phase: **Phase 0 — Tear greybox** (Oct 19–25, Gate A on Oct 25; PLAN-TABLES.txt Diagram E).
+Current phase: **Phase 0 — Tear greybox**, then Gate A (build order: PLAN-TABLES.txt Diagram E). No fixed dates.
 
 ## Layout
 

@@ -471,7 +471,7 @@ first and ring 7 last; the core is only ever seen in the 3-second reveal animati
 
 Ring by ring: [PLAN-TABLES.txt](PLAN-TABLES.txt), **Diagram C**. Source image: [art/layers.png](art/layers.png).
 
-Launch ships rings 1, 2 and 7 plus the tape overlay. December adds 3 to 6, one per week. The Tick is any ring in the
+Launch ships rings 1, 2 and 7 plus the tape overlay. Post-launch updates add 3 to 6, one per update. The Tick is any ring in the
 middle third, same look, ticking.
 
 **Layer palette.** Each layer owns a color family so a thumbnail of any depth is identifiable. Hex
@@ -578,36 +578,36 @@ hours of the update.
 
 ## Content list
 
-Launch ships the smallest set that makes every pillar visible; December adds one layer type and one
-gift family per week so each update is a new thumbnail. Counts are the build target, not a wish list.
+Launch ships the smallest set that makes every pillar visible; each post-launch update adds one layer type and one
+gift family so each update is a new thumbnail. Counts are the build target, not a wish list.
 
-| Content | Launch (Nov 25) | By Dec 31 | Notes |
+| Content | Launch | After post-launch updates | Notes |
 |---|---|---|---|
-| Layer types | 3: paper, ribbon, box lid, plus the tape overlay | 7: + bubble wrap, foil, chains, ice | One new type per December week |
+| Layer types | 3: paper, ribbon, box lid, plus the tape overlay | 7: + bubble wrap, foil, chains, ice | One new type per update |
 | Paper patterns | 6 | 14 | One 512 px tile each; each owns a color family |
 | Tools | 3: hands, scissors, box cutter | 4: + chainsaw | Chainsaw lands with chains |
 | Side-gift models | 32 (8 families × 4) | 64 | Chunky toy style, dots allowed |
 | Core gift models | 18 (3 per rarity band) | 36 | Secret: 1 per tier |
 | Mutations | 2: giant, golden | 4: + frosted, glitched | Visual variants only |
-| Tiers | 2: Birthday, Christmas | 4: + Wedding, The Package | Wedding lands Dec 12, The Package Dec 26 |
-| Entities | Jack | Jack, Krampus | Krampus in week 2 if not ready at launch |
+| Tiers | 2: Birthday, Christmas | 4: + Wedding, The Package | Wedding first, then The Package |
+| Entities | Jack | Jack, Krampus | Krampus in the first update if not ready at launch |
 | Classes | 6 | 6 | Balance only |
 | Lobby decorations | Birthday, Christmas | 4 | Swap with tier |
 | Shop items | 7 | 9 | + two Night items |
-| Gamepasses | 4 | 4 | No new passes in December |
-| Paper packs (cosmetic) | 3 | 8 | Weekly drop |
+| Gamepasses | 4 | 4 | No new passes in post-launch updates |
+| Paper packs (cosmetic) | 3 | 8 | One per update |
 | Sound set | 24 clips | 40 | Tear 9, lid 3, gift 6, Jack 6 at launch |
-| UI screens | 6: HUD, shop, bank, shelf, classes, rewards | 8: + index, settings | Index can wait; players ask for it by week 2 |
+| UI screens | 6: HUD, shop, bank, shelf, classes, rewards | 8: + index, settings | Index can wait; players ask for it soon after launch |
 
 ---
 
 ## Production roadmap
 
-Seven phases, two hard gates, and a launch five weeks out. Each phase is a list of acceptance criteria
+Seven phases and two hard gates, with no fixed dates: a phase starts when the one before it is done. Each phase is a list of acceptance criteria
 a Claude Code run can tick one at a time; a phase is done when every criterion is ticked and the gate's
 human playtest passes.
 
-Phase dates and gates: [PLAN-TABLES.txt](PLAN-TABLES.txt), **Diagram E**.
+Build order and gates: [PLAN-TABLES.txt](PLAN-TABLES.txt), **Diagram E**.
 
 Gate A is the only point where the whole plan can be cancelled cheaply: if tapping a greybox present is
 not fun for a minute, stop and redesign the Tear before anything else is built. Gate B is the point
@@ -664,15 +664,15 @@ Runs in parallel with phase 4.
 - [ ] Full playtest checklist passes
 
 ### Phase 6: Steal and Krampus
-Starts the day after launch.
+Starts right after launch.
 
 - [ ] Shelf tear with 6-second timer and owner interrupt
 - [ ] Naughty meter, nameplate display, daily decay
 - [ ] Krampus lobby clock, walk, sack, rules from Mechanics C
 - [ ] Offline shelf protection for Rare and above
 
-### December content
-One layer type and one gift family per week, Wedding tier mid-month, The Package after Christmas, as
+### Post-launch content
+One layer type and one gift family per update, Wedding tier, then The Package, as
 listed in Content list.
 
 ---
@@ -787,7 +787,7 @@ Runs append to docs/DECISIONS.md, newest first. The table below is the seed copy
 **Open questions** (answer before phase 1 starts):
 
 - [ ] Final name: Unwrap A Present or Unwrap The Present
-- [ ] Does Jack ship at launch or in week 2 if phase 4 slips
+- [ ] Does Jack ship at launch or in the first update if phase 4 slips
 - [x] Rojo + git from day one (recommended) or Studio-only for phase 0 — **Rojo + git** (repo created 2026-10-17)
 - [ ] Which test runner the repo adopts
 - [ ] Who owns art assets: in-house, commissioned, or a mix per tier

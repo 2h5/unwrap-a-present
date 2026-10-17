@@ -42,7 +42,7 @@ Config.TapeOverlay = {
 	layerTypes = { "Paper", "BoxLid" }, -- no other layer type takes tape
 }
 
--- Launch ships these (Content list) plus the tape overlay; December adds the rest one per week.
+-- Launch ships these (Content list) plus the tape overlay; post-launch updates add the rest, one per update.
 Config.LaunchLayerTypes = { "Paper", "Ribbon", "BoxLid" }
 
 Config.Panels = {
