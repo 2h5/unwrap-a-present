@@ -1,0 +1,5 @@
+# Toolchain pinned for everyone on the team. Install Rokit once, then run `rokit install`.
+# https://github.com/rojo-rbx/rokit
+
+[tools]
+rojo = "rojo-rbx/rojo@7.7.1"
