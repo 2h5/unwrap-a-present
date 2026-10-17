@@ -60,6 +60,7 @@ Config.Greybox = {
 	panelThickness = 0.2, -- studs
 	ripLineWidth = 0.15, -- studs
 	ripLineColor = "#2B1E14",
+	tornPanelColor = "#8E8D90", -- the greybox torn-edge stand-in, a step darker than the panel
 }
 
 -- The Tick is a side box in one middle-third layer; 40% of nests fuse it across the lid seam.
@@ -75,7 +76,10 @@ Config.Tools = {
 
 -- The Tear feel spec
 Config.Tear = {
-	flutterSeconds = 2,
+	flutterSeconds = 2, -- then the piece settles where it lies and stays until recycled
+	debrisImpulse = 8, -- studs per second, away from the present
+	debrisSpinMax = 4, -- radians per second, random per axis
+	debrisFallScale = 0.35, -- share of gravity a piece feels while it flutters
 	maxLiveDebris = 40,
 	pitchVariance = 0.1,
 	chainsawShakeSeconds = 0.1,

@@ -164,6 +164,8 @@ Box cutter; grade=2; actions=Cut, Chip, Tear at 0.6 s; seconds per panel=0.6; no
 Chainsaw; grade=3; actions=everything at 0.3 s, tears a 2x2 of panels; seconds per panel=0.3; notes=shop, prestige tier 2 and above, loud
 
 Tear feel spec: press-and-hold grows a tear line for the panel time, then release; early release keeps the rip line (progress never lost). On release: torn-edge mesh swap, small impulse away from the present, 2 s physics flutter, return to pool. Max 40 live debris per client, oldest recycled first. Audio: crinkle on hold start, rip on release, soft thud on landing; 3 variants each, pitch randomized within 10%. No camera shake on single panels; one 0.1 s shake on a chainsaw 2x2. One light haptic tap on release (mobile). Other players see the growing rip line.
+Tear numbers set in the build (DECISIONS.md): reach=20 studs from the character, server-enforced; one holder per panel; the rip line keeps the first touch point. Debris: impulse=8 studs/s away from the present; spin=up to 4 rad/s per axis; gravity while fluttering=35%; after the 2 s flutter a piece settles where it lies and stays until recycled.
+Greybox only, Phase 0 (DECISIONS.md): panel thickness=0.2 studs; rip line=0.15 studs, #2B1E14; torn-panel stand-in=#8E8D90 until a TornPanel mesh exists; present sits one present-width behind the origin.
 
 ==================================================================
 TABLE 6. RARITY (Mechanics B) (rarity; color; odds at Birthday tier; odds at The Package; shelf slot size; example core gifts)

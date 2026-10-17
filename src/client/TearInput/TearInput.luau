@@ -1,7 +1,8 @@
 --[=[
 	TearInput (client system)
 	Owns: Hold detection, rip-line preview, TearRequest.
-	Must never: Decide that a panel is gone. It sends Begin/End and draws what TearState says.
+	Must never: Decide that a panel is gone. It sends Begin/End and draws what TearState says;
+	on "Torn" it hands the panel to Debris.spawn.
 	Touch and mouse share one path (invariant 3): press on a panel, hold, release.
 	Rip line: grows from the touch point to both panel edges over the panel time; stays on release.
 	Read first: src/client/TearInput/README.md
@@ -14,6 +15,7 @@ local UserInputService = game:GetService("UserInputService")
 
 local Config = require(ReplicatedStorage.Shared.Config.Config)
 local Remotes = require(ReplicatedStorage.Shared.Remotes.Remotes)
+local Debris = require(script.Parent.Parent.Debris.Debris)
 
 local RAY_LENGTH = 1000 -- camera ray only; the server enforces reach
 
@@ -52,7 +54,7 @@ local function panelUnder(screen: Vector3): (BasePart?, number, number)
 	local ray = workspace.CurrentCamera:ScreenPointToRay(screen.X, screen.Y)
 	local params = RaycastParams.new()
 	params.FilterType = Enum.RaycastFilterType.Exclude
-	params.FilterDescendantsInstances = { Players.LocalPlayer.Character :: any }
+	params.FilterDescendantsInstances = { Players.LocalPlayer.Character :: any, workspace:FindFirstChild("Debris") :: any }
 	local hit = workspace:Raycast(ray.Origin, ray.Direction * RAY_LENGTH, params)
 	if not hit or hit.Instance:GetAttribute("PanelId") == nil then
 		return nil, 0, 0
@@ -83,6 +85,10 @@ local function onTearState(state: { [string]: any })
 		if line then
 			line.part:Destroy()
 			lines[key] = nil
+		end
+		local panel = findPanel(state.depth, state.panelId)
+		if panel then
+			Debris.spawn(panel)
 		end
 		return
 	end
