@@ -37,10 +37,12 @@ Current phase: **Phase 0 — Tear greybox**, then Gate A (build order: PLAN-TABL
 
 ## Layout
 
+- `default.project.json` is the **run place**. The lobby place gets its own project file in Phase 3
+  (two places; pads teleport parties into private reserved run servers).
 - `src/server/` → ServerScriptService.Server (8 systems, each a folder with `README.md`)
 - `src/shared/` → ReplicatedStorage.Shared (`Types`, `Config`, `Remotes`)
 - `src/client/` → StarterPlayer.StarterPlayerScripts.Client (4 systems)
-- `tests/` — automated tests (runner not chosen yet; see open questions in PLAN.md)
+- `tests/` — Jest-Lua tests over pure-logic modules (no Roblox services), runnable from the command line
 
 ## Conventions
 
@@ -62,4 +64,5 @@ rojo build -o UnwrapAPresent.rbxlx
 rojo sourcemap -o sourcemap.json   # for luau-lsp
 ```
 
-Test command: TBD once a test runner is adopted.
+Test command: set up with the first test in Phase 1 (Jest-Lua; fallback Lune). Pure-logic modules only,
+so tests run without Studio.

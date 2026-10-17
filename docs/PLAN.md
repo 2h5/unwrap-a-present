@@ -125,7 +125,7 @@ renames it back.
 | Run bag | Loot held during a run. Lost on a wipe. Banked at the end. | `RunBag` |
 | Shelf | A player's persistent display of banked gifts in the lobby. Stealable. | `Shelf` |
 | Index | The player's record of every gift type ever found. Never loses entries. | `Index` |
-| Tick | The ticking box in the nest. Opening it starts the Night. | `TickBox` |
+| Tick | A small ticking side box in one layer of the nest. Opening it starts the Night. May block a lid (`blocking`). | `TickBox` |
 | Night | The phase after the Tick opens, until the entity is shut or the team reaches the core. | `NightPhase` |
 | Jack | The entity released by the Tick. Hunts the team during Night. | `Jack` |
 | Naughty | A per-player meter raised by stealing. Decays daily. Krampus targets by it. | `naughty` |
@@ -187,7 +187,7 @@ client can change a number.
 | Loot | `src/server/Loot` | Rarity rolls, side-gift spawn, RunBag, core gift, Bank, Index, Shelf state | Roll on the client or re-roll on request |
 | Economy | `src/server/Economy` | Cash, gems, shop, classes, prestige, gamepass checks, daily and group rewards | Grant a gift for Robux |
 | Steal | `src/server/Steal` | Shelf tear timers, Naughty meter and decay, Krampus walk and sack | Touch Secret items or a player below Naughty 8 |
-| Data | `src/server/Data` | ProfileService profiles, schema version, migration, session lock | Store run state |
+| Data | `src/server/Data` | ProfileStore profiles, schema version, migration, session lock | Store run state |
 | TearInput | `src/client/TearInput` | Hold detection, rip-line preview, TearRequest | Decide that a panel is gone |
 | Debris | `src/client/Debris` | Torn-panel pool, 40 live max, physics, recycle | Exceed the budget |
 | HUD | `src/client/HUD` | Cash, depth, Night timer, bank, shop, classes, rewards screens | Compute a value it displays |
@@ -203,7 +203,7 @@ Night loops back into it; only a Wipe skips the bank.
 The full state list and every transition are in [PLAN-TABLES.txt](PLAN-TABLES.txt), **Diagram B**.
 Source image: [art/run-flow.png](art/run-flow.png).
 
-The Tick is the only branch. A party that routes around it never enters Night and reaches the core
+The Tick is the only branch. A party that leaves a non-blocking Tick sealed never enters Night and reaches the core
 with a smaller bag, because the Tick box drops the run's best side-gifts when opened. State lives on
 the server as `RunState` (`Lobby`, `Building`, `Unwrapping`, `Night`, `CoreLid`, `Reveal`, `Bank`,
 `Wipe`), replicated to the HUD, and every remote checks the current state before it does anything.
@@ -333,10 +333,12 @@ There is one threat in the run (Jack) and one in the lobby (Krampus), and both a
 to be played around and scary enough to clip. Neither ends a run on its own; a wipe needs every
 player down at once.
 
-**The Tick.** One layer in the middle third is the Tick box: its paper is the same as its neighbors,
-but it ticks, its neon seams pulse faintly, and the audio gets louder as players tear toward it. The
-team can leave it sealed and route around it only if the Nest generated an alternate seam (60% of
-nests); otherwise it must be opened. Opening it starts the Night.
+**The Tick.** The Tick is always a side box: about the size of a side-gift, wrapped in the same paper as
+the layer it sits in, placed in one layer in the middle third. It ticks, its neon seams pulse faintly,
+and the audio gets louder as players tear toward it. One flag decides how it sits: **not blocking**
+(60% of nests) it sits beside the path and the team can leave it sealed; **blocking** (40%) it is fused
+across that layer's lid seam and the lid cannot lift until the Tick is opened. Opening it starts the
+Night and drops the run's best side-gifts. One object, one flag, one Night system.
 
 **Night phase.** Lights drop to 30%, the paper patterns desaturate, and Jack is out for 90 seconds at
 tier 1, scaling to 150 seconds at The Package. Tearing continues; the present does not stop. The
@@ -445,7 +447,7 @@ PLAN-TABLES.txt, TABLE 9.
 | Gems 100 / 500 / 1200 | Dev products | 99 / 399 / 799 | Gems |
 | Paper packs | Dev products | 49–199 | Cosmetic wrapping patterns for your shelf and nameplate |
 
-**Data schema** (ProfileService or equivalent, one profile per player, server-only):
+**Data schema** (ProfileStore, one profile per player, server-only):
 
 - `tier`, `prestigeCount`, `gems`, `naughty`, `naughtyUpdatedAt`
 - `shelf`: array of `{giftId, rarity, mutation, slotIndex, count}` (count stacks duplicates, up to 9)
@@ -682,7 +684,7 @@ One paper layer on one cube, no textures, no loot.
 - [ ] Core lid reveal animation and core roll, first-run seed to Uncommon or better
 - [ ] Bank screen, shelf with 12 slots, index, duplicate mutation roll
 - [ ] Shelf duplicates stack to ×9; one Index with core gifts starred; inner-third side-gifts roll the next tier's table
-- [ ] ProfileService profile with the schema in Mechanics D, session lock, rejoin test
+- [ ] ProfileStore profile with the schema in Mechanics D, session lock, rejoin test
 - [ ] **Gate B playtest:** a party of 2 completes a run end to end and sees their shelf
 
 ### Phase 3: Lobby, economy
@@ -697,7 +699,7 @@ One paper layer on one cube, no textures, no loot.
 - [ ] Prestige run counts per tier, vault crate with reclaims, replay any unlocked tier at reduced gems
 
 ### Phase 4: Night and Jack
-- [ ] Tick placement and ticking audio ramp
+- [ ] Tick side box placement (blocking and non-blocking) and ticking audio ramp
 - [ ] Night lighting, Jack movement, line of sight blocked by lids
 - [ ] Hide and shutter, downs, revives, auto-revive solo, wipe
 - [ ] Night ends on timer or core reached
@@ -764,7 +766,7 @@ seconds), `tick_opened`, `player_down`, `revive`, `wipe`, `core_reveal` (rarity)
 - [ ] Frame time under 16 ms on a mid-range phone with 40 debris pieces live
 - [ ] No client can tear, roll or bank by firing a remote with fake arguments
 
-**Automated tests** (run in Studio with the test runner the repo adopts): Nest generation never repeats
+**Automated tests** (Jest-Lua over pure-logic modules with no Roblox services, run from the command line; fallback Lune): Nest generation never repeats
 a type twice in a row and always ends in two lids; rarity tables sum to 100 per tier; panel bitfield
 round-trips; Naughty decay math; profile schema migration from version n-1.
 
@@ -843,12 +845,12 @@ Runs append to docs/DECISIONS.md, newest first. The table below is the seed copy
 - [ ] Final name: Unwrap A Present or Unwrap The Present
 - [ ] Does Jack ship at launch or in the first update if phase 4 slips
 - [x] Rojo + git from day one (recommended) or Studio-only for phase 0 — **Rojo + git** (repo created 2026-10-17)
-- [ ] Which test runner the repo adopts
+- [x] Which test runner the repo adopts — **Jest-Lua**, pure-logic modules, fallback Lune
 - [ ] Who owns art assets: in-house, commissioned, or a mix per tier
 - [ ] In-app search for "unwrap" and "present" done and clear
 - [ ] Gem cost per level of Pockets and Night Eyes
 - [ ] Completed runs needed per repeat of The Package, and the mutation-chance step per repeat
 - [ ] How tier shifts (Christmas, Wedding) and the Lucky gamepass take odds from the lower bands
-- [ ] How a party "routes around" the Tick box inside a nested present
-- [ ] Lobby and run as one place or two (TeleportService between places)
-- [ ] ProfileService or its successor ProfileStore for the Data system
+- [x] How a party "routes around" the Tick box — **side box with a `blocking` flag**
+- [x] Lobby and run as one place or two — **two places**, private reserved run servers
+- [x] ProfileService or ProfileStore — **ProfileStore**

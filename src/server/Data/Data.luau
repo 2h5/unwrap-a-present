@@ -1,6 +1,6 @@
 --[=[
 	Data (server system)
-	Owns: ProfileService profiles, schema version, migration, session lock.
+	Owns: ProfileStore profiles, schema version, migration, session lock.
 	Must never: Store run state.
 	Read first: src/server/Data/README.md
 ]=]

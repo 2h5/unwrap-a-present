@@ -31,7 +31,7 @@ export type Mutation = "Giant" | "Golden" | "Frosted" | "Glitched"
 export type Layer = {
 	layerType: LayerType,
 	depth: number,
-	isTick: boolean,
+	tick: { blocking: boolean }?, -- the Tick side box, if this layer holds it
 	tapeStrips: { TapeStrip }?,
 }
 

@@ -1,6 +1,6 @@
 # Data
 
-ProfileService profiles, schema version, migration, session lock.
+ProfileStore profiles, schema version, migration, session lock.
 Must never: Store run state.
 
 - **Built in:** Phase 2, build order in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E

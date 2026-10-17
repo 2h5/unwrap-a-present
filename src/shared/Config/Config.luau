@@ -55,7 +55,8 @@ Config.Panels = {
 	highTierFrom = 3,
 }
 
-Config.TickAlternateSeamChance = 0.6
+-- The Tick is a side box in one middle-third layer; 40% of nests fuse it across the lid seam.
+Config.TickBlockingChance = 0.4
 
 -- Tools: grade (0 hands to 3 chainsaw), per-panel seconds, and actions with optional per-action override seconds.
 Config.Tools = {

@@ -20,7 +20,7 @@ Core gift: the item at the center of the present, one per run, rolled on the ser
 Run bag: loot held during a run, lost on a wipe, banked at the end; code=RunBag
 Shelf: a player's persistent display of banked gifts in the lobby, stealable; code=Shelf
 Index: the player's record of every gift type ever found, never loses entries; code=Index
-Tick: the ticking box in the nest; opening it starts the Night; code=TickBox
+Tick: a small ticking side box in one layer of the nest; opening it starts the Night; blocking=true means it is fused across the lid seam; code=TickBox
 Night: the phase after the Tick opens, until the entity is shut or the team reaches the core; code=NightPhase
 Jack: the entity released by the Tick, hunts the team during Night; code=Jack
 Naughty: a per-player meter raised by stealing, decays daily, Krampus targets by it; code=naughty
@@ -57,7 +57,7 @@ SERVER SYSTEMS (ServerScriptService), 8:
   Present: seed and Nest generation; layer table; Tick placement
   Tear: panel bitfields; validates each tear  [the highlighted system: every other run system waits on it]
   Night: Tick, Jack AI; downs and revives
-  Data: ProfileService; schema, migration
+  Data: ProfileStore; schema, migration
   Economy: cash, gems, shop; classes, prestige
   Loot: rolls, RunBag, Bank; Index, Shelf
   Steal: shelf tears, Naughty; Krampus takes
@@ -96,7 +96,7 @@ Night; path=src/server/Night; owns=Tick open, Jack AI, line of sight, downs, rev
 Loot; path=src/server/Loot; owns=rarity rolls, side-gift spawn, RunBag, core gift, Bank, Index, Shelf state; must never=roll on the client or re-roll on request
 Economy; path=src/server/Economy; owns=cash, gems, shop, classes, prestige, gamepass checks, daily and group rewards; must never=grant a gift for Robux
 Steal; path=src/server/Steal; owns=shelf tear timers, Naughty meter and decay, Krampus walk and sack; must never=touch Secret items or a player below Naughty 8
-Data; path=src/server/Data; owns=ProfileService profiles, schema version, migration, session lock; must never=store run state
+Data; path=src/server/Data; owns=ProfileStore profiles, schema version, migration, session lock; must never=store run state
 TearInput; path=src/client/TearInput; owns=hold detection, rip-line preview, TearRequest; must never=decide that a panel is gone
 Debris; path=src/client/Debris; owns=torn-panel pool, 40 live max, physics, recycle; must never=exceed the budget
 HUD; path=src/client/HUD; owns=cash, depth, Night timer, bank, shop, classes, rewards screens; must never=compute a value it displays
@@ -130,7 +130,7 @@ TRANSITIONS:
   Core lid -> Reveal: lid lifts (3 s shared animation)
   Reveal -> Bank: after the 3 s animation
   Bank -> Lobby pad: run bag to shelf, index and gems, then teleport
-Note: the Tick is the only branch. A party that routes around it (possible in 60% of nests) never enters Night and reaches the core with a smaller bag, because the Tick box drops the run's best side-gifts when opened.
+Note: the Tick is the only branch. A party that leaves a non-blocking Tick sealed (60% of nests) never enters Night and reaches the core with a smaller bag, because the Tick box drops the run's best side-gifts when opened.
 
 ==================================================================
 TABLE 4. LAYER TABLE (Mechanics A). Weights per depth band; a type can repeat but never twice in a row.
@@ -143,7 +143,7 @@ Chains; action=Cut; tool grade=2 (box cutter); outer=0; middle=5; inner=20
 Ice; action=Chip; tool grade=2; outer=0; middle=5; inner=15
 Box lid; action=Lift; tool grade=0, two players on tier 2 and above; placement=always the last two layers of every nest; notes=taped at tier 2 and above
 Layer count by tier: Birthday=6; Christmas=9; Wedding=12; The Package=16
-Tick placement: random depth in the middle third.
+Tick placement: a side box, side-gift sized, same paper as its layer, in a layer at a random depth in the middle third. blocking=false in 60% of nests (optional, beside the path); blocking=true in 40% (fused across that layer's lid seam; the lid cannot lift until the Tick is opened). Opening it starts the Night and drops the run's best side-gifts.
 Panels: paper layer is a 4x4 grid per face (6 faces, 96 panels) at tiers 1 and 2, 6x6 at tiers 3 and 4. Tape panels sit on seams and must be cut before the two paper panels beside them can tear.
 TAPE OVERLAY RULES: a Paper layer is taped with chance by depth band: outer third=40%; middle third=60%; inner third=80%. A taped paper layer tapes 25% to 50% of its seams, chosen from the seed. Each tape strip is one panel: action=Cut; tool grade=1 (scissors); seconds per strip=0.8 with scissors, 0.6 with box cutter, 0.3 with chainsaw. A strip blocks the two paper panels it spans until it is cut. BoxLid layers are taped always at tier 2 and above, never at tier 1; the lid cannot lift until its tape is cut. No other layer type takes tape.
 
