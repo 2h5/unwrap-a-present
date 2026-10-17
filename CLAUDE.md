@@ -64,5 +64,5 @@ rojo build -o UnwrapAPresent.rbxlx
 rojo sourcemap -o sourcemap.json   # for luau-lsp
 ```
 
-Test command: set up with the first test in Phase 1 (Jest-Lua; fallback Lune). Pure-logic modules only,
+Test command: set up with the first test in Phase 0 (Jest-Lua; fallback Lune). Pure-logic modules only,
 so tests run without Studio.

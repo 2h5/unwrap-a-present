@@ -393,6 +393,27 @@ Server-wide counter event; needs a global counter the launch build does not have
 Repeatable prestige; see TABLE 9; when=after The Package tier ships
 
 ==================================================================
+TABLE 20. NIGHT AND JACK (Mechanics C) (rule; number)
+==================================================================
+Night lighting; lights drop to 30%; paper patterns desaturate
+Night length; see TABLE 9 (90 s at Birthday to 150 s at The Package); ends when the timer runs out or the team reaches the core lid, whichever first
+Jack; 3 s still with its crank turning, then a 1.5 s lunge toward the nearest player in line of sight; cannot see through layers; a lunge that connects downs the player
+Hide or shutter; any lifted box lid stays as a prop; shutter holds a lid up as a shield for up to 4 s
+Revive; a teammate holds E (touch: hold-to-use button) for 3 s
+Solo down; auto-revive after 10 s, one Common side-gift removed from the bag
+Wipe; every living player down at once; run bag lost, index keeps what was seen
+
+==================================================================
+TABLE 21. STEAL, NAUGHTY AND KRAMPUS (Mechanics C) (rule; number)
+==================================================================
+Steal; 6 s of holding on another player's shelf; the owner tapping it interrupts; takes one from a stack; Secret items cannot be stolen
+Naughty raised by a steal; by the item's rarity band: Common=1; Uncommon=2; Rare=3; Epic=4; Mythic=5
+Offline shelves; only Common and Uncommon items can be stolen
+Naughty meter; range 0 to 20; decays 3 per real day; shown on the nameplate above 5; shelf glows red above 10
+Krampus; every 20 minutes per lobby server, sky dims for 60 s; takes one item from each shelf whose owner is at Naughty 8 or above, highest rarity first; never takes Secret items; never enters a run
+Krampus sack; any player at Naughty 0 can open it after he leaves
+
+==================================================================
 TABLE 18. DECISIONS LOG
 ==================================================================
 Moved: the live decisions log is docs/DECISIONS.md (runs append there, newest first).

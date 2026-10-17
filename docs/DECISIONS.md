@@ -5,6 +5,9 @@ waits for a human to mark it **Approved** in the next run before anything is bui
 
 | Date | Decision | Reason | By | Status |
 |---|---|---|---|---|
+| 2026-10-17 | F6. PLAN-TABLES.txt gains TABLE 20 (Night and Jack) and TABLE 21 (Steal, Naughty and Krampus), copied from PLAN.md Mechanics C. No new numbers | PLAN-TABLES.txt is the source for every number; these lived only in PLAN.md prose | Human | Approved |
+| 2026-10-17 | F7. Loot, Night, Steal and Shelf READMEs point at the tables they read (Table 6 odds rows; Tables 20 and 21) instead of PLAN.md prose or the old shift rule | A new run reads only the tables its README lists | Human | Approved |
+| 2026-10-17 | F8. Test setup (Jest-Lua, fallback Lune) moves from Phase 1 to Phase 0; the first test is the panel bitfield round-trip, set up in the run that closes the panel grid criterion. No acceptance criterion added | Phase 0 Tear code is tested from the start | Human | Approved |
 | 2026-10-17 | N1. Permanent track prices. Pockets: 20 gems at level 1, +10 per level (650 for all 10). Night Eyes: 30 gems at level 1, +15 per level (405 for all 6) | Early levels quick; maxing both takes weeks | Human | Approved |
 | 2026-10-17 | N2. Repeatable prestige: 10 completed runs per repeat; mutation chance +2% per repeat (20% to the 30% cap at repeat 5). Secret odds cap at repeat 4, Night at repeat 3. After repeat 5, every third repeat grants a paper pack cosmetic and repeat count is a fourth leaderboard. Nameplate stars cap at 10 | Keeps something moving after the caps | Human | Approved |
 | 2026-10-17 | N3. Tier shifts come entirely from Common. Christmas: Common 46, Uncommon 28, Rare 18, Epic 7, Mythic 0.9, Secret 0.1. Wedding: Common 37, Uncommon 28, Rare 22, Epic 10, Mythic 2.9, Secret 0.1. Both sum to 100; the full tables replace the shift rule as the source | Simplest rule; Common is the band players want to leave | Human | Approved |

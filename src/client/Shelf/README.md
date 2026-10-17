@@ -5,7 +5,7 @@ Must never: Move an item.
 
 - **Built in:** Phase 6, build order in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E
 - **Rules:** [PLAN.md](../../../docs/PLAN.md), Mechanics B (Shelf); Mechanics C (Steal)
-- **Numbers:** [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt), Table 6 (shelf slot sizes), Diagram D (shelf row), Table 14 (Steal success VFX)
+- **Numbers:** [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt), Table 6 (shelf slot sizes), Table 21 (steal hold, Naughty glow), Diagram D (shelf row), Table 14 (Steal success VFX)
 - **Code reads numbers from:** [Config.luau](../../shared/Config/Config.luau), never inline
 
 ## Public API

@@ -2,6 +2,7 @@
 
 Date · change · who. Newest first. Prune monthly.
 
+- 2026-10-17 · Night and Steal tables (20, 21) added to PLAN-TABLES; Loot, Night, Steal, Shelf READMEs repointed; test setup moved to Phase 0 (F6–F8) · Claude Code
 - 2026-10-17 · Human decisions N1–N24 and repo fixes F1–F5: track prices, repeat prestige, full rarity tables, Lucky roll-twice, launch rule, two-place rules, Config without Roblox types, stale PNGs removed · Claude Code
 - 2026-10-17 · Open questions batch 1: Tick is a side box with a blocking flag, two places, ProfileStore, Jest-Lua over pure modules · Claude Code
 - 2026-10-17 · Progression answers: tool tier renamed grade, prestige 3/6/10 with vault crate, permanent track, owned classes, stacking shelf, join-anyone pad, Mechanics E retention, repeatable prestige, LORE.md draft · Claude Code

@@ -5,7 +5,7 @@ Must never: Run in the lobby.
 
 - **Built in:** Phase 4, build order in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E
 - **Rules:** [PLAN.md](../../../docs/PLAN.md), Mechanics C (Tick, Night, Jack, downs and wipes)
-- **Numbers:** [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt), Diagram B (run flow), Table 9 (Night length), Table 7 (Flashlight, Spare lid)
+- **Numbers:** [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt), Table 20 (Night and Jack), Diagram B (run flow), Table 9 (Night length), Table 7 (Flashlight, Spare lid), Table 8 (Sprinter)
 - **Code reads numbers from:** [Config.luau](../../shared/Config/Config.luau), never inline
 
 ## Public API

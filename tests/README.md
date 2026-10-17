@@ -16,4 +16,5 @@ Required automated tests (PLAN.md › Testing and telemetry):
 - [ ] Profile schema migration from version n-1
 - [ ] Present parts at The Package tier ≤ 1,200 (performance budget)
 
-Setup lands with the first test in Phase 1; the test command then goes into `CLAUDE.md`.
+Setup lands in Phase 0 with the first test (panel bitfield round-trips, in the run that closes the
+panel grid criterion); the test command then goes into `CLAUDE.md`.
