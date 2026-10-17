@@ -3,7 +3,10 @@
 ProfileService profiles, schema version, migration, session lock.
 Must never: Store run state.
 
-**Built in:** Phase 2 · **Plan sections:** Mechanics D (data schema); invariant 10 ([PLAN.md](../../../docs/PLAN.md))
+- **Built in:** Phase 2 (Nov 2–8), dates in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E
+- **Rules:** [PLAN.md](../../../docs/PLAN.md), Mechanics D (data schema); invariant 10
+- **Numbers:** [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt), Table 10 (data schema)
+- **Code reads numbers from:** [Config.luau](../../shared/Config/Config.luau), never inline
 
 ## Public API
 

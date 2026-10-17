@@ -3,7 +3,10 @@
 Shelf tear timers, Naughty meter and decay, Krampus walk and sack.
 Must never: Touch Secret items or a player below Naughty 8.
 
-**Built in:** Phase 6 · **Plan sections:** Mechanics C (Steal, Naughty, Krampus) ([PLAN.md](../../../docs/PLAN.md))
+- **Built in:** Phase 6 (Nov 26–Dec 4), dates in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E
+- **Rules:** [PLAN.md](../../../docs/PLAN.md), Mechanics C (Steal, Naughty, Krampus)
+- **Numbers:** [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt), Diagram D (Krampus walk, shelf row); Naughty and Krampus numbers are in PLAN.md Mechanics C
+- **Code reads numbers from:** [Config.luau](../../shared/Config/Config.luau), never inline
 
 ## Public API
 

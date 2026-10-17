@@ -4,7 +4,8 @@ Code both sides can require. Lives in `ReplicatedStorage.Shared`, so everything 
 the client: no secrets, no server-only rules, no docs modules.
 
 - [Types](Types/Types.luau) — the glossary as Luau types. Names match PLAN.md › Glossary.
-- [Config](Config/Config.luau) — every tunable number from the plan. Change a number here, not inline.
+- [Config](Config/Config.luau) — every tunable number from [PLAN-TABLES.txt](../../docs/PLAN-TABLES.txt).
+  Change a number there and here in the same commit, never inline.
 - [Remotes](Remotes/Remotes.luau) — RemoteEvent names. Up = requests, Down = replicated state.
 
 ## Rules

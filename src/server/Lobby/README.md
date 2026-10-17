@@ -3,7 +3,10 @@
 Start pads, party of up to 4, teleport to run place, booths, lobby night clock.
 Must never: Hold any loot or cash logic.
 
-**Built in:** Phase 3 · **Plan sections:** Player journey; Art bible B (lobby plan) ([PLAN.md](../../../docs/PLAN.md))
+- **Built in:** Phase 3 (Nov 9–15), dates in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E
+- **Rules:** [PLAN.md](../../../docs/PLAN.md), Player journey; Art bible B
+- **Numbers:** [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt), Table 2 (player journey), Diagram D (lobby plan)
+- **Code reads numbers from:** [Config.luau](../../shared/Config/Config.luau), never inline
 
 ## Public API
 

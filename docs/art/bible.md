@@ -1,25 +1,26 @@
 # Art bible
 
-The text of Art bible A and B lives in [PLAN.md](../PLAN.md#art-bible-a-pillars-tiers-the-present) so
-there is one copy. This page collects the images.
+One copy of everything, so this page is only a map.
 
-## Present cross-section
+- **Rules** (pillars, studs rule, UI style, icon rules): [PLAN.md](../PLAN.md#art-bible-a-pillars-tiers-the-present)
+- **Numbers and drawings:** [PLAN-TABLES.txt](../PLAN-TABLES.txt)
+  - Table 11: three visual tiers
+  - Diagram C: present cross-section, ring by ring
+  - Table 12: layer palette, rarity colors, loot style, mutations
+  - Diagram D: lobby plan and run room
+  - Table 13: HUD and UI style
+  - Table 14: VFX list and the 24-clip SFX set
+  - Table 15: performance budgets
 
-![Present cross-section — 8 layer types, outside-in](layers.png)
+## Source images
 
-## Run flow
+The text in PLAN-TABLES.txt wins if an image disagrees.
 
-![Run flow — 7 states, one loop, one losing exit](run-flow.png)
+- [layers.png](layers.png): present cross-section (Diagram C)
+- [run-flow.png](run-flow.png): run flow (Diagram B)
+- [architecture.png](architecture.png): systems architecture (Diagram A)
 
-## Systems architecture
-
-![Systems architecture — 8 server systems, 4 client systems, one remotes layer](architecture.png)
-
-## Still to export from the plan doc
-
-- `lobby.png` — lobby plan, 7 zones, spawn facing the pads
-- `timeline.png` — build timeline, 7 phases, 2 gates
-- `palette.png`, `loot-sheet.png`, `ui-sheet.png` — made during Phase 5
+Still to make in Phase 5: `palette.png`, `loot-sheet.png`, `ui-sheet.png`.
 
 ## References
 

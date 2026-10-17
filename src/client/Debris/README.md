@@ -3,7 +3,10 @@
 Torn-panel pool, 40 live max, physics, recycle.
 Must never: Exceed the budget.
 
-**Built in:** Phase 0 · **Plan sections:** Mechanics A (on release); Art bible B (budgets) ([PLAN.md](../../../docs/PLAN.md))
+- **Built in:** Phase 0 (Oct 19–25), dates in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E
+- **Rules:** [PLAN.md](../../../docs/PLAN.md), Mechanics A (on release); Art bible B (budgets)
+- **Numbers:** [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt), Table 5 (feel spec), Table 14 (Tear release VFX), Table 15 (budgets)
+- **Code reads numbers from:** [Config.luau](../../shared/Config/Config.luau), never inline
 
 ## Public API
 

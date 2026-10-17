@@ -1,7 +1,11 @@
 # CLAUDE.md — Unwrap A Present
 
-Roblox game, Rojo + git. The plan is [docs/PLAN.md](docs/PLAN.md); the decisions log is
+Roblox game, Rojo + git. The plan is [docs/PLAN.md](docs/PLAN.md); every table and diagram is in
+[docs/PLAN-TABLES.txt](docs/PLAN-TABLES.txt); the decisions log is
 [docs/DECISIONS.md](docs/DECISIONS.md). Do not repeat plan content here.
+
+**PLAN-TABLES.txt is the source for every number; PLAN.md is the source for every rule.** Do not try
+to reconcile the two. If a number disagrees, PLAN-TABLES.txt wins.
 
 ## Run protocol (verbatim from PLAN.md)
 
@@ -25,10 +29,11 @@ the plan does not describe, check Art bible B budgets, play one full run on a ph
 ## Read order
 
 1. `docs/PLAN.md` — first four sections in full, then the current phase only.
-2. `docs/DECISIONS.md` — anything **Proposed** waiting on a human.
-3. The `README.md` inside the system folder you are touching (`src/server/<System>/`, etc.).
+2. `docs/PLAN-TABLES.txt` — only the tables the system README lists under **Numbers**.
+3. `docs/DECISIONS.md` — anything **Proposed** waiting on a human.
+4. The `README.md` inside the system folder you are touching (`src/server/<System>/`, etc.).
 
-Current phase: **Phase 0 — Tear greybox.**
+Current phase: **Phase 0 — Tear greybox** (Oct 19–25, Gate A on Oct 25; PLAN-TABLES.txt Diagram E).
 
 ## Layout
 
@@ -46,7 +51,8 @@ Current phase: **Phase 0 — Tear greybox.**
 - Server folders also carry a `README.luau` pointer (one line of purpose + path). Client and shared
   folders do not — docs never replicate to the client.
 - A README describing deleted code is deleted in the same commit.
-- Numbers from the plan live in `src/shared/Config`, never inline.
+- Numbers come from PLAN-TABLES.txt and live in `src/shared/Config`, never inline. Changing a number
+  means changing PLAN-TABLES.txt and Config in the same commit.
 
 ## Commands
 

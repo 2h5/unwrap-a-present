@@ -2,7 +2,8 @@
 
 A 1–4 player co-op Roblox run: tear through a house-sized, nested present to find out what is inside.
 
-- **Plan:** [docs/PLAN.md](docs/PLAN.md) — single source of truth
+- **Plan:** [docs/PLAN.md](docs/PLAN.md) — source for every rule
+- **Tables and diagrams:** [docs/PLAN-TABLES.txt](docs/PLAN-TABLES.txt) — source for every number
 - **Kickoff notes:** [docs/KICKOFF.md](docs/KICKOFF.md)
 - **Decisions:** [docs/DECISIONS.md](docs/DECISIONS.md)
 - **For Claude Code runs:** [CLAUDE.md](CLAUDE.md)

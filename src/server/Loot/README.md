@@ -3,7 +3,10 @@
 Rarity rolls, side-gift spawn, RunBag, core gift, Bank, Index, Shelf state.
 Must never: Roll on the client or re-roll on request.
 
-**Built in:** Phase 2 · **Plan sections:** Mechanics B ([PLAN.md](../../../docs/PLAN.md))
+- **Built in:** Phase 2 (Nov 2–8), dates in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E
+- **Rules:** [PLAN.md](../../../docs/PLAN.md), Mechanics B
+- **Numbers:** [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt), Table 6 (rarity), Table 9 (loot shift per tier)
+- **Code reads numbers from:** [Config.luau](../../shared/Config/Config.luau), never inline
 
 ## Public API
 

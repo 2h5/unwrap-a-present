@@ -1,7 +1,8 @@
 --[=[
 	Config (shared)
-	Owns: every tunable number from PLAN.md, in one place. Systems read from here, never inline.
+	Owns: every tunable number from docs/PLAN-TABLES.txt, in one place. Systems read from here.
 	Must never: contain logic, or a value the plan does not state (log a decision first).
+	A number changed here is changed in PLAN-TABLES.txt in the same commit.
 	Read first: src/shared/README.md
 ]=]
 
@@ -146,7 +147,7 @@ Config.Gems = {
 	classSpin = 25,
 }
 
--- Odds are certain; passive/start pairings are flagged for a human check in PLAN.md.
+-- Passives and starting kit: PLAN.md › Mechanics D › Classes.
 Config.Classes = {
 	Kid = { rarity = "Common", odds = 40 },
 	Wrapper = { rarity = "Uncommon", odds = 28 },

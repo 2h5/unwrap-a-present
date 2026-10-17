@@ -6,8 +6,10 @@ This is the single source of truth for building Unwrap A Present from nothing to
 Every Claude Code run starts here and ends by writing to the decisions log.
 
 > Export note: this file is the Markdown export of the Master Plan doc. Edit the doc, export,
-> commit — in that order. Never edit this copy by hand. Rows marked ⚠ were reconstructed from a
-> PDF whose table layout was ambiguous; confirm them against the source doc on the next export.
+> commit, in that order. Never edit this copy by hand.
+>
+> **[PLAN-TABLES.txt](PLAN-TABLES.txt) is the source for every number and diagram; this file is the
+> source for every rule.** If a number here disagrees with PLAN-TABLES.txt, PLAN-TABLES.txt wins.
 
 ---
 
@@ -164,7 +166,8 @@ Eight server systems own all state, one remotes layer carries validated requests
 state down, and four client systems do nothing but read input and draw. A run touches them in the
 order the arrows show.
 
-![Systems architecture](art/architecture.png)
+The node list and every edge are in [PLAN-TABLES.txt](PLAN-TABLES.txt), **Diagram A**. Source image:
+[art/architecture.png](art/architecture.png).
 
 Lobby starts a run and loads the profile; Present builds the Nest; Tear validates every panel and
 tells Loot and Night what happened; Steal and Loot both end in Economy and Data. Nothing on the
@@ -195,18 +198,8 @@ client can change a number.
 A run has seven states and one losing exit. Unwrapping is where players spend most of the run; the
 Night loops back into it; only a Wipe skips the bank.
 
-![Run flow](art/run-flow.png)
-
-```
-Lobby pad ──step on pad──▶ Build Nest ──Nest to client──▶ Unwrapping ──last layer──▶ Core lid ──lid lifts──▶ Reveal
- (party 1–4)               (server seed)                  (tear, cut, lift)          (team holds E)          (core gift rolls)
-     ▲                                                    │        ▲                                            │
-     │                                         Tick opened│        │timer out                          3 s animation
-     │                                                    ▼        │                                            ▼
-     └──back to lobby── Wipe ◀──all down── Night (Jack out, 90 s)                                    Bank (shelf and gems)
-     │                 (run bag lost)                                                                           │
-     └──────────────────────────── run bag to shelf, index and gems, then teleport ─────────────────────────────┘
-```
+The full state list and every transition are in [PLAN-TABLES.txt](PLAN-TABLES.txt), **Diagram B**.
+Source image: [art/run-flow.png](art/run-flow.png).
 
 The Tick is the only branch. A party that routes around it never enters Night and reaches the core
 with a smaller bag, because the Tick box drops the run's best side-gifts when opened. State lives on
@@ -396,15 +389,12 @@ in Sell Fries.
 
 | Class | Rarity, odds | Passive | Starts with |
 |---|---|---|---|
-| Kid ⚠ | Common, 40% | +5% cash | Nothing |
-| Wrapper ⚠ | Uncommon, 28% | Tape panels take tier 0 | 20 cash |
-| Sprinter ⚠ | Rare, 16% | +3 walk speed, Jack lunges 25% slower at you | A flashlight |
-| Collector ⚠ | Epic, 10% | +1 side-gift on every box lid | Scissors, 50 cash |
-| Heir ⚠ | Legendary, 4.5% | +10% gems; core gift rolls twice, keep the better | Box cutter, 100 cash |
+| Kid | Common, 40% | +5% cash | Nothing |
+| Wrapper | Uncommon, 28% | Tape panels take tier 0 | 20 cash |
+| Sprinter | Rare, 16% | +3 walk speed, Jack lunges 25% slower at you | A flashlight |
+| Collector | Epic, 10% | +1 side-gift on every box lid, +10% gems | Scissors, 50 cash |
+| Heir | Legendary, 4.5% | Core gift rolls twice, keep the better | Box cutter, 100 cash |
 | Krampus's Kid | Mythic, 1.5% | Immune to Krampus, Naughty does not rise from your steals | Nothing, and everyone can see it |
-
-> ⚠ The source PDF's class table did not align cleanly. Odds sum to 100% and the last row is
-> certain; the passive/start pairing of the other rows needs a human check.
 
 **Prestige.** Unlocked after 3 completed runs at the current tier. Prestiging resets cash upgrades and
 the shelf to 12 slots (items go to a vault, reclaimable one per run), and unlocks the next tier's
@@ -472,7 +462,7 @@ that true.
 **Present cross-section** — 8 layer types, outside-in. Read from the outside in. A player meets ring 1
 first and ring 8 last; the core is only ever seen in the 3-second reveal animation.
 
-![Present cross-section](art/layers.png)
+Ring by ring: [PLAN-TABLES.txt](PLAN-TABLES.txt), **Diagram C**. Source image: [art/layers.png](art/layers.png).
 
 Launch ships rings 1, 2, 3 and 8. December adds 4 to 7, one per week. The Tick is any ring in the
 middle third, same look, ticking.
@@ -515,7 +505,7 @@ The lobby is one open field where everything a new player needs is visible from 
 Chop a Forest wooden-panel style with the present's colors on top, and every effect in the game is on
 one list with a budget.
 
-**Lobby plan** — 7 zones, spawn facing the pads. *(Diagram not yet exported: add `art/lobby.png`.)*
+**Lobby plan**, spawn facing the pads. Zones and positions: [PLAN-TABLES.txt](PLAN-TABLES.txt), **Diagram D**.
 Spawn faces the pads so the first prompt is a walk, not a menu. The shelf row and the porch sit on the
 left where a returning player looks for their stuff; the booths are straight ahead; the update board
 is beside the pads where everyone queues.
@@ -610,7 +600,7 @@ Seven phases, two hard gates, and a launch five weeks out. Each phase is a list 
 a Claude Code run can tick one at a time; a phase is done when every criterion is ticked and the gate's
 human playtest passes.
 
-*(Build timeline diagram not yet exported: add `art/timeline.png`.)*
+Phase dates and gates: [PLAN-TABLES.txt](PLAN-TABLES.txt), **Diagram E**.
 
 Gate A is the only point where the whole plan can be cancelled cheaply: if tapping a greybox present is
 not fun for a minute, stop and redesign the Tear before anything else is built. Gate B is the point

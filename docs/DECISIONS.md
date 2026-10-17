@@ -5,6 +5,7 @@ waits for a human to mark it **Approved** in the next run before anything is bui
 
 | Date | Decision | Reason | By | Status |
 |---|---|---|---|---|
+| 2026-10-17 | `docs/PLAN-TABLES.txt` is the plain-text form of every table and diagram and the source for every number; PLAN.md is the source for every rule. Decisions stay only in DECISIONS.md. | One readable form for people and Claude Code; PDF tables did not extract cleanly | Team | Approved |
 | 2026-10-17 | Rojo + git from day one; repo at github.com/2h5/unwrap-a-present | Plan recommendation; diffs, images and Claude Code all need files | Team | Approved |
 | 2026-10-17 | System pages live as `README.md` beside the code in `src/<side>/<System>/`; `docs/systems/README.md` is only a map to them | One copy per system avoids two pages drifting apart | Scaffold run | Proposed |
 | 2026-10-17 | Art: smooth low-poly world, patterned present, dotted toy loot. No dots on world or present. | Dots are the Grow a Garden brand mark and fight paper patterns | Plan v1 | Approved |

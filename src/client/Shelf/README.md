@@ -3,7 +3,10 @@
 Lobby shelf rendering, steal prompt and 6-second timer display.
 Must never: Move an item.
 
-**Built in:** Phase 6 · **Plan sections:** Mechanics B (Shelf); Mechanics C (Steal) ([PLAN.md](../../../docs/PLAN.md))
+- **Built in:** Phase 6 (Nov 26–Dec 4), dates in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E
+- **Rules:** [PLAN.md](../../../docs/PLAN.md), Mechanics B (Shelf); Mechanics C (Steal)
+- **Numbers:** [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt), Table 6 (shelf slot sizes), Diagram D (shelf row), Table 14 (Steal success VFX)
+- **Code reads numbers from:** [Config.luau](../../shared/Config/Config.luau), never inline
 
 ## Public API
 

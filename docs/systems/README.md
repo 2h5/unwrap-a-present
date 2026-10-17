@@ -18,4 +18,5 @@ Each system's page is the `README.md` beside its code, so code and docs change i
 | Shelf | client | [src/client/Shelf](../../src/client/Shelf/README.md) | Phase 6 |
 | Shared | both | [src/shared](../../src/shared/README.md) | — |
 
-![Systems architecture](../art/architecture.png)
+How the systems call each other: [PLAN-TABLES.txt](../PLAN-TABLES.txt), Diagram A (edges) and
+Table 3 (ownership). Each system README lists the PLAN-TABLES tables it reads under **Numbers**.

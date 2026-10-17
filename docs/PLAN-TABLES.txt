@@ -1,0 +1,388 @@
+UNWRAP A PRESENT — MASTER PLAN, TABLES AND DIAGRAMS AS TEXT
+Source: Master Plan doc, 2026-10-17. This file is the authoritative text form of every
+table and drawing in the plan. If a PDF or image disagrees with this file, this file wins.
+PLAN-TABLES.txt is the source for every number; PLAN.md is the source for every rule.
+
+==================================================================
+TABLE 1. GLOSSARY (Term: meaning; code name)
+==================================================================
+Present: the whole nested object a run is about, one per run; code=Present
+Layer: one wrapping shell (paper, tape, ribbon, bubble wrap, foil, chains, ice, or a box), layers nest from outside in; code=Layer, LayerType
+Panel: one tearable piece of a layer; a paper layer is a grid of panels; a box lid is one panel; code=Panel
+Depth: how many layers deep the team is; depth 0 is the outside; code=depth
+Nest: the ordered list of layers in this present, generated at run start from a seed; code=Nest, seed
+Tool: what the player holds; each tool has an action set and a tier; code=Tool, tier
+Action: Tear, Cut, Snip, Pop, Chip, Lift; each layer type accepts exactly one; code=Action
+Side-gift: a loot item dropped by a layer, has a rarity, goes to the run bag; code=SideGift
+Core gift: the item at the center of the present, one per run, rolled on the server; code=CoreGift
+Run bag: loot held during a run, lost on a wipe, banked at the end; code=RunBag
+Shelf: a player's persistent display of banked gifts in the lobby, stealable; code=Shelf
+Index: the player's record of every gift type ever found, never loses entries; code=Index
+Tick: the ticking box in the nest; opening it starts the Night; code=TickBox
+Night: the phase after the Tick opens, until the entity is shut or the team reaches the core; code=NightPhase
+Jack: the entity released by the Tick, hunts the team during Night; code=Jack
+Naughty: a per-player meter raised by stealing, decays daily, Krampus targets by it; code=naughty
+Krampus: lobby-side entity that visits at lobby night and takes from the naughtiest shelves; code=Krampus
+Tier: prestige level (Birthday, Christmas, Wedding, The Package), sets layer count and loot table; code=tier
+Wipe: all players in a run down at once; run bag lost, present gone; code=Wipe
+Bank: converting the run bag to shelf and index at run end; code=Bank
+Class: a rolled perk set a player picks before a run; code=Class
+Cash: run currency, buys tools and upgrades; code=cash
+Gems: meta currency, buys class spins and cosmetics; code=gems
+
+==================================================================
+TABLE 2. PLAYER JOURNEY, FIRST SESSION (minute; what happens; what the player learns)
+==================================================================
+0:00; Spawn in the lobby facing the Start a Run pads. A present on the porch is already half torn, paper on the ground. One prompt: step on a pad.; Learns: this is a game about tearing presents open.
+0:20; Teleport to the run room. A present fills the view. Hands are the tool. Tap and hold a panel: it rips, paper flutters, cash counter ticks.; Learns: the Tear, one thumb, no tutorial text.
+1:00; First layer gone. Ribbon on the box underneath. Hands cannot cut it; a scissors pickup glows beside the present.; Learns: layers need the right tool; tools come from the room and the shop.
+2:00; First box lid lifts with a sound sting. Two side-gifts drop and fly into the run bag with a rarity flash.; Learns: the Reveal; loot comes from layers.
+4:00; A box deeper in the nest is ticking. The team can route around it or open it. A new player opens it.; Learns: the Tick; something is wrong with this present.
+4:30; Jack is out. The team has 90 seconds of hide-or-shutter while continuing to tear. One player goes down; the others keep going.; Learns: the Night; death is not the end of the run.
+7:00; Core box. The whole team lifts the lid together. The core gift rolls on screen. First run is seeded to land Uncommon, never Common.; Learns: the core gift is the reason to run again.
+7:30; Bank screen: run bag to shelf and index, gems earned, class spin offered. Teleport to lobby.; Learns: progress persists; gems buy spins.
+8:00; The shelf in the lobby now shows the core gift. Another player walks past it. A prompt: Naughty players can tear into your shelf, and Krampus takes from Naughty players.; Learns: steal exists and it has a cost.
+9:00; Rewards booth for the daily, Classes booth for the spin, pad again.; Learns: the loop is closed.
+Second session: first prestige prompt after three completed runs. Third session: player first sees Krampus take from a shelf that is not theirs.
+
+==================================================================
+DIAGRAM A. SYSTEMS ARCHITECTURE
+==================================================================
+Rule: the server decides everything; the client asks and animates. No client can change a number.
+
+SERVER SYSTEMS (ServerScriptService), 8:
+  Lobby: pads, party, teleport; rewards and class booths; lobby night clock
+  Present: seed and Nest generation; layer table; Tick placement
+  Tear: panel bitfields; validates each tear  [the highlighted system: every other run system waits on it]
+  Night: Tick, Jack AI; downs and revives
+  Data: ProfileService; schema, migration
+  Economy: cash, gems, shop; classes, prestige
+  Loot: rolls, RunBag, Bank; Index, Shelf
+  Steal: shelf tears, Naughty; Krampus takes
+
+REMOTES (ReplicatedStorage/Remotes; in the repo: ReplicatedStorage.Shared.Remotes):
+  Client to server: TearRequest, LidLift, ShopBuy, ClassSpin, StealRequest, Revive
+  Server to client: RunState, LootEvent, NightState, ShelfState
+
+CLIENT SYSTEMS (StarterPlayerScripts), 4:
+  TearInput: hold, rip line; sends TearRequest
+  Debris: pooled torn panels; 40 live max
+  HUD: cash, depth, Night; bank, shop, classes
+  Shelf: lobby display; steal prompt, timer
+
+EDGES (caller -> callee: meaning):
+  Lobby -> Present: start run
+  Present -> Tear: Nest
+  Tear -> Night: Tick opened
+  Lobby -> Data: profile (load on join)
+  Tear -> Loot: layer cleared
+  Steal -> Loot: shelf moves
+  Loot -> Economy: cash, gems
+  Economy -> Data: save
+  Remotes -> Server: validated calls
+  Server -> Remotes: state out
+  Client -> Remotes: player asks
+  Remotes -> Client: state in
+
+==================================================================
+TABLE 3. SYSTEM OWNERSHIP (system; path; owns; must never)
+==================================================================
+Lobby; path=src/server/Lobby; owns=start pads, party of up to 4, teleport to run place, booths, lobby night clock; must never=hold any loot or cash logic
+Present; path=src/server/Present; owns=seed, Nest generation, layer table, Tick placement; must never=be called by the client
+Tear; path=src/server/Tear; owns=panel bitfields per layer, tool and action validation, panel timing, layer-cleared events; must never=trust a client position or timer
+Night; path=src/server/Night; owns=Tick open, Jack AI, line of sight, downs, revives, wipe detection; must never=run in the lobby
+Loot; path=src/server/Loot; owns=rarity rolls, side-gift spawn, RunBag, core gift, Bank, Index, Shelf state; must never=roll on the client or re-roll on request
+Economy; path=src/server/Economy; owns=cash, gems, shop, classes, prestige, gamepass checks, daily and group rewards; must never=grant a gift for Robux
+Steal; path=src/server/Steal; owns=shelf tear timers, Naughty meter and decay, Krampus walk and sack; must never=touch Secret items or a player below Naughty 8
+Data; path=src/server/Data; owns=ProfileService profiles, schema version, migration, session lock; must never=store run state
+TearInput; path=src/client/TearInput; owns=hold detection, rip-line preview, TearRequest; must never=decide that a panel is gone
+Debris; path=src/client/Debris; owns=torn-panel pool, 40 live max, physics, recycle; must never=exceed the budget
+HUD; path=src/client/HUD; owns=cash, depth, Night timer, bank, shop, classes, rewards screens; must never=compute a value it displays
+Shelf; path=src/client/Shelf; owns=lobby shelf rendering, steal prompt and 6-second timer display; must never=move an item
+
+==================================================================
+DIAGRAM B. RUN FLOW (state machine)
+==================================================================
+RunState values: Lobby, Building, Unwrapping, Night, CoreLid, Reveal, Bank, Wipe
+Every remote checks the current state before it does anything.
+
+STATES:
+  Lobby pad: party of 1 to 4
+  Build Nest: server seed
+  Unwrapping: tear, cut, lift  [where most of the run is spent]
+  Core lid: team holds E
+  Reveal: core gift rolls
+  Night: Jack out, 90 s (scales to 150 s at The Package)
+  Wipe: run bag lost  [the only way to lose the run bag]
+  Bank: shelf and gems
+
+TRANSITIONS:
+  Lobby pad -> Build Nest: step on pad
+  Build Nest -> Unwrapping: Nest sent to client
+  Unwrapping -> Night: Tick opened
+  Night -> Unwrapping: timer out
+  Night -> Core lid: core lid reached before the timer runs out (Night ends)
+  Night -> Wipe: all living players down at once
+  Wipe -> Lobby pad: back to lobby, run bag lost, index keeps what was seen
+  Unwrapping -> Core lid: last layer cleared
+  Core lid -> Reveal: lid lifts (3 s shared animation)
+  Reveal -> Bank: after the 3 s animation
+  Bank -> Lobby pad: run bag to shelf, index and gems, then teleport
+Note: the Tick is the only branch. A party that routes around it (possible in 60% of nests) never enters Night and reaches the core with a smaller bag, because the Tick box drops the run's best side-gifts when opened.
+
+==================================================================
+TABLE 4. LAYER TABLE (Mechanics A). Weights per depth band; a type can repeat but never twice in a row.
+==================================================================
+Paper; action=Tear; tool tier needed=0 (hands); weight outer third=50; middle third=30; inner third=20
+Tape (over paper seams); action=Cut; tool tier=1 (scissors); outer=30; middle=30; inner=20
+Ribbon and bow; action=Snip; tool tier=1; outer=20; middle=20; inner=10
+Bubble wrap; action=Pop; tool tier=0; outer=0; middle=20; inner=20
+Foil; action=Tear; tool tier=0; outer=0; middle=15; inner=15
+Chains; action=Cut; tool tier=2 (box cutter); outer=0; middle=5; inner=20
+Ice; action=Chip; tool tier=2; outer=0; middle=5; inner=15
+Box lid; action=Lift; tool tier=0, two players on tier 2 and above; placement=always the last two layers of every nest
+Layer count by tier: Birthday=6; Christmas=9; Wedding=12; The Package=16
+Tick placement: random depth in the middle third.
+Panels: paper layer is a 4x4 grid per face (6 faces, 96 panels) at tier 1, 6x6 at tier 3 and above. Tape panels sit on seams and must be cut before the two paper panels beside them can tear.
+
+==================================================================
+TABLE 5. TOOLS (tool; tier; actions; seconds per panel; notes)
+==================================================================
+Hands; tier=0; actions=Tear, Pop, Lift; seconds per panel=1.2; notes=always equipped as fallback
+Scissors; tier=1; actions=Cut, Snip, Tear at 1.0 s; seconds per panel=0.8; notes=first pickup, at depth 1
+Box cutter; tier=2; actions=Cut, Chip, Tear at 0.6 s; seconds per panel=0.6; notes=shop only
+Chainsaw; tier=3; actions=everything at 0.3 s, tears a 2x2 of panels; seconds per panel=0.3; notes=shop, tier 2 and above, loud
+
+Tear feel spec: press-and-hold grows a tear line for the panel time, then release; early release keeps the rip line (progress never lost). On release: torn-edge mesh swap, small impulse away from the present, 2 s physics flutter, return to pool. Max 40 live debris per client, oldest recycled first. Audio: crinkle on hold start, rip on release, soft thud on landing; 3 variants each, pitch randomized within 10%. No camera shake on single panels; one 0.1 s shake on a chainsaw 2x2. One light haptic tap on release (mobile). Other players see the growing rip line.
+
+==================================================================
+TABLE 6. RARITY (Mechanics B) (rarity; color; odds at Birthday tier; odds at The Package; shelf slot size; example core gifts)
+==================================================================
+Common; color=Grey; odds Birthday=55%; odds Package=30%; shelf slots=1; examples=sock, mug, paperclip box
+Uncommon; color=Green; odds Birthday=28%; odds Package=30%; shelf slots=1; examples=yo-yo, model car, snow globe
+Rare; color=Blue; odds Birthday=12%; odds Package=22%; shelf slots=2; examples=robot, guitar, tiny tree
+Epic; color=Purple; odds Birthday=4%; odds Package=12%; shelf slots=2; examples=go-kart, arcade cabinet, puppy crate
+Mythic; color=Gold; odds Birthday=0.9%; odds Package=5%; shelf slots=3; examples=golden goose, rocket, the Jack's own box
+Secret; color=Prismatic (animated hue sweep); odds Birthday=0.1%; odds Package=1%; shelf slots=4; examples=one per tier, lore items, hidden in the index until found
+Rules: 1 to 3 side-gifts per cleared layer; 8 side-gift families at launch (plush, vehicle, figure, candy, trinket, tech, odd, seasonal); first-ever run seeded to Uncommon or better; shelf starts at 12 slots, 24 with gems, 36 with gamepass; gems per completed run = 3, or 5 with no downs, or 8 with the Tick survived; duplicate core gift of Rare or above = 20% mutation roll (frosted, giant, glitched, golden), each mutation is its own index entry.
+
+==================================================================
+TABLE 7. RUN ROOM SHOP (item; cost in cash; effect). Cash resets to 0 at run start.
+==================================================================
+Scissors; cost=30; effect=tier 1 tool, if not picked up
+Box cutter; cost=120; effect=tier 2 tool
+Chainsaw; cost=400, tier 2 and above only; effect=tier 3 tool
+Grip tape; cost=60; effect=panel time -15% for this run
+Flashlight; cost=40; effect=Night lighting 30% to 60% for the holder
+Spare lid; cost=80; effect=one extra shutter prop
+Lucky bow; cost=150; effect=next layer rolls one extra side-gift
+Cash sources: per panel torn (1 at tier 1, scaling with tier); per side-gift banked (5 to 200 by rarity); selling shelf overflow.
+Gem sources: 3 to 8 per completed run; 35 from the daily reward every 6 hours; 100 one-time for group join and like. Gem sinks: class spin 25; shelf slots 50 per 4 slots up to 24; cosmetics 50 to 500.
+
+==================================================================
+TABLE 8. CLASSES (class; rarity and spin odds; passive; starts with). Rolled, not chosen; one active per run; spin = 25 gems.
+==================================================================
+Kid; rarity=Common, 40%; passive=+5% cash; starts with=nothing
+Wrapper; rarity=Uncommon, 28%; passive=tape panels take tier 0; starts with=20 cash
+Sprinter; rarity=Rare, 16%; passive=+3 walk speed, Jack lunges 25% slower at you; starts with=a flashlight
+Collector; rarity=Epic, 10%; passive=+1 side-gift on every box lid, +10% gems; starts with=scissors, 50 cash
+Heir; rarity=Legendary, 4.5%; passive=core gift rolls twice, keep the better; starts with=box cutter, 100 cash
+Krampus's Kid; rarity=Mythic, 1.5%; passive=immune to Krampus, Naughty does not rise from your steals; starts with=nothing, and everyone can see it
+
+==================================================================
+TABLE 9. PRESTIGE TIERS (tier; layers; Night length; loot table shift; lobby change)
+==================================================================
+Birthday; layers=6; Night=90 s; loot shift=base; lobby=balloons on the porch
+Christmas; layers=9; Night=110 s; loot shift=Rare +6%, Epic +3%; lobby=snow, tree, lights
+Wedding; layers=12; Night=130 s; loot shift=Rare +10%, Epic +6%, Mythic +2%; lobby=white drapes, cake on the porch
+The Package; layers=16; Night=150 s; loot shift=core table only, Secret 1%; lobby=brown paper, barcode, no decoration
+Prestige rule: unlocked after 3 completed runs at the current tier; resets cash upgrades and the shelf to 12 slots (items go to a vault, reclaimable one per run); unlocks the next tier's present, loot table and lobby decoration.
+
+==================================================================
+TABLE 10. MONETIZATION (product; type; price in Robux; what it does). Invariant 6: the core gift is never purchasable.
+==================================================================
+2x Cash; type=gamepass; price=199; effect=doubles cash in runs
+Big Shelf; type=gamepass; price=299; effect=36 shelf slots
+Extra Tool Slot; type=gamepass; price=149; effect=hold two tools, swap with one tap
+Lucky; type=gamepass; price=399; effect=rarity table shifted one step up for side-gifts only, never the core
+Gems 100 / 500 / 1200; type=dev product; price=99 / 399 / 799; effect=gems
+Paper packs; type=dev product; price=49 to 199; effect=cosmetic wrapping patterns for your shelf and nameplate
+
+DATA SCHEMA (one profile per player, server-only):
+  tier, prestigeCount, gems, naughty, naughtyUpdatedAt
+  shelf: array of {giftId, rarity, mutation, slotIndex}
+  vault: array of the same shape
+  index: map giftId -> {count, firstDepth, firstSeenAt}
+  classes: array of owned class ids; activeClass
+  passes: map gamepass id -> boolean, re-checked on join
+  stats: runs, completions, wipes, ticksSurvived, stolen, stolenFrom
+  dailyClaimedAt, groupClaimed
+  Run state (RunBag, panel bitfields, Nest, Night timer) lives in server memory only, never in the profile.
+
+==================================================================
+TABLE 11. THREE VISUAL TIERS (tier; surface language; materials; custom textures)
+==================================================================
+World (room, lobby, props); language=smooth low-poly, stock materials, Chop a Forest look; materials=Grass, WoodPlanks, roof tiles, Fabric, SmoothPlastic; custom textures=none
+Present (layers); language=patterned, glossy, high contrast between layer types; materials=SmoothPlastic + pattern tile, Glass, Fabric, Cardboard, Foil, Metal, Ice, Neon; custom textures=one 512 px pattern tile per paper, one dot tile for bubble wrap
+Loot (side-gifts, core gifts); language=chunky toy, bevel-dot relief, flat bright colors; materials=SmoothPlastic + dot relief tile; custom textures=one dot relief tile shared by all loot
+Studs rule: no stud or bevel-dot pattern on the world or the present; dots only on loot.
+
+==================================================================
+DIAGRAM C. PRESENT CROSS-SECTION (layers in order, outside to inside)
+==================================================================
+Ring 1 (outermost): Paper; action=tear with hands; look=candy red stripes at launch
+Ring 2: Tape over seams; action=cut with scissors; look=clear with a gloss
+Ring 3: Ribbon and bow; action=snip; look=satin gold
+Ring 4: Bubble wrap; action=pop; look=milky translucent dots
+Ring 5: Foil; action=tear; look=mirror silver, crinkled
+Ring 6: Chains; action=cut with box cutter; look=dark iron
+Ring 7: Ice; action=chip; look=pale blue, glowing inside
+Ring 8 (innermost): Cardboard box; action=lift the lid; look=kraft brown
+Center: Core gift, lit by its rarity color, visible only during the 3 s reveal.
+Launch ships rings 1, 2, 3 and 8. December adds 4 to 7, one per week. The Tick is any ring in the middle third, same look as its neighbors, ticking.
+(Drawing note: the diagram shows a Christmas-tier present with one of each type for illustration; a real nest draws types from TABLE 4 and can repeat types.)
+
+==================================================================
+TABLE 12. LAYER PALETTE (layer; color family; base hex; pattern; Night version). Patterns use one lighter and one darker step of the same hue, never a second hue.
+==================================================================
+Paper, launch set; colors=candy red, mint, royal blue, sun yellow, pink, teal; hex=#E23D3D, #5FD3A0, #2F5BD9, #F2C230, #F06BA8, #2FB8C9; patterns=stripes, polka dots, snowflakes, zigzag, stars, plaid; night=desaturated 40%, pattern unchanged
+Tape; colors=clear with warm gloss; hex=#FFF3C4 at 35% transparency; pattern=none, specular only; night=gloss off
+Ribbon and bow; colors=satin gold, satin crimson; hex=#E0B13A, #B52A3C; pattern=none, reflectance 0.6; night=reflectance 0.2
+Bubble wrap; colors=milky white; hex=#F4F7FA at 50% transparency; pattern=dot tile, 8 px bubbles; night=unchanged
+Foil; colors=silver, with a rose and a blue variant; hex=#C9CED6, #D9A9A0, #A9C4E0; pattern=Roblox Foil material; night=darker ambient only
+Chains; colors=dark iron; hex=#4A4F57; pattern=Roblox Metal; night=unchanged
+Ice; colors=pale blue, lit from inside; hex=#BFE6F7, inner Neon #7FD8FF; pattern=Roblox Ice; night=inner glow brighter
+Cardboard; colors=kraft brown; hex=#B98A52; pattern=Roblox Cardboard, printed arrows and a barcode decal; night=unchanged
+Tick box; colors=same as its ring; hex=same; pattern=Neon seams #FF4D2E pulsing 0.8 s; night=seams at full brightness
+Rarity colors: Common=#9AA0A6; Uncommon=#4CC96B; Rare=#3C8DFF; Epic=#A857F0; Mythic=#FFC23D; Secret=animated hue sweep, never a fixed color.
+Loot style: one dot relief tile at 0.25 studs per dot; flat base colors from the rarity family plus one accent; no gradients. Side-gift 1 to 2 studs; core gift 3 to 6 studs; Mythic core gifts get a slow idle animation. Mutations: Giant=2x scale; Golden=base color #E0B13A, reflectance 0.5; Frosted=Ice shell; Glitched=UV offset every 0.5 s.
+
+==================================================================
+DIAGRAM D. LOBBY PLAN (top-down)
+==================================================================
+Field: one open area. Spawn is center-bottom, facing the Start a Run pads 12 studs away on the right. Shelf row and porch are on the left. Booths are straight ahead along the top. Update board is beside the pads.
+
+Zones:
+  House and porch (top-left): demo present half torn, paper on the ground; tier decoration swaps here
+  Shelf row (left, below the house): one shelf per player; Naughty 10+ glows red; steal prompt on approach
+  Krampus walk: a path along the front of the shelf row, left to right; every 20 minutes, 60 seconds
+  Rewards booth (top, left of center): daily, group; codes later
+  Classes booth (top center): 25-gem spin; odds board
+  Shop booth (top, right of center): gems, passes, paper packs
+  Update board (top-right corner): "??? arrives in" countdown and poster
+  Start a Run (right side, tall zone): four pads stacked vertically: solo pad, solo pad, party pad (4), party pad (4)
+  Spawn (center-bottom): faces the pads
+
+Run room: single interior 60 by 60 studs, warm wood floor, one wide window with daylight, present centered and scaled to tier (Birthday 16 studs across, The Package 28). No props except the shop counter in one corner and the lid props the team creates. Night drops window light and adds a cold rim light from the Tick box.
+
+==================================================================
+TABLE 13. HUD (element; where; shows)
+==================================================================
+Cash; where=top left; shows=run cash, ticks up per panel
+Depth; where=top center; shows=layer n of N as a vertical stack of colored bars
+Night timer; where=top center, replaces depth during Night; shows=seconds left, red
+Tool; where=bottom center; shows=current tool, hold ring fills during a tear
+Party; where=left edge; shows=up to 4 names, down state, class icon
+Prompt; where=bottom third; shows=one line, one key, never two prompts at once
+UI style: wooden panels with rounded corners, leaf or ribbon accent on tabs, big round icon buttons on the right edge (Shelf, Shop, Classes, Rewards) with the key letter under each, Chop a Forest proportions; one bold rounded sans at 3 sizes; present colors only on rarity and layer indicators, never on panel chrome.
+
+==================================================================
+TABLE 14. VFX LIST (event; effect; budget per emitter per event)
+==================================================================
+Tear release; effect=torn panel detach, 6 paper flecks; budget=1 mesh + 6 particles
+Layer cleared; effect=ring of confetti in the layer's color, light pulse; budget=40 particles, 0.6 s
+Side-gift drop; effect=spawn pop, rarity glow, arc to bag; budget=12 particles, beam 0.8 s
+Core reveal; effect=light shaft from the box, slow 30-particle drift, rarity color; budget=30 particles, 3 s
+Tick found; effect=seam neon pulse, faint heat shimmer; budget=0 particles, Neon only
+Jack lunge; effect=spring stretch, 8 dust puffs on land; budget=8 particles
+Player down; effect=greyscale vignette for that player; budget=post-process only
+Krampus walk; effect=footprints that fade, sack jingle; budget=2 decals per step
+Steal success; effect=item lifts, red flash on the victim's shelf; budget=1 flash
+SFX launch set, 24 clips: tear hold start x3, tear release x3, paper land x3, tape cut x2, ribbon snip x2, lid lift x3, side-gift pop x3, core reveal sting x1, Tick ticking loop x1, Jack crank x1, Jack lunge x1, player down x1. All under 2 s except the two loops. Pitch randomized within 10%.
+
+==================================================================
+TABLE 15. PERFORMANCE BUDGETS, hard limits (budget; limit; checked by)
+==================================================================
+Parts in the run room, present included; limit=2500; checked by=drift run
+Present parts at The Package tier; limit=1200; checked by=automated test
+Live debris pieces per client; limit=40; checked by=Debris module
+Particle emitters active at once; limit=12; checked by=drift run
+Texture memory, run room; limit=48 MB; checked by=Studio MicroProfiler
+Frame time, mid-range phone, 4 players, Night; limit=16 ms; checked by=playtest
+Server step, 4 players tearing; limit=4 ms; checked by=MicroProfiler
+TearRequest rate per player; limit=8 per second, server-enforced; checked by=Tear module
+Place file size; limit=25 MB; checked by=CI check
+
+==================================================================
+TABLE 16. CONTENT LIST (content; at launch Nov 25; by Dec 31; notes)
+==================================================================
+Layer types; launch=4 (paper, tape, ribbon, box lid); Dec 31=8 (adds bubble wrap, foil, chains, ice); notes=one new type per December week
+Paper patterns; launch=6; Dec 31=14; notes=one 512 px tile each, each owns a color family
+Tools; launch=3 (hands, scissors, box cutter); Dec 31=4 (adds chainsaw); notes=chainsaw lands with chains
+Side-gift models; launch=32 (8 families x 4); Dec 31=64; notes=chunky toy style, dots allowed
+Core gift models; launch=18 (3 per rarity band); Dec 31=36; notes=Secret is 1 per tier
+Mutations; launch=2 (giant, golden); Dec 31=4 (adds frosted, glitched); notes=visual variants only
+Tiers; launch=2 (Birthday, Christmas); Dec 31=4 (adds Wedding, The Package); notes=Wedding lands Dec 12, The Package Dec 26
+Entities; launch=Jack; Dec 31=Jack, Krampus; notes=Krampus in week 2 if not ready at launch
+Classes; launch=6; Dec 31=6; notes=balance only
+Lobby decorations; launch=Birthday, Christmas; Dec 31=4; notes=swap with tier
+Shop items; launch=7; Dec 31=9; notes=adds two Night items
+Gamepasses; launch=4; Dec 31=4; notes=no new passes in December
+Paper packs (cosmetic); launch=3; Dec 31=8; notes=weekly drop
+Sound set; launch=24 clips; Dec 31=40; notes=tear 9, lid 3, gift 6, Jack 6 at launch
+UI screens; launch=6 (HUD, shop, bank, shelf, classes, rewards); Dec 31=8 (adds index, settings); notes=index can wait, players ask for it by week 2
+
+==================================================================
+DIAGRAM E. BUILD TIMELINE (phase; start; end; gate)
+==================================================================
+Phase 0, Tear greybox; start=2026-10-19; end=2026-10-25
+Gate A, Tear feels good; date=2026-10-25; human playtest, three people tap for one minute each and want to keep going; the only cheap cancel point
+Phase 1, Nest and tools; start=2026-10-26; end=2026-11-01
+Phase 2, Loot, bank, data; start=2026-11-02; end=2026-11-08
+Gate B, full run works; date=2026-11-08; human playtest, party of 2 completes a run end to end and sees their shelf; after this, art and content run in parallel with systems
+Phase 3, Lobby and economy; start=2026-11-09; end=2026-11-15
+Phase 4, Night and Jack; start=2026-11-16; end=2026-11-21
+Phase 5, Art and polish; start=2026-11-16; end=2026-11-24; runs in parallel with Phase 4
+Icon countdown swap; date=2026-11-20
+Launch; date=2026-11-25
+Phase 6, Steal and Krampus; start=2026-11-26; end=2026-12-04
+December content; start=2026-12-05; end=2026-12-31; one layer type and one gift family per week; Wedding tier 2026-12-12; The Package 2026-12-26
+Returns update; date=2027-01-08
+(Acceptance criteria per phase are the checklists under "Production roadmap" in PLAN.md; they are plain lists and export cleanly.)
+
+==================================================================
+TABLE 17. TELEMETRY TARGETS (metric; target at launch; why; where logged)
+==================================================================
+Time to first tear; target=under 20 s from join; why=pillar one, onboarding; logged=AnalyticsService custom event first_tear
+Run completion rate; target=over 60% of started runs; why=difficulty and length tuning; logged=run_end with outcome
+Median run length; target=8 to 12 min, party of 2; why=invariant 5; logged=run_end duration
+Day-1 return; target=over 30%; why=the Reveal is working; logged=Roblox analytics
+Clip rate proxy; target=over 5% of runs end with a Mythic, Night survival, or a steal; why=pillar three, marketing; logged=run_end flags
+Events to log, server-side: join, first_tear, layer_cleared (depth, type, seconds), tick_opened, player_down, revive, wipe, core_reveal (rarity), bank (gems, items), steal (rarity, success), krampus_take, purchase, class_spin, prestige.
+
+==================================================================
+TABLE 18. DECISIONS LOG
+==================================================================
+Moved: the live decisions log is docs/DECISIONS.md (runs append there, newest first).
+
+==================================================================
+FROM KICKOFF NOTES (not repeated in the Master Plan)
+==================================================================
+COMPARABLES (game; where it stood on 2026-10-16; what to borrow)
+Steal An Egg; status=~926K CCU, down from a 14.3M peak on Sep 19, still #1 but late-cycle; borrow=persistent shelf of owned items, rarity index; do not enter the steal genre directly
+Dig & Clean; status=released Jul 2026, 270K peak in Aug; borrow=the reveal (dig, clean, find out what it is), museum shelf, rarity hunt
+Sell Fries! [Anomaly]; status=released Sep 2026, 57K all-time peak in Oct; borrow=day/night loop, shutter counter to the window anomaly, class spin for 25 gems, cursed perks
+Drain the Lake; status=released Jun 2026, 59K peak; borrow=skill tree, checkpoint stations as you go deeper, run resets on exit
+Chop A Forest; status=27.7K on the trending page, 91% rating; borrow=lobby layout (Start a Run pads, Rewards, Classes), daily reward 35 gems every 6 h, one-time group reward 100
+Peel The Potato; status=established, parent of the genre; borrow=chore pile hides one key, cash buys faster tools, gems from completed runs
+Crack Verity; status=released Sep 26 2026; borrow=layers with a LAYER DISCOVERED prompt teasing something at the center, 4-player teams
+Evolve a Cell; status=released Sep 26 2026, 6.7K peak; borrow=proof that new entries in this lane show up weekly
+
+STUDIO-SIDE DOC CONVENTION (doc; where; holds; cap)
+Index README; where=ServerStorage/README ModuleScript; holds=a map only: systems, where each lives, naming conventions, owners; cap=60 lines
+System README; where=first child of each system folder; holds=purpose in two lines, public API, invariants, how to add a new layer/item/entity; cap=80 lines
+Script header; where=top of each script in a --[=[ ]=] doc comment; holds=what this script owns, what it must never do, which README to read first; cap=15 lines
+CHANGELOG; where=ServerStorage/CHANGELOG ModuleScript (or CHANGELOG.md in the repo); holds=date, change, who, newest first; cap=none, prune monthly
+Superseded by the Master Plan: with a repo, the real README.md lives beside the scripts and the Studio ModuleScript holds only a one-line purpose and the path to it.
+
+END OF FILE
