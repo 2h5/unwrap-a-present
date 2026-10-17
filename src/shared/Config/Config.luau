@@ -22,7 +22,6 @@ Config.Tiers = {
 -- A type can repeat but never twice in a row. The last two layers are always BoxLid.
 Config.LayerTable = {
 	Paper = { action = "Tear", toolTier = 0, weights = { 50, 30, 20 } },
-	Tape = { action = "Cut", toolTier = 1, weights = { 30, 30, 20 } },
 	Ribbon = { action = "Snip", toolTier = 1, weights = { 20, 20, 10 } },
 	BubbleWrap = { action = "Pop", toolTier = 0, weights = { 0, 20, 20 } },
 	Foil = { action = "Tear", toolTier = 0, weights = { 0, 15, 15 } },
@@ -31,8 +30,20 @@ Config.LayerTable = {
 	BoxLid = { action = "Lift", toolTier = 0, twoPlayerFromTier = 2 },
 }
 
--- Launch ships these (Content list); December adds the rest one per week.
-Config.LaunchLayerTypes = { "Paper", "Tape", "Ribbon", "BoxLid" }
+-- Tape overlay (PLAN-TABLES.txt Table 4, TAPE OVERLAY RULES). Tape is never its own layer.
+-- Each strip is one panel that blocks the two panels it spans until cut.
+Config.TapeOverlay = {
+	action = "Cut",
+	toolTier = 1,
+	stripSeconds = { Scissors = 0.8, BoxCutter = 0.6, Chainsaw = 0.3 },
+	paperChanceByBand = { 0.4, 0.6, 0.8 }, -- outer, middle, inner third
+	seamFraction = { 0.25, 0.5 }, -- min, max share of a taped paper layer's seams, chosen from the seed
+	boxLidFromTier = 2, -- BoxLid always taped at tier 2+, never at tier 1; lid cannot lift until cut
+	layerTypes = { "Paper", "BoxLid" }, -- no other layer type takes tape
+}
+
+-- Launch ships these (Content list) plus the tape overlay; December adds the rest one per week.
+Config.LaunchLayerTypes = { "Paper", "Ribbon", "BoxLid" }
 
 Config.Panels = {
 	gridPerFaceLowTier = 4, -- 4x4 per face, 6 faces = 96 panels

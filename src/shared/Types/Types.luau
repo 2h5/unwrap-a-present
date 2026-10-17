@@ -7,7 +7,15 @@
 
 export type RunState = "Lobby" | "Building" | "Unwrapping" | "Night" | "CoreLid" | "Reveal" | "Bank" | "Wipe"
 
-export type LayerType = "Paper" | "Tape" | "Ribbon" | "BubbleWrap" | "Foil" | "Chains" | "Ice" | "BoxLid"
+export type LayerType = "Paper" | "Ribbon" | "BubbleWrap" | "Foil" | "Chains" | "Ice" | "BoxLid"
+
+-- Tape is an overlay on a layer, never its own layer (DECISIONS.md, 2026-10-17).
+export type Overlay = "Tape"
+
+export type TapeStrip = {
+	seamIndex: number,
+	cut: boolean,
+}
 
 export type Action = "Tear" | "Cut" | "Snip" | "Pop" | "Chip" | "Lift"
 
@@ -21,6 +29,7 @@ export type Layer = {
 	layerType: LayerType,
 	depth: number,
 	isTick: boolean,
+	tapeStrips: { TapeStrip }?,
 }
 
 export type Nest = {
