@@ -5,6 +5,8 @@ waits for a human to mark it **Approved** in the next run before anything is bui
 
 | Date | Decision | Reason | By | Status |
 |---|---|---|---|---|
+| 2026-10-17 | Test runner is Lune (lune-org/lune 0.11.0, pinned in rokit.toml), the approved fallback. Command: `lune run tests/run` | Jest-Lua runs only inside the Roblox engine (Studio or Open Cloud), so it cannot run from the command line in every run | Claude Code | Approved |
+| 2026-10-17 | Phase 0 greybox panels are anchored server Parts in Workspace.Present, 0.2 studs thick (`Config.Greybox.panelThickness`). Mechanics A has the client build layer meshes from Nest data; that replaces the greybox once Present generates the Nest | Gate A needs something to tap; the plan states no greybox thickness | Claude Code | Approved |
 | 2026-10-17 | F6. PLAN-TABLES.txt gains TABLE 20 (Night and Jack) and TABLE 21 (Steal, Naughty and Krampus), copied from PLAN.md Mechanics C. No new numbers | PLAN-TABLES.txt is the source for every number; these lived only in PLAN.md prose | Human | Approved |
 | 2026-10-17 | F7. Loot, Night, Steal and Shelf READMEs point at the tables they read (Table 6 odds rows; Tables 20 and 21) instead of PLAN.md prose or the old shift rule | A new run reads only the tables its README lists | Human | Approved |
 | 2026-10-17 | F8. Test setup (Jest-Lua, fallback Lune) moves from Phase 1 to Phase 0; the first test is the panel bitfield round-trip, set up in the run that closes the panel grid criterion. No acceptance criterion added | Phase 0 Tear code is tested from the start | Human | Approved |

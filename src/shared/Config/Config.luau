@@ -55,6 +55,11 @@ Config.Panels = {
 	highTierFrom = 3,
 }
 
+-- Phase 0 greybox only (DECISIONS.md, Phase 0 greybox panels). Replaced by real layer meshes later.
+Config.Greybox = {
+	panelThickness = 0.2, -- studs
+}
+
 -- The Tick is a side box in one middle-third layer; 40% of nests fuse it across the lid seam.
 Config.TickBlockingChance = 0.4
 

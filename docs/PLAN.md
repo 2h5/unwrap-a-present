@@ -677,7 +677,7 @@ the first layer drop. Waiting times in PLAN-TABLES.txt, Diagram E.
 ### Phase 0: Tear greybox
 One paper layer on one cube, no textures, no loot.
 
-- [ ] Panel grid generated from a layer definition, 4×4 per face
+- [x] Panel grid generated from a layer definition, 4×4 per face
 - [ ] Hold-to-tear with a growing rip line, server-validated, progress kept on early release
 - [ ] Torn-edge mesh swap, physics flutter, pool of 40, recycle oldest
 - [ ] Three tear sounds, pitch randomized

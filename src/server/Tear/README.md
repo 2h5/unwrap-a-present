@@ -10,7 +10,11 @@ Must never: Trust a client position or timer.
 
 ## Public API
 
-_None yet._ List each public function here as it lands: signature, one line of what it does.
+- `Tear.init()` — Phase 0: builds one greybox Paper layer (depth 0, tier 1) as `Workspace.Present`.
+- `Tear.getGrid(depth): Grid?` — the panel grid for a layer.
+- [PanelGrid.luau](PanelGrid.luau) (pure, tested in `tests/Tear`): `fromLayer(layer, tier, Config.Panels)`,
+  `gridPerFace`, `panelId`, `locate`, `isTorn`, `setTorn`, `encode`/`decode` (bitfield as a string),
+  `placement(grid, id, size)` (panel centre, normal, width on a cube centred at the origin).
 
 ## Invariants and rules
 
@@ -19,4 +23,5 @@ _None yet._ List each public function here as it lands: signature, one line of w
 
 ## How to add a new one
 
-_Fill in when the first one exists (e.g. how to add a layer type, gift, entity, screen)._
+A new panel-grid layer type: add it to `GRID_LAYER_TYPES` in PanelGrid.luau and a spec case in
+`tests/Tear/PanelGrid.spec.luau`. Keep Roblox calls out of PanelGrid; they go in Tear.luau.
