@@ -12,13 +12,11 @@ One copy of everything, so this page is only a map.
   - Table 14: VFX list and the 24-clip SFX set
   - Table 15: performance budgets
 
-## Source images
+## Images
 
-The text in PLAN-TABLES.txt wins if an image disagrees.
-
-- [layers.png](layers.png): present cross-section (Diagram C)
-- [run-flow.png](run-flow.png): run flow (Diagram B)
-- [architecture.png](architecture.png): systems architecture (Diagram A)
+The PNGs are illustrations exported from the planning doc; PLAN-TABLES.txt wins on any disagreement.
+The first three exports (cross-section, run flow, architecture) were deleted because they no longer
+matched it; Diagrams A, B and C in PLAN-TABLES.txt replace them.
 
 Still to make in Phase 5: `palette.png`, `loot-sheet.png`, `ui-sheet.png`.
 

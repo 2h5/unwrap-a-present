@@ -79,25 +79,21 @@ Config.Tear = {
 Config.RarityOrder = { "Common", "Uncommon", "Rare", "Epic", "Mythic", "Secret" }
 
 Config.Rarity = {
-	Common = { color = Color3.fromHex("#9AA0A6"), shelfSlots = 1, naughty = 1 },
-	Uncommon = { color = Color3.fromHex("#4CC96B"), shelfSlots = 1, naughty = 2 },
-	Rare = { color = Color3.fromHex("#3C8DFF"), shelfSlots = 2, naughty = 3 },
-	Epic = { color = Color3.fromHex("#A857F0"), shelfSlots = 2, naughty = 4 },
-	Mythic = { color = Color3.fromHex("#FFC23D"), shelfSlots = 3, naughty = 5 },
+	-- Hex strings, not Color3: Config holds no Roblox types. The client converts with Color3.fromHex.
+	Common = { color = "#9AA0A6", shelfSlots = 1, naughty = 1 },
+	Uncommon = { color = "#4CC96B", shelfSlots = 1, naughty = 2 },
+	Rare = { color = "#3C8DFF", shelfSlots = 2, naughty = 3 },
+	Epic = { color = "#A857F0", shelfSlots = 2, naughty = 4 },
+	Mythic = { color = "#FFC23D", shelfSlots = 3, naughty = 5 },
 	Secret = { color = nil, shelfSlots = 4, naughty = nil }, -- animated hue sweep; cannot be stolen
 }
 
--- Odds in percent; each table sums to 100. Christmas and Wedding apply the shifts in PLAN.md
--- (Mechanics D › Prestige) to Birthday. How the shift is taken from Common/Uncommon is open:
--- log a decision in phase 2 before filling those two in.
+-- Odds in percent; each table sums to 100.
 Config.RarityOdds = {
 	Birthday = { Common = 55, Uncommon = 28, Rare = 12, Epic = 4, Mythic = 0.9, Secret = 0.1 },
+	Christmas = { Common = 46, Uncommon = 28, Rare = 18, Epic = 7, Mythic = 0.9, Secret = 0.1 },
+	Wedding = { Common = 37, Uncommon = 28, Rare = 22, Epic = 10, Mythic = 2.9, Secret = 0.1 },
 	ThePackage = { Common = 30, Uncommon = 30, Rare = 22, Epic = 12, Mythic = 5, Secret = 1 },
-}
-
-Config.TierShift = {
-	Christmas = { Rare = 6, Epic = 3 },
-	Wedding = { Rare = 10, Epic = 6, Mythic = 2 },
 }
 
 Config.Loot = {
@@ -184,26 +180,41 @@ Config.Gamepasses = {
 	DoubleCash = { robux = 199 },
 	BigShelf = { robux = 299 },
 	ExtraToolSlot = { robux = 149 },
-	Lucky = { robux = 399 }, -- side-gifts only, never the core (invariant 6)
+	-- Side-gift rolls happen twice, keep the better rarity; never the core (invariant 6: 2p - p^2 < 2p)
+	Lucky = { robux = 399, rollTwice = true },
+}
+
+-- Two places (DECISIONS.md N10, N11)
+Config.Run = {
+	rejoinWindowSeconds = 120,
+}
+
+Config.Matchmaking = {
+	waitSeconds = 20,
+	maxParty = 4,
 }
 
 -- Mechanics E: keeping players playing (PLAN-TABLES.txt TABLE 19)
+-- Level n costs costLevel1 + costStep * (n - 1) gems.
 Config.PermanentTrack = {
-	Pockets = { startCashPerLevel = 10, maxLevel = 10 },
-	NightEyes = { lightingPerLevel = 0.05, maxBonus = 0.3 },
-	-- Gem cost per level: not set yet (open question in PLAN.md).
+	Pockets = { startCashPerLevel = 10, maxLevel = 10, costLevel1 = 20, costStep = 10 },
+	NightEyes = { lightingPerLevel = 0.05, maxBonus = 0.3, costLevel1 = 30, costStep = 15 },
 }
 
 Config.RepeatPrestige = {
+	runsPerRepeat = 10,
 	secretOddsStepPercent = 0.5,
 	secretOddsCapPercent = 3,
-	mutationChanceCap = 0.3, -- step per repeat not set yet
+	mutationChanceStep = 0.02,
+	mutationChanceCap = 0.3,
 	nightSecondsStep = 10,
 	nightSecondsCap = 180,
+	cosmeticEveryRepeats = 3, -- a paper pack cosmetic every third repeat
+	starCap = 10,
 }
 
 Config.FeaturedModifiers = { "AllIce", "DoubleTick", "TapeEverywhere", "Giant", "Tiny", "GoldenHour", "SilentNight" }
 
-Config.Leaderboards = { "FastestBirthdayRun", "MostMythics", "LongestStreak" }
+Config.Leaderboards = { "FastestBirthdayRun", "MostMythics", "LongestStreak", "MostRepeats" }
 
 return Config

@@ -16,6 +16,7 @@ _None yet._ List each public function here as it lands: signature, one line of w
 
 - Invariant 7: the server decides; the client only asks and animates.
 - Must never: Touch Secret items or a player below Naughty 8.
+- The Krampus clock runs per lobby server (N12); Krampus never enters a run.
 
 ## How to add a new one
 

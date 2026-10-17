@@ -66,6 +66,14 @@ REMOTES (ReplicatedStorage.Shared.Remotes):
   Client to server: TearRequest, LidLift, ShopBuy, ClassSpin, StealRequest, Revive
   Server to client: RunState, LootEvent, NightState, ShelfState
 
+TWO PLACES (lobby place and run place):
+  Pads teleport the party into a private reserved server of the run place.
+  The run place accepts only players whose teleport data carries a valid party token issued by the lobby; anyone else is teleported to the lobby on join.
+  The reserved server shuts down when its last player leaves.
+  Rejoin: a party member who disconnects can rejoin the same run within 120 s; the reserved server access code is stored in the profile at teleport time; the lobby shows "Rejoin run (m:ss)". After 120 s the run continues without them and they bank nothing from it.
+  Join anyone: waits up to 20 s to fill a team of 4, then starts with whoever is there.
+  Krampus clock: per lobby server. Featured present: chosen by UTC calendar date, same on every server.
+
 CLIENT SYSTEMS (StarterPlayerScripts), 4:
   TearInput: hold, rip line; sends TearRequest
   Debris: pooled torn panels; 40 live max
@@ -166,6 +174,8 @@ Rare; color=Blue; odds Birthday=12%; odds Package=22%; shelf slots=2; examples=r
 Epic; color=Purple; odds Birthday=4%; odds Package=12%; shelf slots=2; examples=go-kart, arcade cabinet, puppy crate
 Mythic; color=Gold; odds Birthday=0.9%; odds Package=5%; shelf slots=3; examples=golden goose, rocket, the Jack's own box
 Secret; color=Prismatic (animated hue sweep); odds Birthday=0.1%; odds Package=1%; shelf slots=4; examples=one per tier, lore items, hidden in the index until found
+Christmas odds (shift taken entirely from Common): Common=46%; Uncommon=28%; Rare=18%; Epic=7%; Mythic=0.9%; Secret=0.1%
+Wedding odds (shift taken entirely from Common): Common=37%; Uncommon=28%; Rare=22%; Epic=10%; Mythic=2.9%; Secret=0.1%
 Rules: 1 to 3 side-gifts per cleared layer; 8 side-gift families at launch (plush, vehicle, figure, candy, trinket, tech, odd, seasonal); first-ever run seeded to Uncommon or better; shelf starts at 12 slots, 24 with gems, 36 with gamepass; gems per completed run = 3, or 5 with no downs, or 8 with the Tick survived; duplicate core gift of Rare or above = 20% mutation roll (frosted, giant, glitched, golden), each mutation is its own index entry.
 Depth rule: side-gifts in the outer and middle thirds roll the current tier's table; the inner third rolls the next tier's table; The Package's inner third rolls its core table with Secret at 2%.
 Shelf and Index: duplicates stack on their existing shelf slot up to x9; selling a duplicate gives cash; a steal takes one from the stack. One Index for side-gifts and core gifts, core gifts starred. Completing an Index family gives a wrapping-paper pattern for the shelf plus a badge.
@@ -201,7 +211,7 @@ Christmas; layers=9; Night=110 s; loot shift=Rare +6%, Epic +3%; lobby=snow, tre
 Wedding; layers=12; Night=130 s; loot shift=Rare +10%, Epic +6%, Mythic +2%; lobby=white drapes, cake on the porch
 The Package; layers=16; Night=150 s; loot shift=core table only, Secret 1%; lobby=brown paper, barcode, no decoration
 Prestige rule: completed runs needed at the current tier = 3 (Birthday to Christmas), 6 (Christmas to Wedding), 10 (Wedding to The Package); no Index requirement. Prestige shrinks the shelf to 12 slots; the rest go to a vault, shown as a crate on the porch, and 3 items per run can be reclaimed. Index, gems, classes, passes, stats and the permanent track are never touched. Unlocks the next tier's present, loot table and lobby decoration. Players can run any unlocked tier.
-Repeatable prestige after The Package (The Package +1, +2, ...), completed runs needed per repeat not set yet: Secret odds +0.5% (cap 3%); mutation chance rises from 20% toward a 30% cap (step per repeat not set yet); Night +10 s (cap 180 s); one star on the nameplate per repeat. Never adds layers (invariant 5).
+Repeatable prestige after The Package (The Package +1, +2, ...), 10 completed runs per repeat: Secret odds +0.5% (cap 3%, reached at repeat 4); mutation chance +2% per repeat (20% to the 30% cap at repeat 5); Night +10 s (cap 180 s, reached at repeat 3); one star on the nameplate per repeat, cap 10 stars. After repeat 5, every third repeat grants a paper pack cosmetic, and repeat count is a leaderboard. Never adds layers (invariant 5).
 
 ==================================================================
 TABLE 10. MONETIZATION (product; type; price in Robux; what it does). Invariant 6: the core gift is never purchasable.
@@ -209,7 +219,7 @@ TABLE 10. MONETIZATION (product; type; price in Robux; what it does). Invariant 
 2x Cash; type=gamepass; price=199; effect=doubles cash in runs
 Big Shelf; type=gamepass; price=299; effect=36 shelf slots
 Extra Tool Slot; type=gamepass; price=149; effect=hold two tools, swap with one tap
-Lucky; type=gamepass; price=399; effect=rarity table shifted one step up for side-gifts only, never the core
+Lucky; type=gamepass; price=399; effect=side-gift rolls happen twice and keep the better rarity, never the core gift (invariant 6 check: 2p - p^2 < 2p, so no band ever doubles)
 Gems 100 / 500 / 1200; type=dev product; price=99 / 399 / 799; effect=gems
 Paper packs; type=dev product; price=49 to 199; effect=cosmetic wrapping patterns for your shelf and nameplate
 
@@ -224,6 +234,7 @@ DATA SCHEMA (one profile per player, server-only):
   upgrades: {pockets, nightEyes} levels
   streak: {days, lastLoginDay}
   likesReceived; likedShelves: set of shelf owner ids this player has liked
+  rejoin: {accessCode, expiresAt}; written at teleport, valid 120 s (the only teleport data kept in the profile)
   dailyClaimedAt, groupClaimed
   Run state (RunBag, panel bitfields, Nest, Night timer) lives in server memory only, never in the profile.
 
@@ -277,7 +288,7 @@ Zones:
   Classes booth (top center): 25-gem spin; odds board
   Shop booth (top, right of center): gems, passes, paper packs
   Update board (top-right corner): "??? arrives in" countdown and poster; beside it the most-liked shelves board and the three leaderboards (TABLE 19)
-  Start a Run (right side, tall zone): three pads stacked vertically: solo pad, party pad (friends, up to 4), join-anyone pad (matchmakes strangers up to 4)
+  Start a Run (right side, tall zone): three pads stacked vertically: solo pad, party pad (friends, up to 4), join-anyone pad (waits up to 20 s to fill a team of 4, then starts with whoever is there, even one player; no backfill into a running run)
   Spawn (center-bottom): faces the pads
 Zone count is 7: house and porch, shelf row, rewards, classes, shop, update board, Start a Run. Spawn and the Krampus walk are markers, not zones.
 
@@ -351,7 +362,7 @@ DIAGRAM E. BUILD ORDER (no fixed dates; a phase starts when the one before it is
 6. Phase 3, Lobby and economy
 7. Phase 4, Night and Jack, and Phase 5, Art and polish, in parallel
 8. Icon countdown swap, a few days before launch
-9. Launch
+9. Launch. Jack ships at launch. If Phase 4 is not done when Phase 5 finishes, wait up to 7 days; after that, launch without the Tick (none placed) and ship Night as the first update within 7 days of launch. The countdown icon is not used for that update; it is saved for the first layer drop.
 10. Phase 6, Steal and Krampus, featured present of the day, leaderboards, shelf likes; right after launch
 11. Post-launch content: one layer type and one gift family per update; limited gift families; Wedding tier, then The Package, then repeatable prestige; server-wide counter event
 12. Returns update, once the holiday season is over
@@ -370,11 +381,11 @@ Events to log, server-side: join, first_tear, layer_cleared (depth, type, second
 ==================================================================
 TABLE 19. KEEPING PLAYERS PLAYING (feature; numbers; when)
 ==================================================================
-Permanent track (gems, never resets); Pockets=+10 starting cash per level, 10 levels; Night Eyes=+5% Night lighting per level, cap 30%; cost per level=not set yet; when=Phase 3. No permanent tear-speed line (invariant 5).
+Permanent track (gems, never resets); Pockets=+10 starting cash per level, 10 levels; Night Eyes=+5% Night lighting per level, cap 30%; cost=Pockets 20 gems at level 1, +10 per level (650 for all 10); Night Eyes 30 gems at level 1, +15 per level (405 for all 6); when=Phase 3. No permanent tear-speed line (invariant 5).
 Login streak; +10 gems per consecutive day, capped at day 7; when=Phase 3
 Bring-a-friend; +2 gems per run for every player in a party of 2 or more; when=Phase 3
-Featured present of the day; one modifier per calendar day, server-synced; modifiers=All Ice, Double Tick, Tape Everywhere, Giant (2x panels), Tiny (half panels), Golden Hour (Mythic odds 2x), Silent Night (Night from depth 1); when=Phase 6, first retention feature built
-Leaderboards; fastest Birthday run, most Mythics, longest streak; when=Phase 6
+Featured present of the day; one modifier per UTC calendar date, the same on every server; modifiers=All Ice, Double Tick, Tape Everywhere, Giant (2x panels), Tiny (half panels), Golden Hour (Mythic odds 2x), Silent Night (Night from depth 1); when=Phase 6, first retention feature built
+Leaderboards; fastest Birthday run, most Mythics, longest streak, most repeats of The Package; when=Phase 6
 Shelf likes; one like button per shelf, one lobby board of most-liked shelves, no comments; when=Phase 6
 Secret items as lore; each Secret is one line of the Sender's letter (docs/LORE.md, draft); when=ships with the first Secret
 Limited gift families; available for a limited time, then retired; retired entries stay in the Index; when=post-launch content

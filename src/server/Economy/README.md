@@ -16,6 +16,9 @@ _None yet._ List each public function here as it lands: signature, one line of w
 
 - Invariant 7: the server decides; the client only asks and animates.
 - Must never: Grant a gift for Robux.
+- Permanent track level n costs `costLevel1 + costStep * (n - 1)` gems (N1).
+- Lucky gamepass: side-gift rolls happen twice and keep the better; never the core gift (N4,
+  invariant 6: 2p − p² < 2p).
 
 ## How to add a new one
 

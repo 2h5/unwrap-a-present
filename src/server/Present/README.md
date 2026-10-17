@@ -16,6 +16,8 @@ _None yet._ List each public function here as it lands: signature, one line of w
 
 - Invariant 7: the server decides; the client only asks and animates.
 - Must never: Be called by the client.
+- The featured present modifier is chosen by the UTC calendar date, so every server shows the same
+  one (N12). UTC midnight is 7–8 pm Eastern.
 
 ## How to add a new one
 

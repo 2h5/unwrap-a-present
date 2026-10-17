@@ -16,6 +16,8 @@ _None yet._ List each public function here as it lands: signature, one line of w
 
 - Invariant 7: the server decides; the client only asks and animates.
 - Must never: Roll on the client or re-roll on request.
+- Odds per tier come straight from `Config.RarityOdds` (all four tiers filled in; tier shifts came from
+  Common, N3). There is no shift rule to apply at runtime.
 
 ## How to add a new one
 

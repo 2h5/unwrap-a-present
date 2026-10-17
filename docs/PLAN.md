@@ -168,8 +168,7 @@ Eight server systems own all state, one remotes layer carries validated requests
 state down, and four client systems do nothing but read input and draw. A run touches them in the
 order the arrows show.
 
-The node list and every edge are in [PLAN-TABLES.txt](PLAN-TABLES.txt), **Diagram A**. Source image:
-[art/architecture.png](art/architecture.png).
+The node list and every edge are in [PLAN-TABLES.txt](PLAN-TABLES.txt), **Diagram A**.
 
 Lobby starts a run and loads the profile; Present builds the Nest; Tear validates every panel and
 tells Loot and Night what happened; Steal and Loot both end in Economy and Data. Nothing on the
@@ -177,6 +176,14 @@ client can change a number.
 
 **Remotes** (`ReplicatedStorage/Shared/Remotes`) — Up: `TearRequest`, `LidLift`, `ShopBuy`,
 `ClassSpin`, `StealRequest`, `Revive`. Down: `RunState`, `LootEvent`, `NightState`, `ShelfState`.
+
+**Two places.** The game is a lobby place and a run place. Pads teleport the party into a private
+reserved server of the run place. The run place accepts only players whose teleport data carries a
+valid party token issued by the lobby; anyone else is teleported to the lobby on join. The reserved
+server shuts down when its last player leaves. A party member who disconnects can rejoin the same run
+for a short window (the access code is kept in the profile and the lobby shows "Rejoin run (m:ss)");
+after that the run continues without them and they bank nothing from it, because invariant 10 protects
+shelf, gems and prestige, not run loot. Numbers in PLAN-TABLES.txt, Diagram A.
 
 | System | Path | Owns | Must never |
 |---|---|---|---|
@@ -201,7 +208,6 @@ A run has seven states and one losing exit. Unwrapping is where players spend mo
 Night loops back into it; only a Wipe skips the bank.
 
 The full state list and every transition are in [PLAN-TABLES.txt](PLAN-TABLES.txt), **Diagram B**.
-Source image: [art/run-flow.png](art/run-flow.png).
 
 The Tick is the only branch. A party that leaves a non-blocking Tick sealed never enters Night and reaches the core
 with a smaller bag, because the Tick box drops the run's best side-gifts when opened. State lives on
@@ -426,8 +432,9 @@ highest.
 
 **After The Package.** Prestige repeats forever (The Package +1, +2, …). Each repeat slightly raises
 Secret odds, the mutation chance and Night length, up to caps, and adds a star to the nameplate. It
-never adds layers, so runs stay 8–12 minutes (invariant 5). The game has no end. Numbers in
-PLAN-TABLES.txt, TABLE 9.
+never adds layers, so runs stay 8–12 minutes (invariant 5). Once those caps are reached, every few
+repeats still grants a paper pack cosmetic, repeat count is a leaderboard, and stars keep counting to
+a cap. The game has no end. Numbers in PLAN-TABLES.txt, TABLE 9.
 
 | Tier | Layers | Night length | Loot table shift | Lobby change |
 |---|---|---|---|---|
@@ -443,7 +450,7 @@ PLAN-TABLES.txt, TABLE 9.
 | 2x Cash | Gamepass | 199 | Doubles cash in runs |
 | Big Shelf | Gamepass | 299 | 36 shelf slots |
 | Extra Tool Slot | Gamepass | 149 | Hold two tools, swap with one tap |
-| Lucky | Gamepass | 399 | Rarity table shifted one step up for side-gifts only, never the core |
+| Lucky | Gamepass | 399 | Side-gift rolls happen twice and keep the better rarity; never the core gift |
 | Gems 100 / 500 / 1200 | Dev products | 99 / 399 / 799 | Gems |
 | Paper packs | Dev products | 49–199 | Cosmetic wrapping patterns for your shelf and nameplate |
 
@@ -459,6 +466,7 @@ PLAN-TABLES.txt, TABLE 9.
 - `upgrades`: `{pockets, nightEyes}` levels
 - `streak`: `{days, lastLoginDay}`
 - `likesReceived`, `likedShelves`
+- `rejoin`: `{accessCode, expiresAt}`, written at teleport (the only teleport data kept in the profile)
 - `dailyClaimedAt`, `groupClaimed`
 
 Run state (`RunBag`, panel bitfields, Nest, Night timer) lives in server memory only and is never
@@ -471,19 +479,20 @@ written to the profile.
 The game has no end. Every feature here gives a reason to come back without adding a second map, a
 quest board or anything else invariant 9 rules out. Numbers in PLAN-TABLES.txt, TABLE 19.
 
-- **Featured present of the day.** One modifier per calendar day, the same on every server (All Ice,
+- **Featured present of the day.** One modifier per UTC calendar date, the same on every server (All Ice,
   Double Tick, Tape Everywhere, Giant, Tiny, Golden Hour, Silent Night). Still one present per run. The
   first retention feature to build.
 - **Login streak.** Gems for each day in a row, capped at a week.
 - **Bring-a-friend.** Extra gems for every player in a party of 2 or more.
-- **Leaderboards.** Fastest Birthday run, most Mythics, longest streak.
+- **Leaderboards.** Fastest Birthday run, most Mythics, longest streak, most repeats of The Package.
 - **Shelf likes.** See Mechanics B, Shelf.
 - **Lore.** Each Secret item is one line of the Sender's letter. Draft in [LORE.md](LORE.md).
 - **Limited gift families.** Available for a while, then retired; retired entries stay in the Index.
 - **Server-wide counter event.** Comes with post-launch content.
 - **Repeatable prestige.** See Mechanics D, After The Package.
 
-Start pads are **solo**, **party** (friends) and **join anyone** (matchmakes strangers). Most players
+Start pads are **solo**, **party** (friends) and **join anyone** (matchmakes strangers, waits a short time to
+fill a team, then starts with whoever is there; no joining a run already going). Most players
 come alone, so join anyone matters most.
 
 ---
@@ -516,7 +525,7 @@ that true.
 **Present cross-section** — seven layer types plus the tape overlay, outside-in. Read from the outside in. A player meets ring 1
 first and ring 7 last; the core is only ever seen in the 3-second reveal animation.
 
-Ring by ring: [PLAN-TABLES.txt](PLAN-TABLES.txt), **Diagram C**. Source image: [art/layers.png](art/layers.png).
+Ring by ring: [PLAN-TABLES.txt](PLAN-TABLES.txt), **Diagram C**.
 
 Launch ships rings 1, 2 and 7 plus the tape overlay. Post-launch updates add 3 to 6, one per update. The Tick is any ring in the
 middle third, same look, ticking.
@@ -659,6 +668,11 @@ Build order and gates: [PLAN-TABLES.txt](PLAN-TABLES.txt), **Diagram E**.
 Gate A is the only point where the whole plan can be cancelled cheaply: if tapping a greybox present is
 not fun for a minute, stop and redesign the Tear before anything else is built. Gate B is the point
 after which art and content can start in parallel with systems.
+
+**Launch rule.** Jack ships at launch. If Phase 4 is not done when Phase 5 finishes, wait a short,
+fixed time; after that, launch without the Tick (none is placed, since opening it starts the Night)
+and ship Night as the first update. The countdown icon is not used for that update; it is saved for
+the first layer drop. Waiting times in PLAN-TABLES.txt, Diagram E.
 
 ### Phase 0: Tear greybox
 One paper layer on one cube, no textures, no loot.
@@ -816,6 +830,8 @@ unwrap-a-present/
 - Images are PNG, under 1 MB, named by what they show. A Markdown page embeds them with
   `![[palette.png]]` (Obsidian) or `![](art/palette.png)`; use the second form so GitHub and Claude Code
   render them too.
+- PNGs in `docs/art/` are illustrations exported from the planning doc; PLAN-TABLES.txt wins on any
+  disagreement.
 - Reference screenshots of other games go in `docs/art/refs/` for study only and are never committed
   into the game or used as textures.
 - This plan is edited here, exported to `docs/PLAN.md`, committed. The export is the first step of any
@@ -842,15 +858,15 @@ Runs append to docs/DECISIONS.md, newest first. The table below is the seed copy
 
 **Open questions** (answer before phase 1 starts):
 
-- [ ] Final name: Unwrap A Present or Unwrap The Present
-- [ ] Does Jack ship at launch or in the first update if phase 4 slips
+- [x] Final name — **Unwrap A Present**
+- [x] Does Jack ship at launch — **yes**; if Phase 4 slips, wait up to 7 days, then launch without the Tick and ship Night within 7 days
 - [x] Rojo + git from day one (recommended) or Studio-only for phase 0 — **Rojo + git** (repo created 2026-10-17)
 - [x] Which test runner the repo adopts — **Jest-Lua**, pure-logic modules, fallback Lune
-- [ ] Who owns art assets: in-house, commissioned, or a mix per tier
-- [ ] In-app search for "unwrap" and "present" done and clear
-- [ ] Gem cost per level of Pockets and Night Eyes
-- [ ] Completed runs needed per repeat of The Package, and the mutation-chance step per repeat
-- [ ] How tier shifts (Christmas, Wedding) and the Lucky gamepass take odds from the lower bands
+- [x] Who owns art assets — **a mix**: commission the icon, then the 18 core gifts, then side-gifts; world and paper tiles in-house
+- [ ] In-app search for "unwrap" and "present" done and clear (human, in the Roblox app, before Phase 3)
+- [x] Gem cost per level — **Pockets 20 +10 per level, Night Eyes 30 +15 per level**
+- [x] Runs per repeat of The Package and mutation step — **10 runs, +2% per repeat**
+- [x] Tier shifts and Lucky — **shifts come from Common; Lucky rolls side-gifts twice, keeps the better**
 - [x] How a party "routes around" the Tick box — **side box with a `blocking` flag**
 - [x] Lobby and run as one place or two — **two places**, private reserved run servers
 - [x] ProfileService or ProfileStore — **ProfileStore**

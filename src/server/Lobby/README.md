@@ -16,6 +16,13 @@ _None yet._ List each public function here as it lands: signature, one line of w
 
 - Invariant 7: the server decides; the client only asks and animates.
 - Must never: Hold any loot or cash logic.
+- Two places (N9): the run place accepts only players whose teleport data carries a valid party token
+  issued here; anyone else is sent back to the lobby. The reserved run server shuts down when its last
+  player leaves.
+- Rejoin (N10): the reserved server access code goes into the profile at teleport; the lobby shows
+  "Rejoin run (m:ss)" until `Config.Run.rejoinWindowSeconds` runs out. After that, nothing banks.
+- Join anyone (N11): wait up to `Config.Matchmaking.waitSeconds` to fill `maxParty`, then start with
+  whoever is there. No backfill into a running run.
 
 ## How to add a new one
 
