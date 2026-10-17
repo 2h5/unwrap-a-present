@@ -138,6 +138,8 @@ local function buildGreybox(grid: PanelGrid.Grid, size: number, origin: Vector3)
 		part.Name = `Panel{id}`
 		part.Anchored = true
 		part.Size = Vector3.new(p.width, p.width, thickness)
+		local _, row, col = PanelGrid.locate(grid, id)
+		part.Color = Color3.fromHex(Config.Greybox.panelColors[(row + col) % 2 + 1])
 		-- A part's front (-Z) points along the outward normal.
 		local up = if math.abs(normal.Y) > 0.5 then Vector3.zAxis else Vector3.yAxis
 		part.CFrame = CFrame.lookAt(center, center + normal, up)

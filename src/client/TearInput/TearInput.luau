@@ -5,6 +5,7 @@
 	on "Torn" it hands the panel to Debris.spawn.
 	Touch and mouse share one path (invariant 3): press on a panel, hold, release.
 	Rip line: grows from the touch point to both panel edges over the panel time; stays on release.
+	Sounds: crinkle on hold start, rip on tear. Haptic: one light tap on this player's tear (touch only).
 	Read first: src/client/TearInput/README.md
 ]=]
 
@@ -36,6 +37,8 @@ local TearInput = {}
 local lines: { [string]: Line } = {}
 local folder: Folder
 local activeInput: InputObject? = nil
+local myKey: string? = nil -- the panel this client asked to tear, for the release haptic
+local haptic: HapticEffect
 
 local function findPanel(depth: number, panelId: number): BasePart?
 	local present = workspace:FindFirstChild("Present")
@@ -92,6 +95,12 @@ local function onTearState(state: { [string]: any })
 			Sfx.playAt(Config.Sounds.tearRelease, panel.Position)
 			Debris.spawn(panel)
 		end
+		if key == myKey then
+			myKey = nil
+			if UserInputService.TouchEnabled then
+				haptic:Play() -- one light tap on release (mobile)
+			end
+		end
 		return
 	end
 	if not line then
@@ -127,6 +136,32 @@ local function isPress(input: InputObject): boolean
 	return input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1
 end
 
+-- Roblox's touch controls do not mark their touches as game-processed, so a thumb on the
+-- movement zone or the jump button would also start a tear. Those touches belong to movement.
+local MOVE_CONTROLS = { "DynamicThumbstickFrame", "ThumbstickFrame", "JumpButton" }
+local function onTouchControls(input: InputObject): boolean
+	if input.UserInputType ~= Enum.UserInputType.Touch then
+		return false
+	end
+	local playerGui = Players.LocalPlayer:FindFirstChildOfClass("PlayerGui")
+	local touchGui = playerGui and playerGui:FindFirstChild("TouchGui")
+	local frame = touchGui and touchGui:FindFirstChild("TouchControlFrame")
+	if not frame then
+		return false
+	end
+	for _, name in MOVE_CONTROLS do
+		local control = frame:FindFirstChild(name) :: GuiObject?
+		if control and control.Visible then
+			local p, s = control.AbsolutePosition, control.AbsoluteSize
+			local x, y = input.Position.X, input.Position.Y
+			if x >= p.X and x <= p.X + s.X and y >= p.Y and y <= p.Y + s.Y then
+				return true
+			end
+		end
+	end
+	return false
+end
+
 function TearInput.init()
 	local request = Remotes.get("TearRequest")
 
@@ -134,8 +169,12 @@ function TearInput.init()
 	folder.Name = "RipLines"
 	folder.Parent = workspace
 
+	haptic = Instance.new("HapticEffect")
+	haptic.Type = Enum.HapticEffectType.UIClick
+	haptic.Parent = folder
+
 	UserInputService.InputBegan:Connect(function(input, gameProcessed)
-		if gameProcessed or activeInput or not isPress(input) then
+		if gameProcessed or activeInput or not isPress(input) or onTouchControls(input) then
 			return
 		end
 		local panel, u, v = panelUnder(input.Position)
@@ -143,6 +182,7 @@ function TearInput.init()
 			return
 		end
 		activeInput = input
+		myKey = `{panel:GetAttribute("Depth")}:{panel:GetAttribute("PanelId")}`
 		request:FireServer("Begin", panel:GetAttribute("Depth"), panel:GetAttribute("PanelId"), u, v)
 	end)
 
@@ -155,6 +195,7 @@ function TearInput.init()
 			or (input.UserInputType == Enum.UserInputType.MouseButton1 and active.UserInputType == input.UserInputType)
 		if same then
 			activeInput = nil
+			myKey = nil
 			request:FireServer("End")
 		end
 	end)

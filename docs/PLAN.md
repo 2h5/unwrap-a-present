@@ -681,7 +681,7 @@ One paper layer on one cube, no textures, no loot.
 - [x] Hold-to-tear with a growing rip line, server-validated, progress kept on early release
 - [x] Torn-edge mesh swap, physics flutter, pool of 40, recycle oldest
 - [x] Three tear sounds, pitch randomized
-- [ ] Works with touch on a phone-sized viewport
+- [x] Works with touch on a phone-sized viewport
 - [ ] **Gate A playtest:** three people tap for one minute each and want to keep going
 
 ### Phase 1: Nest and tools

@@ -61,6 +61,7 @@ Config.Greybox = {
 	ripLineWidth = 0.15, -- studs
 	ripLineColor = "#2B1E14",
 	tornPanelColor = "#8E8D90", -- the greybox torn-edge stand-in, a step darker than the panel
+	panelColors = { "#A3A2A5", "#BDBCBF" }, -- checker, so each panel reads as its own target on a phone
 }
 
 -- The Tick is a side box in one middle-third layer; 40% of nests fuse it across the lid seam.
