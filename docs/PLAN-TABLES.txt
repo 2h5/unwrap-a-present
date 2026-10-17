@@ -7,7 +7,8 @@ PLAN-TABLES.txt is the source for every number; PLAN.md is the source for every 
 TABLE 1. GLOSSARY (Term: meaning; code name)
 ==================================================================
 Present: the whole nested object a run is about, one per run; code=Present
-Layer: one wrapping shell (paper, tape, ribbon, bubble wrap, foil, chains, ice, or a box), layers nest from outside in; code=Layer, LayerType
+Layer: one wrapping shell: paper, ribbon, bubble wrap, foil, chains, ice, or a box. Layers nest from outside in.; code=Layer, LayerType
+Overlay: tape strips laid over a layer's seams; each strip is its own panel with action Cut; a strip blocks the panels it spans until cut; tape is the only overlay.; code=Overlay, TapeStrip
 Panel: one tearable piece of a layer; a paper layer is a grid of panels; a box lid is one panel; code=Panel
 Depth: how many layers deep the team is; depth 0 is the outside; code=depth
 Nest: the ordered list of layers in this present, generated at run start from a seed; code=Nest, seed
@@ -60,7 +61,7 @@ SERVER SYSTEMS (ServerScriptService), 8:
   Loot: rolls, RunBag, Bank; Index, Shelf
   Steal: shelf tears, Naughty; Krampus takes
 
-REMOTES (ReplicatedStorage/Remotes; in the repo: ReplicatedStorage.Shared.Remotes):
+REMOTES (ReplicatedStorage.Shared.Remotes):
   Client to server: TearRequest, LidLift, ShopBuy, ClassSpin, StealRequest, Revive
   Server to client: RunState, LootEvent, NightState, ShelfState
 
@@ -134,16 +135,16 @@ Note: the Tick is the only branch. A party that routes around it (possible in 60
 TABLE 4. LAYER TABLE (Mechanics A). Weights per depth band; a type can repeat but never twice in a row.
 ==================================================================
 Paper; action=Tear; tool tier needed=0 (hands); weight outer third=50; middle third=30; inner third=20
-Tape (over paper seams); action=Cut; tool tier=1 (scissors); outer=30; middle=30; inner=20
 Ribbon and bow; action=Snip; tool tier=1; outer=20; middle=20; inner=10
 Bubble wrap; action=Pop; tool tier=0; outer=0; middle=20; inner=20
 Foil; action=Tear; tool tier=0; outer=0; middle=15; inner=15
 Chains; action=Cut; tool tier=2 (box cutter); outer=0; middle=5; inner=20
 Ice; action=Chip; tool tier=2; outer=0; middle=5; inner=15
-Box lid; action=Lift; tool tier=0, two players on tier 2 and above; placement=always the last two layers of every nest
+Box lid; action=Lift; tool tier=0, two players on tier 2 and above; placement=always the last two layers of every nest; notes=taped at tier 2 and above
 Layer count by tier: Birthday=6; Christmas=9; Wedding=12; The Package=16
 Tick placement: random depth in the middle third.
 Panels: paper layer is a 4x4 grid per face (6 faces, 96 panels) at tier 1, 6x6 at tier 3 and above. Tape panels sit on seams and must be cut before the two paper panels beside them can tear.
+TAPE OVERLAY RULES: a Paper layer is taped with chance by depth band: outer third=40%; middle third=60%; inner third=80%. A taped paper layer tapes 25% to 50% of its seams, chosen from the seed. Each tape strip is one panel: action=Cut; tool tier=1 (scissors); seconds per strip=0.8 with scissors, 0.6 with box cutter, 0.3 with chainsaw. A strip blocks the two paper panels it spans until it is cut. BoxLid layers are taped always at tier 2 and above, never at tier 1; the lid cannot lift until its tape is cut. No other layer type takes tape.
 
 ==================================================================
 TABLE 5. TOOLS (tool; tier; actions; seconds per panel; notes)
@@ -230,16 +231,15 @@ Studs rule: no stud or bevel-dot pattern on the world or the present; dots only 
 ==================================================================
 DIAGRAM C. PRESENT CROSS-SECTION (layers in order, outside to inside)
 ==================================================================
-Ring 1 (outermost): Paper; action=tear with hands; look=candy red stripes at launch
-Ring 2: Tape over seams; action=cut with scissors; look=clear with a gloss
-Ring 3: Ribbon and bow; action=snip; look=satin gold
-Ring 4: Bubble wrap; action=pop; look=milky translucent dots
-Ring 5: Foil; action=tear; look=mirror silver, crinkled
-Ring 6: Chains; action=cut with box cutter; look=dark iron
-Ring 7: Ice; action=chip; look=pale blue, glowing inside
-Ring 8 (innermost): Cardboard box; action=lift the lid; look=kraft brown
+Ring 1 (outermost): Paper (tape strips over its seams); action=tear with hands; look=candy red stripes at launch
+Ring 2: Ribbon and bow; action=snip; look=satin gold
+Ring 3: Bubble wrap; action=pop; look=milky translucent dots
+Ring 4: Foil; action=tear; look=mirror silver, crinkled
+Ring 5: Chains; action=cut with box cutter; look=dark iron
+Ring 6: Ice; action=chip; look=pale blue, glowing inside
+Ring 7 (innermost): Cardboard box (tape seals the lid at tier 2 and above); action=lift the lid; look=kraft brown
 Center: Core gift, lit by its rarity color, visible only during the 3 s reveal.
-Launch ships rings 1, 2, 3 and 8. December adds 4 to 7, one per week. The Tick is any ring in the middle third, same look as its neighbors, ticking.
+Launch ships rings 1, 2 and 7 plus the tape overlay. December adds 3 to 6, one per week. The Tick is any ring in the middle third, same look as its neighbors, ticking.
 (Drawing note: the diagram shows a Christmas-tier present with one of each type for illustration; a real nest draws types from TABLE 4 and can repeat types.)
 
 ==================================================================
@@ -266,12 +266,13 @@ Zones:
   House and porch (top-left): demo present half torn, paper on the ground; tier decoration swaps here
   Shelf row (left, below the house): one shelf per player; Naughty 10+ glows red; steal prompt on approach
   Krampus walk: a path along the front of the shelf row, left to right; every 20 minutes, 60 seconds
-  Rewards booth (top, left of center): daily, group; codes later
+  Rewards booth (top, left of center): daily, group
   Classes booth (top center): 25-gem spin; odds board
   Shop booth (top, right of center): gems, passes, paper packs
   Update board (top-right corner): "??? arrives in" countdown and poster
   Start a Run (right side, tall zone): four pads stacked vertically: solo pad, solo pad, party pad (4), party pad (4)
   Spawn (center-bottom): faces the pads
+Zone count is 7: house and porch, shelf row, rewards, classes, shop, update board, Start a Run. Spawn and the Krampus walk are markers, not zones.
 
 Run room: single interior 60 by 60 studs, warm wood floor, one wide window with daylight, present centered and scaled to tier (Birthday 16 studs across, The Package 28). No props except the shop counter in one corner and the lid props the team creates. Night drops window light and adds a cold rim light from the Tick box.
 
@@ -316,7 +317,7 @@ Place file size; limit=25 MB; checked by=CI check
 ==================================================================
 TABLE 16. CONTENT LIST (content; at launch Nov 25; by Dec 31; notes)
 ==================================================================
-Layer types; launch=4 (paper, tape, ribbon, box lid); Dec 31=8 (adds bubble wrap, foil, chains, ice); notes=one new type per December week
+Layer types; launch=3 (paper, ribbon, box lid) plus the tape overlay; Dec 31=7 (adds bubble wrap, foil, chains, ice); notes=one new type per December week
 Paper patterns; launch=6; Dec 31=14; notes=one 512 px tile each, each owns a color family
 Tools; launch=3 (hands, scissors, box cutter); Dec 31=4 (adds chainsaw); notes=chainsaw lands with chains
 Side-gift models; launch=32 (8 families x 4); Dec 31=64; notes=chunky toy style, dots allowed

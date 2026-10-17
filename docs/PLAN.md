@@ -112,7 +112,8 @@ renames it back.
 | Term | Meaning | Code name |
 |---|---|---|
 | Present | The whole nested object a run is about. One per run. | `Present` |
-| Layer | One wrapping shell: paper, tape, ribbon, bubble wrap, foil, chains, ice, or a box. Layers nest from outside in. | `Layer`, `LayerType` |
+| Layer | One wrapping shell: paper, ribbon, bubble wrap, foil, chains, ice, or a box. Layers nest from outside in. | `Layer`, `LayerType` |
+| Overlay | Tape strips laid over a layer's seams; each strip is its own panel with action Cut; a strip blocks the panels it spans until cut; tape is the only overlay. | `Overlay`, `TapeStrip` |
 | Panel | One tearable piece of a layer. A paper layer is a grid of panels; a box lid is one panel. | `Panel` |
 | Depth | How many layers deep the team is. Depth 0 is the outside. | `depth` |
 | Nest | The ordered list of layers in this present, generated at run start from a seed. | `Nest`, `seed` |
@@ -224,13 +225,19 @@ meshes; it never decides what a layer is.
 | Layer type | Action | Tool tier needed | Outer third | Middle third | Inner third |
 |---|---|---|---|---|---|
 | Paper | Tear | 0 (hands) | 50 | 30 | 20 |
-| Tape (over paper seams) | Cut | 1 (scissors) | 30 | 30 | 20 |
 | Ribbon and bow | Snip | 1 | 20 | 20 | 10 |
 | Bubble wrap | Pop | 0 | 0 | 20 | 20 |
 | Foil | Tear | 0 | 0 | 15 | 15 |
 | Chains | Cut | 2 (box cutter) | 0 | 5 | 20 |
 | Ice | Chip | 2 | 0 | 5 | 15 |
-| Box lid | Lift | 0, two players on tier 2+ | Always last two layers | | |
+| Box lid | Lift | 0, two players on tier 2+ | Always last two layers; taped at tier 2 and above | | |
+
+**Tape overlay rules.** A Paper layer is taped with chance by depth band: outer third 40%, middle
+third 60%, inner third 80%. A taped paper layer tapes 25% to 50% of its seams, chosen from the seed.
+Each tape strip is one panel: action Cut, tool tier 1 (scissors), 0.8 s per strip with scissors, 0.6 s
+with box cutter, 0.3 s with chainsaw. A strip blocks the two paper panels it spans until it is cut.
+BoxLid layers are taped always at tier 2 and above, never at tier 1; the lid cannot lift until its
+tape is cut. No other layer type takes tape.
 
 **Panels.** A paper layer is a 4×4 grid per face (6 faces, 96 panels) at tier 1, 6×6 at tier 3+.
 Tape panels sit on seams and must be cut before the two paper panels beside them can tear; this is
@@ -459,12 +466,12 @@ that true.
 | Present (layers) | Patterned, glossy, high contrast between layer types | SmoothPlastic + pattern tile, Glass, Fabric, Cardboard, Foil, Metal, Ice, Neon | One 512 px pattern tile per paper, one dot tile for bubble wrap |
 | Loot (side-gifts, core gifts) | Chunky toy, bevel-dot relief, flat bright colors | SmoothPlastic + dot relief tile | One dot relief tile shared by all loot |
 
-**Present cross-section** — 8 layer types, outside-in. Read from the outside in. A player meets ring 1
-first and ring 8 last; the core is only ever seen in the 3-second reveal animation.
+**Present cross-section** — seven layer types plus the tape overlay, outside-in. Read from the outside in. A player meets ring 1
+first and ring 7 last; the core is only ever seen in the 3-second reveal animation.
 
 Ring by ring: [PLAN-TABLES.txt](PLAN-TABLES.txt), **Diagram C**. Source image: [art/layers.png](art/layers.png).
 
-Launch ships rings 1, 2, 3 and 8. December adds 4 to 7, one per week. The Tick is any ring in the
+Launch ships rings 1, 2 and 7 plus the tape overlay. December adds 3 to 6, one per week. The Tick is any ring in the
 middle third, same look, ticking.
 
 **Layer palette.** Each layer owns a color family so a thumbnail of any depth is identifiable. Hex
@@ -576,7 +583,7 @@ gift family per week so each update is a new thumbnail. Counts are the build tar
 
 | Content | Launch (Nov 25) | By Dec 31 | Notes |
 |---|---|---|---|
-| Layer types | 4: paper, tape, ribbon, box lid | 8: + bubble wrap, foil, chains, ice | One new type per December week |
+| Layer types | 3: paper, ribbon, box lid, plus the tape overlay | 7: + bubble wrap, foil, chains, ice | One new type per December week |
 | Paper patterns | 6 | 14 | One 512 px tile each; each owns a color family |
 | Tools | 3: hands, scissors, box cutter | 4: + chainsaw | Chainsaw lands with chains |
 | Side-gift models | 32 (8 families × 4) | 64 | Chunky toy style, dots allowed |
@@ -768,8 +775,14 @@ connected to this chat can still read them for quick lookups, which is why the p
 
 ## Decisions log and open questions
 
-The live decisions log is [`DECISIONS.md`](DECISIONS.md). Runs append there, newest first, and a
-decision that touches an invariant waits there for a human before it is built.
+Runs append to docs/DECISIONS.md, newest first. The table below is the seed copy from plan v1 and is not updated after export. A decision that touches an invariant waits in DECISIONS.md for a human before it is built.
+
+| Date | Decision | Reason | By |
+|---|---|---|---|
+| 2026-10-17 | Art: smooth low-poly world, patterned present, dotted toy loot. No dots on world or present. | Dots are the Grow a Garden brand mark and fight paper patterns | Plan v1 |
+| 2026-10-17 | Docs move to an Obsidian vault in the repo; Studio READMEs become pointers | Images and Claude Code both need files | Plan v1 |
+| 2026-10-17 | Launch target Nov 25, generic name, Krampus not Grinch | Seasonal window, invariants 1 and 2 | Plan v1 |
+| 2026-10-17 | One present per run, no side content | Depth from layers and tiers, scope control | Plan v1 |
 
 **Open questions** (answer before phase 1 starts):
 
