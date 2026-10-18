@@ -180,7 +180,7 @@ Secret; color=Prismatic (animated hue sweep); odds Birthday=0.1%; odds Package=1
 Christmas odds (shift taken entirely from Common): Common=46%; Uncommon=28%; Rare=18%; Epic=7%; Mythic=0.9%; Secret=0.1%
 Wedding odds (shift taken entirely from Common): Common=37%; Uncommon=28%; Rare=22%; Epic=10%; Mythic=2.9%; Secret=0.1%
 Rules: 1 to 3 side-gifts per cleared layer; 8 side-gift families at launch (plush, vehicle, figure, candy, trinket, tech, odd, seasonal); first-ever run seeded to Uncommon or better; shelf starts at 12 slots, 24 with gems, 36 with gamepass; gems per completed run = 3, or 5 with no downs, or 8 with the Tick survived; duplicate core gift of Rare or above = 20% mutation roll (frosted, giant, glitched, golden), each mutation is its own index entry.
-Depth rule: side-gifts in the outer and middle thirds roll the current tier's table; the inner third rolls the next tier's table; The Package's inner third rolls its core table with Secret at 2%.
+Depth rule: side-gifts in the outer and middle thirds roll the current tier's table; the inner third rolls the next tier's table; The Package's inner third rolls its core table with Secret at 2% (the extra 1% taken from Common, as N3).
 Shelf and Index: duplicates stack on their existing shelf slot up to x9; selling a duplicate gives gems; a steal takes one from the stack. One Index for side-gifts and core gifts, core gifts starred. Completing an Index family gives a wrapping-paper pattern for the shelf plus a badge.
 
 ==================================================================

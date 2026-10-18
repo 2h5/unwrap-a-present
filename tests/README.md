@@ -11,7 +11,7 @@ glue (remotes, parts, sounds) in a thin wrapper around the pure module.
 Required automated tests (PLAN.md › Testing and telemetry):
 
 - [x] Nest generation never repeats a type twice in a row and always ends in two lids ([Present/Nest.spec.luau](Present/Nest.spec.luau))
-- [ ] Rarity tables sum to 100 per tier
+- [x] Rarity tables sum to 100 per tier ([Loot/Rarity.spec.luau](Loot/Rarity.spec.luau))
 - [x] Panel bitfield round-trips ([Tear/PanelGrid.spec.luau](Tear/PanelGrid.spec.luau))
 - [ ] Naughty decay math
 - [ ] Profile schema migration from version n-1

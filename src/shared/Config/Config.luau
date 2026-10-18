@@ -169,6 +169,7 @@ Config.Loot = {
 	packageInnerSecretPercent = 2, -- The Package inner third rolls its core table with Secret at 2%
 	mutationMinRarity = "Rare",
 	families = { "plush", "vehicle", "figure", "candy", "trinket", "tech", "odd", "seasonal" },
+	launchMutations = { "Giant", "Golden" }, -- Content list: frosted and glitched come in updates
 }
 
 Config.Shelf = {

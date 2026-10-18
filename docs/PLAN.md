@@ -712,7 +712,7 @@ One paper layer on one cube, no textures, no loot.
 - [x] Automated tests for Nest rules
 
 ### Phase 2: Loot, bank, data
-- [ ] Rarity tables per tier, summing to 100, server rolls only
+- [x] Rarity tables per tier, summing to 100, server rolls only
 - [ ] Side-gift spawn, fly-to-bag, shared RunBag
 - [ ] Core lid reveal animation and core roll, first-run seed to Uncommon or better
 - [ ] Bank screen, shelf with 12 slots, index, duplicate mutation roll

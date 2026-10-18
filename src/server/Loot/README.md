@@ -10,7 +10,9 @@ Must never: Roll on the client or re-roll on request.
 
 ## Public API
 
-_None yet._ List each public function here as it lands: signature, one line of what it does.
+- [Rarity.luau](Rarity.luau) (pure, tested in `tests/Loot`): `sideOdds(config, tier, band)`,
+  `rollSide(rng, config, tier, band, lucky, Rng)`, `rollCore(rng, config, tier, firstRun, Rng)` (no luck
+  parameter: invariant 6), `rollMutation(rng, config, rarity, duplicate, Rng)`, `sum`, `rank`.
 
 ## Invariants and rules
 
@@ -18,6 +20,8 @@ _None yet._ List each public function here as it lands: signature, one line of w
 - Must never: Roll on the client or re-roll on request.
 - Odds per tier come straight from `Config.RarityOdds` (all four tiers filled in; tier shifts came from
   Common, N3). There is no shift rule to apply at runtime.
+- The Package's inner third: its own table with Secret at 2%, the extra 1% taken from Common (as N3).
+- Rolls happen on the server from a server-seeded Rng, once per gift; nothing re-rolls on request.
 
 ## How to add a new one
 

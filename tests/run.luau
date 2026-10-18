@@ -13,6 +13,7 @@ local SPECS = {
 	{ name = "Tear/Layer", run = require("./Tear/Layer.spec") },
 	{ name = "Debris/DebrisPool", run = require("./Debris/DebrisPool.spec") },
 	{ name = "Present/Nest", run = require("./Present/Nest.spec") },
+	{ name = "Loot/Rarity", run = require("./Loot/Rarity.spec") },
 }
 
 local passed, failed = 0, 0
