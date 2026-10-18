@@ -12,9 +12,10 @@ local Config = {}
 Config.Tiers = {
 	order = { "Birthday", "Christmas", "Wedding", "ThePackage" },
 	Birthday = { layers = 6, nightSeconds = 90, presentStuds = 16 },
-	Christmas = { layers = 9, nightSeconds = 110 },
-	Wedding = { layers = 12, nightSeconds = 130 },
+	Christmas = { layers = 9, nightSeconds = 110, presentStuds = 20 },
+	Wedding = { layers = 12, nightSeconds = 130, presentStuds = 24 },
 	ThePackage = { layers = 16, nightSeconds = 150, presentStuds = 28 },
+	coreBoxStuds = 6, -- the last layer; shells between depth 0 and the core shrink evenly (N30)
 	-- Prestige (PLAN-TABLES.txt TABLE 9). Tier numbers: Birthday 1, Christmas 2, Wedding 3, The Package 4.
 	completedRunsToPrestige = { Birthday = 3, Christmas = 6, Wedding = 10 },
 	vaultReclaimsPerRun = 3,
@@ -23,7 +24,8 @@ Config.Tiers = {
 }
 
 -- Layer table: action, tool grade needed, weight per depth band (outer, middle, inner third).
--- A type can repeat but never twice in a row. The last two layers are always BoxLid.
+-- A type can repeat but never twice in a row. Depth 0 is always Paper (N26). The last two layers are
+-- always BoxLid, and at least one more BoxLid sits in the middle third (N27).
 Config.LayerTable = {
 	Paper = { action = "Tear", grade = 0, weights = { 50, 30, 20 } },
 	Ribbon = { action = "Snip", grade = 1, weights = { 20, 20, 10 } },
@@ -31,11 +33,12 @@ Config.LayerTable = {
 	Foil = { action = "Tear", grade = 0, weights = { 0, 15, 15 } },
 	Chains = { action = "Cut", grade = 2, weights = { 0, 5, 20 } },
 	Ice = { action = "Chip", grade = 2, weights = { 0, 5, 15 } },
-	BoxLid = { action = "Lift", grade = 0, twoPlayerFromTier = 2 }, -- prestige tier
+	BoxLid = { action = "Lift", grade = 0, weights = { 0, 15, 20 }, twoPlayerFromTier = 2 }, -- prestige tier
 }
 
 -- Tape overlay (PLAN-TABLES.txt Table 4, TAPE OVERLAY RULES). Tape is never its own layer.
--- Each strip is one panel that blocks the two panels it spans until cut.
+-- A seam is a full grid line across a face (n-1 across, n-1 down). Each strip is one panel; it runs its
+-- full line and blocks every panel it touches until cut (N28). Depth 0 is never taped (N26).
 Config.TapeOverlay = {
 	action = "Cut",
 	grade = 1,
@@ -49,10 +52,19 @@ Config.TapeOverlay = {
 -- Launch ships these (Content list) plus the tape overlay; post-launch updates add the rest, one per update.
 Config.LaunchLayerTypes = { "Paper", "Ribbon", "BoxLid" }
 
+-- Panels per face = clamp(floor(layer studs / panelStuds), minPerFace, maxPerFace), N30.
 Config.Panels = {
-	gridPerFaceLowTier = 4, -- 4x4 per face, 6 faces = 96 panels, tiers 1-2
-	gridPerFaceHighTier = 6, -- 6x6 at tiers 3-4
-	highTierFrom = 3,
+	panelStuds = 4, -- a panel is about 4 studs, a thumb-sized target
+	minPerFace = 3,
+	maxPerFace = 6,
+}
+
+-- Ribbon: two bands crossing around the layer beneath plus a bow; one segment per face a band
+-- crosses. 8 segments + 1 bow = 9 panels, all Snip (N29). No shell of its own.
+Config.Ribbon = {
+	bands = 2,
+	facesPerBand = 4,
+	bows = 1,
 }
 
 -- Phase 0 greybox only (DECISIONS.md, Phase 0 greybox panels). Replaced by real layer meshes later.
@@ -70,7 +82,7 @@ Config.TickBlockingChance = 0.4
 -- Tools: grade (0 hands to 3 chainsaw), per-panel seconds, and actions with optional per-action override seconds.
 Config.Tools = {
 	Hands = { grade = 0, seconds = 1.2, actions = { Tear = 1.2, Pop = 1.2, Lift = 1.2 } },
-	Scissors = { grade = 1, seconds = 0.8, actions = { Cut = 0.8, Snip = 0.8, Tear = 1.0 }, pickupDepth = 1 },
+	Scissors = { grade = 1, seconds = 0.8, actions = { Cut = 0.8, Snip = 0.8, Tear = 1.0 }, pickupDepth = 1 }, -- spawns as depth 1 is revealed
 	BoxCutter = { grade = 2, seconds = 0.6, actions = { Cut = 0.6, Chip = 0.6, Tear = 0.6 } },
 	Chainsaw = { grade = 3, seconds = 0.3, actions = "All", areaPanels = 2 }, -- tears a 2x2
 }

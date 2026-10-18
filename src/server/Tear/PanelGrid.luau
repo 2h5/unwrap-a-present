@@ -15,9 +15,9 @@ export type LayerDefinition = {
 }
 
 export type PanelsConfig = {
-	gridPerFaceLowTier: number,
-	gridPerFaceHighTier: number,
-	highTierFrom: number,
+	panelStuds: number,
+	minPerFace: number,
+	maxPerFace: number,
 }
 
 export type Grid = {
@@ -45,16 +45,14 @@ local PanelGrid = {}
 
 PanelGrid.faceCount = #FACES
 
-function PanelGrid.gridPerFace(tier: number, panels: PanelsConfig): number
-	if tier >= panels.highTierFrom then
-		return panels.gridPerFaceHighTier
-	end
-	return panels.gridPerFaceLowTier
+-- Panels per face from the layer's size, so a panel is always about `panelStuds` across (N30).
+function PanelGrid.gridPerFace(layerStuds: number, panels: PanelsConfig): number
+	return math.clamp(layerStuds // panels.panelStuds, panels.minPerFace, panels.maxPerFace)
 end
 
-function PanelGrid.fromLayer(layer: LayerDefinition, tier: number, panels: PanelsConfig): Grid
+function PanelGrid.fromLayer(layer: LayerDefinition, layerStuds: number, panels: PanelsConfig): Grid
 	assert(GRID_LAYER_TYPES[layer.layerType], `PanelGrid: {layer.layerType} is not a panel grid layer`)
-	local perFace = PanelGrid.gridPerFace(tier, panels)
+	local perFace = PanelGrid.gridPerFace(layerStuds, panels)
 	local count = #FACES * perFace * perFace
 	return {
 		layerType = layer.layerType,

@@ -223,9 +223,15 @@ one action from exactly one tool class. That one rule drives the whole game.
 
 **Present generation.** At run start the server rolls a seed and builds the Nest: tier sets the layer
 count (Birthday 6, Christmas 9, Wedding 12, The Package 16), the layer table sets which types can
-appear at which depth, and the Tick is placed at a random depth in the middle third. The last two
-layers are always a box lid over the core box. The client receives the Nest as data and builds the
-meshes; it never decides what a layer is.
+appear at which depth, and the Tick is placed at a random depth in the middle third. Depth 0 is always
+Paper and never taped. At least one box lid sits in the middle third (lifted lids are the props the
+team hides behind during the Night, and a blocking Tick needs a lid layer). The last two layers are
+always a box lid over the core box. The client receives the Nest as data and builds the meshes; it
+never decides what a layer is.
+
+**Present size.** Depth 0 is the tier's present size (Birthday 16 studs, Christmas 20, Wedding 24, The
+Package 28) and the core box is 6 studs; the layers between shrink evenly. A ribbon layer has no shell
+of its own: it wraps the layer beneath it.
 
 **Layer table.** Weights are per depth band; a type can repeat but never twice in a row.
 
@@ -237,27 +243,38 @@ meshes; it never decides what a layer is.
 | Foil | Tear | 0 | 0 | 15 | 15 |
 | Chains | Cut | 2 (box cutter) | 0 | 5 | 20 |
 | Ice | Chip | 2 | 0 | 5 | 15 |
-| Box lid | Lift | 0, two players on tier 2+ | Always last two layers; taped at tier 2 and above | | |
+| Box lid | Lift | 0, two players on tier 2+ | 0 | 15 | 20 |
+
+Box lid: the last two layers are always box lids, and at least one more sits in the middle third.
+Taped at tier 2 and above.
+
+**Ribbon layer.** Two bands crossing around the layer beneath, plus a bow. Each band has one segment per
+face it crosses (4), so a ribbon layer is 8 segments and 1 bow: 9 panels, all Snip, tool grade 1. The
+layer beneath is visible but cannot be torn until the ribbon is cleared. Satin gold (Art bible A).
 
 **Tape overlay rules.** A Paper layer is taped with chance by depth band: outer third 40%, middle
-third 60%, inner third 80%. A taped paper layer tapes 25% to 50% of its seams, chosen from the seed.
-Each tape strip is one panel: action Cut, tool grade 1 (scissors), 0.8 s per strip with scissors, 0.6 s
-with box cutter, 0.3 s with chainsaw. A strip blocks the two paper panels it spans until it is cut.
-BoxLid layers are taped always at tier 2 and above, never at tier 1; the lid cannot lift until its
-tape is cut. No other layer type takes tape.
+third 60%, inner third 80%; depth 0 is never taped. A seam is a full grid line across a face (at 4×4,
+3 across and 3 down: 6 per face, 36 per layer). A taped paper layer tapes 25% to 50% of its seams,
+chosen from the seed. Each tape strip is one panel: action Cut, tool grade 1 (scissors), 0.8 s per
+strip with scissors, 0.6 s with box cutter, 0.3 s with chainsaw. A strip runs its full line and blocks
+every paper panel it touches (8 at 4×4); a panel cannot be started until every strip touching it is
+cut. BoxLid layers are taped always at tier 2 and above, never at tier 1; the lid cannot lift until
+its tape is cut. No other layer type takes tape.
 
-**Panels.** A paper layer is a 4×4 grid per face (6 faces, 96 panels) at tiers 1–2, 6×6 at tiers 3–4.
-Tape panels sit on seams and must be cut before the two paper panels beside them can tear; this is
-the ordering puzzle. Panel state is a bitfield on the server; the client renders from it.
+**Panels.** Panels per face = clamp(floor(layer size in studs ÷ 4), 3, 6), so a panel is always about
+4 studs, a thumb-sized target (a 16-stud paper layer is 4×4 per face, 96 panels). Tape strips sit on
+seams and must be cut before the panels they touch can tear; this is the ordering puzzle. Panel state
+is a bitfield on the server; the client renders from it.
 
 **Tools.** Hands → Scissors → Box cutter → Chainsaw. Each tool has a grade, an action set, a per-panel
 time, and a hold-to-use input. Tools are bought with cash in the run room shop (prices in Mechanics D)
-and found as glowing pickups in the room at a fixed depth so a fresh party is never stuck.
+and found as glowing pickups in the room at a fixed depth so a fresh party is never stuck. The
+scissors pickup spawns beside the present the moment depth 0 clears, as depth 1 is revealed.
 
 | Tool | Grade | Actions | Seconds per panel | Notes |
 |---|---|---|---|---|
 | Hands | 0 | Tear, Pop, Lift | 1.2 | Always equipped as fallback |
-| Scissors | 1 | Cut, Snip, Tear at 1.0 | 0.8 | First pickup, depth 1 |
+| Scissors | 1 | Cut, Snip, Tear at 1.0 | 0.8 | First pickup, spawns when depth 0 clears |
 | Box cutter | 2 | Cut, Chip, Tear at 0.6 | 0.6 | Shop only |
 | Chainsaw | 3 | Everything at 0.3, tears a 2×2 of panels | 0.3 | Shop, prestige tier 2+, loud |
 

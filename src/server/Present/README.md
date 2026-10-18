@@ -21,9 +21,11 @@ Must never: Be called by the client.
 - Must never: Be called by the client.
 - The featured present modifier is chosen by the UTC calendar date, so every server shows the same
   one (N12). UTC midnight is 7–8 pm Eastern.
-- Nest: tier sets the count; each layer is picked by its band weight from the build's layer types
-  (`Config.LaunchLayerTypes`, in that order); a type never follows itself; the last two are BoxLid and
-  are exempt from the no-repeat rule. Same seed and tier always give the same Nest.
+- Nest: tier sets the count; depth 0 is Paper (N26); other layers are picked by band weight from the
+  build's layer types (`Config.LaunchLayerTypes`, in order); a type never follows itself; one BoxLid is
+  guaranteed in the middle third (N27); the last two are BoxLid. Same seed and tier, same Nest.
+- `Nest.sizes(nest, presentStuds, coreBoxStuds)`: shells shrink evenly; a ribbon takes the size of the
+  layer it wraps (N29, N30).
 
 ## How to add a new one
 

@@ -8,7 +8,7 @@ local Config = require("../../src/shared/Config/Config")
 local SECONDS = Config.Tools.Hands.actions.Tear
 
 local function newSession()
-	local grid = PanelGrid.fromLayer({ layerType = "Paper", depth = 0 }, 1, Config.Panels)
+	local grid = PanelGrid.fromLayer({ layerType = "Paper", depth = 0 }, Config.Tiers.Birthday.presentStuds, Config.Panels)
 	return TearSession.new(grid), grid
 end
 

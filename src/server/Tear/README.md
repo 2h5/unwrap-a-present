@@ -12,7 +12,7 @@ Must never: Trust a client position or timer.
 
 - `Tear.init()` — Phase 0: builds one greybox Paper layer (depth 0, tier 1) as `Workspace.Present`.
 - `Tear.getGrid(depth): Grid?` — the panel grid for a layer.
-- [PanelGrid.luau](PanelGrid.luau) (pure, tested in `tests/Tear`): `fromLayer(layer, tier, Config.Panels)`,
+- [PanelGrid.luau](PanelGrid.luau) (pure, tested in `tests/Tear`): `fromLayer(layer, layerStuds, Config.Panels)`,
   `gridPerFace`, `panelId`, `locate`, `isTorn`, `setTorn`, `encode`/`decode` (bitfield as a string),
   `placement(grid, id, size)` (panel centre, normal, width on a cube centred at the origin).
 - [TearSession.luau](TearSession.luau) (pure, tested): `new(grid)`, `begin(session, holder, panelId, seconds, now)`

@@ -165,7 +165,7 @@ function Tear.init()
 	-- Set one present-width back from the origin so it does not cover the default SpawnLocation.
 	local tier = 1
 	local size = Config.Tiers.Birthday.presentStuds
-	local grid = PanelGrid.fromLayer({ layerType = "Paper", depth = 0 }, tier, Config.Panels)
+	local grid = PanelGrid.fromLayer({ layerType = "Paper", depth = 0 }, size, Config.Panels)
 	sessions[grid.depth] = TearSession.new(grid)
 
 	local present = Instance.new("Model")

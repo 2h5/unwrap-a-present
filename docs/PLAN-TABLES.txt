@@ -143,23 +143,24 @@ Note: the Tick is the only branch. A party that leaves a non-blocking Tick seale
 ==================================================================
 TABLE 4. LAYER TABLE (Mechanics A). Weights per depth band; a type can repeat but never twice in a row.
 ==================================================================
-Paper; action=Tear; tool grade needed=0 (hands); weight outer third=50; middle third=30; inner third=20
-Ribbon and bow; action=Snip; tool grade=1; outer=20; middle=20; inner=10
+Paper; action=Tear; tool grade needed=0 (hands); weight outer third=50; middle third=30; inner third=20; depth 0 is always Paper, never taped
+Ribbon and bow; action=Snip; tool grade=1; outer=20; middle=20; inner=10; shape=two bands crossing around the layer beneath plus a bow: 8 segments (one per face each band crosses) + 1 bow = 9 panels; the layer beneath is visible but cannot be torn until the ribbon is cleared; no shell of its own
 Bubble wrap; action=Pop; tool grade=0; outer=0; middle=20; inner=20
 Foil; action=Tear; tool grade=0; outer=0; middle=15; inner=15
 Chains; action=Cut; tool grade=2 (box cutter); outer=0; middle=5; inner=20
 Ice; action=Chip; tool grade=2; outer=0; middle=5; inner=15
-Box lid; action=Lift; tool grade=0, two players on tier 2 and above; placement=always the last two layers of every nest; notes=taped at tier 2 and above
+Box lid; action=Lift; tool grade=0, two players on tier 2 and above; outer=0; middle=15; inner=20; placement=always the last two layers of every nest, and at least one more in the middle third; notes=taped at tier 2 and above
 Layer count by tier: Birthday=6; Christmas=9; Wedding=12; The Package=16
+Present size by tier (depth 0, studs across): Birthday=16; Christmas=20; Wedding=24; The Package=28; core box=6; shells between shrink evenly (ribbon wraps the layer beneath and takes no step)
 Tick placement: a side box, side-gift sized, same paper as its layer, in a layer at a random depth in the middle third. blocking=false in 60% of nests (optional, beside the path); blocking=true in 40% (fused across that layer's lid seam; the lid cannot lift until the Tick is opened). Opening it starts the Night and drops the run's best side-gifts.
-Panels: paper layer is a 4x4 grid per face (6 faces, 96 panels) at tiers 1 and 2, 6x6 at tiers 3 and 4. Tape panels sit on seams and must be cut before the two paper panels beside them can tear.
-TAPE OVERLAY RULES: a Paper layer is taped with chance by depth band: outer third=40%; middle third=60%; inner third=80%. A taped paper layer tapes 25% to 50% of its seams, chosen from the seed. Each tape strip is one panel: action=Cut; tool grade=1 (scissors); seconds per strip=0.8 with scissors, 0.6 with box cutter, 0.3 with chainsaw. A strip blocks the two paper panels it spans until it is cut. BoxLid layers are taped always at tier 2 and above, never at tier 1; the lid cannot lift until its tape is cut. No other layer type takes tape.
+Panels: panels per face = clamp(floor(layer studs / 4), 3, 6), so a panel is about 4 studs (16-stud layer = 4x4 per face, 96 panels). Tape strips sit on seams and must be cut before the panels they touch can tear.
+TAPE OVERLAY RULES: a Paper layer is taped with chance by depth band: outer third=40%; middle third=60%; inner third=80%; depth 0 never. A seam is a full grid line across a face (n-1 across and n-1 down: 6 per face and 36 per layer at 4x4). A taped paper layer tapes 25% to 50% of its seams, chosen from the seed (9 to 18 strips at 4x4). Each tape strip is one panel: action=Cut; tool grade=1 (scissors); seconds per strip=0.8 with scissors, 0.6 with box cutter, 0.3 with chainsaw. A strip runs its full line and blocks every paper panel it touches (8 at 4x4); a panel cannot be started until every strip touching it is cut. BoxLid layers are taped always at tier 2 and above, never at tier 1; the lid cannot lift until its tape is cut. No other layer type takes tape.
 
 ==================================================================
 TABLE 5. TOOLS (tool; grade; actions; seconds per panel; notes)
 ==================================================================
 Hands; grade=0; actions=Tear, Pop, Lift; seconds per panel=1.2; notes=always equipped as fallback
-Scissors; grade=1; actions=Cut, Snip, Tear at 1.0 s; seconds per panel=0.8; notes=first pickup, at depth 1
+Scissors; grade=1; actions=Cut, Snip, Tear at 1.0 s; seconds per panel=0.8; notes=first pickup, spawns beside the present the moment depth 0 clears
 Box cutter; grade=2; actions=Cut, Chip, Tear at 0.6 s; seconds per panel=0.6; notes=shop only
 Chainsaw; grade=3; actions=everything at 0.3 s, tears a 2x2 of panels; seconds per panel=0.3; notes=shop, prestige tier 2 and above, loud
 
@@ -294,7 +295,7 @@ Zones:
   Spawn (center-bottom): faces the pads
 Zone count is 7: house and porch, shelf row, rewards, classes, shop, update board, Start a Run. Spawn and the Krampus walk are markers, not zones.
 
-Run room: single interior 60 by 60 studs, warm wood floor, one wide window with daylight, present centered and scaled to tier (Birthday 16 studs across, The Package 28). No props except the shop counter in one corner and the lid props the team creates. Night drops window light and adds a cold rim light from the Tick box.
+Run room: single interior 60 by 60 studs, warm wood floor, one wide window with daylight, present centered and scaled to tier (Birthday 16 studs across, Christmas 20, Wedding 24, The Package 28). No props except the shop counter in one corner and the lid props the team creates. Night drops window light and adds a cold rim light from the Tick box.
 
 ==================================================================
 TABLE 13. HUD (element; where; shows)

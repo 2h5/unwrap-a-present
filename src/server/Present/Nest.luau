@@ -1,9 +1,10 @@
 --[=[
 	Nest (pure logic, server)
-	Owns: building the Nest (ordered layers, outside in) from a seed, a tier and the layer table.
-	Rules (PLAN.md › Mechanics A; PLAN-TABLES.txt Table 4, Table 9): tier sets the layer count; each
-	layer type is picked by its weight in the depth band (outer, middle, inner third); a type never
-	follows itself; the last two layers are always BoxLid (the box lid over the core box).
+	Owns: building the Nest (ordered layers, outside in) from a seed, a tier and the layer table, and
+	each layer's size in studs.
+	Rules (PLAN.md › Mechanics A; PLAN-TABLES.txt Table 4, Table 9): tier sets the layer count; depth 0
+	is Paper; each other layer is picked by its band weight; a type never follows itself; at least one
+	BoxLid sits in the middle third; the last two layers are BoxLid (never preceded by a third lid).
 	Must never: call game:GetService or read a clock. The caller passes the seed and an Rng.
 	Read first: src/server/Present/README.md
 ]=]
@@ -21,11 +22,14 @@ export type NestConfig = {
 -- Rng is passed in, not required, so this module needs no path into ReplicatedStorage.
 export type RngApi = {
 	new: (seed: number) -> any,
+	int: (rng: any, lo: number, hi: number) -> number,
 	weighted: (rng: any, entries: { { value: string, weight: number } }) -> string?,
 }
 
 local LID = "BoxLid"
+local FIRST = "Paper"
 local LIDS_AT_END = 2
+local RIBBON = "Ribbon"
 
 local Nest = {}
 
@@ -34,33 +38,79 @@ function Nest.band(depth: number, layerCount: number): number
 	return math.clamp(depth * 3 // layerCount + 1, 1, 3)
 end
 
+-- Middle-third depths that can hold the guaranteed lid without touching the final pair.
+local function lidCandidates(count: number): { number }
+	local out = {}
+	for depth = 1, count - LIDS_AT_END - 2 do
+		if Nest.band(depth, count) == 2 then
+			table.insert(out, depth)
+		end
+	end
+	return out
+end
+
 function Nest.generate(seed: number, tier: string, config: NestConfig, Rng: RngApi): Nest
 	local tierInfo = config.tiers[tier]
 	assert(tierInfo and tierInfo.layers, `Nest: unknown tier {tier}`)
 	local count = tierInfo.layers
-	assert(count > LIDS_AT_END, `Nest: tier {tier} needs more than {LIDS_AT_END} layers`)
+	local candidates = lidCandidates(count)
+	assert(#candidates > 0, `Nest: tier {tier} has no room for a middle-third lid`)
+	assert(table.find(config.layerTypes, FIRST) and table.find(config.layerTypes, LID), "Nest: needs Paper and BoxLid")
 
 	local rng = Rng.new(seed)
-	local layers: { Layer } = {}
-	local previous: string? = nil
-	for depth = 0, count - LIDS_AT_END - 1 do
-		local band = Nest.band(depth, count)
-		local entries = {}
-		for _, layerType in config.layerTypes do
-			local rule = config.layerTable[layerType]
-			if layerType ~= LID and layerType ~= previous and rule and rule.weights then
-				table.insert(entries, { value = layerType, weight = rule.weights[band] })
+	local middleLid = candidates[Rng.int(rng, 1, #candidates)]
+	local lastPicked = count - LIDS_AT_END - 1 -- depth just before the final lids
+
+	local layers: { Layer } = { { layerType = FIRST, depth = 0 } }
+	local previous = FIRST
+	for depth = 1, lastPicked do
+		local picked: string?
+		if depth == middleLid then
+			picked = LID
+		else
+			local band = Nest.band(depth, count)
+			local noLid = depth + 1 == middleLid or depth == lastPicked
+			local entries = {}
+			for _, layerType in config.layerTypes do
+				local rule = config.layerTable[layerType]
+				local allowed = layerType ~= previous and not (noLid and layerType == LID)
+				if allowed and rule and rule.weights then
+					table.insert(entries, { value = layerType, weight = rule.weights[band] })
+				end
 			end
+			picked = Rng.weighted(rng, entries)
 		end
-		local picked = Rng.weighted(rng, entries)
-		assert(picked, `Nest: no layer type can follow {previous} in band {band}`)
-		table.insert(layers, { layerType = picked, depth = depth })
-		previous = picked
+		assert(picked, `Nest: no layer type can follow {previous} at depth {depth}`)
+		table.insert(layers, { layerType = picked :: string, depth = depth })
+		previous = picked :: string
 	end
 	for depth = count - LIDS_AT_END, count - 1 do
 		table.insert(layers, { layerType = LID, depth = depth })
 	end
 	return { seed = seed, tier = tier, layers = layers }
+end
+
+-- Size in studs of every layer, by depth. Shells shrink evenly from `outerStuds` (depth 0) to
+-- `coreStuds` (the last layer); a Ribbon has no shell and takes the size of the layer it wraps.
+function Nest.sizes(nest: Nest, outerStuds: number, coreStuds: number): { [number]: number }
+	local shells = {}
+	for _, layer in nest.layers do
+		if layer.layerType ~= RIBBON then
+			table.insert(shells, layer.depth)
+		end
+	end
+	local sizes = {}
+	local step = if #shells > 1 then (outerStuds - coreStuds) / (#shells - 1) else 0
+	for i, depth in shells do
+		sizes[depth] = outerStuds - (i - 1) * step
+	end
+	for i = #nest.layers, 1, -1 do
+		local layer = nest.layers[i]
+		if layer.layerType == RIBBON then
+			sizes[layer.depth] = sizes[layer.depth + 1]
+		end
+	end
+	return sizes
 end
 
 return Nest

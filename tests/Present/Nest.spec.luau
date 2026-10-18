@@ -58,14 +58,61 @@ return function(test, expectEqual)
 				local n = #nest.layers
 				expectEqual(nest.layers[n].layerType, "BoxLid", `{tier}/{seed} last`)
 				expectEqual(nest.layers[n - 1].layerType, "BoxLid", `{tier}/{seed} second to last`)
-				for i = 1, n - 2 do
-					assert(nest.layers[i].layerType ~= "BoxLid", `{tier}/{seed}: lid before the end at {i}`)
-					if i > 1 then
-						assert(nest.layers[i].layerType ~= nest.layers[i - 1].layerType, `{tier}/{seed}: repeat at {i}`)
-					end
+				assert(nest.layers[n - 2].layerType ~= "BoxLid", `{tier}/{seed}: three lids at the end`)
+				for i = 2, n - 2 do
+					assert(nest.layers[i].layerType ~= nest.layers[i - 1].layerType, `{tier}/{seed}: repeat at {i}`)
 				end
 			end)
 		end
+	end)
+
+	test("depth 0 is always Paper", function()
+		eachNest(ALL_TYPES, function(nest, tier, seed)
+			expectEqual(nest.layers[1].layerType, "Paper", `{tier}/{seed} depth 0`)
+		end)
+	end)
+
+	test("at least one BoxLid sits in the middle third", function()
+		for _, types in { Config.LaunchLayerTypes, ALL_TYPES } do
+			eachNest(types, function(nest, tier, seed)
+				local n = #nest.layers
+				local found = false
+				for i = 1, n - 2 do
+					local layer = nest.layers[i]
+					if layer.layerType == "BoxLid" and Nest.band(layer.depth, n) == 2 then
+						found = true
+					end
+				end
+				assert(found, `{tier}/{seed}: no middle-third lid`)
+			end)
+		end
+	end)
+
+	test("sizes: depth 0 is the present size, the core is 6, shells shrink evenly, ribbon wraps", function()
+		eachNest(Config.LaunchLayerTypes, function(nest, tier, seed)
+			local outer = Config.Tiers[tier].presentStuds
+			local sizes = Nest.sizes(nest, outer, Config.Tiers.coreBoxStuds)
+			local n = #nest.layers
+			expectEqual(sizes[0], outer, `{tier}/{seed} outer`)
+			expectEqual(sizes[n - 1], Config.Tiers.coreBoxStuds, `{tier}/{seed} core`)
+			local last, step = nil, nil
+			for _, layer in nest.layers do
+				local size = sizes[layer.depth]
+				if layer.layerType == "Ribbon" then
+					expectEqual(size, sizes[layer.depth + 1], `{tier}/{seed} ribbon wraps`)
+				else
+					if last then
+						local s = last - size
+						assert(s > 0, `{tier}/{seed}: shell at {layer.depth} does not shrink`)
+						if step then
+							assert(math.abs(s - step) < 1e-9, `{tier}/{seed}: uneven step at {layer.depth}`)
+						end
+						step = s
+					end
+					last = size
+				end
+			end
+		end)
 	end)
 
 	test("only the build's layer types appear", function()
@@ -83,7 +130,7 @@ return function(test, expectEqual)
 	test("a type with weight 0 in a band never appears in that band", function()
 		eachNest(ALL_TYPES, function(nest, tier, seed)
 			local n = #nest.layers
-			for i = 1, n - 2 do
+			for i = 2, n - 2 do
 				local layer = nest.layers[i]
 				local band = Nest.band(layer.depth, n)
 				local weight = Config.LayerTable[layer.layerType].weights[band]

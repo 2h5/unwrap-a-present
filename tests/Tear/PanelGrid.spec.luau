@@ -6,36 +6,33 @@ local Config = require("../../src/shared/Config/Config")
 local PAPER = { layerType = "Paper", depth = 0 }
 
 return function(test, expectEqual)
-	test("paper layer is 4x4 per face, 96 panels, at tiers 1 and 2", function()
-		for tier = 1, 2 do
-			local grid = PanelGrid.fromLayer(PAPER, tier, Config.Panels)
-			expectEqual(grid.perFace, Config.Panels.gridPerFaceLowTier, "perFace")
-			expectEqual(grid.perFace, 4, "perFace")
-			expectEqual(grid.count, 96, "count")
-		end
+	test("a 16-stud paper layer is 4x4 per face, 96 panels", function()
+		local grid = PanelGrid.fromLayer(PAPER, Config.Tiers.Birthday.presentStuds, Config.Panels)
+		expectEqual(grid.perFace, 4, "perFace")
+		expectEqual(grid.count, 96, "count")
 	end)
 
-	test("paper layer is 6x6 per face at tiers 3 and 4", function()
-		for tier = 3, 4 do
-			local grid = PanelGrid.fromLayer(PAPER, tier, Config.Panels)
-			expectEqual(grid.perFace, Config.Panels.gridPerFaceHighTier, "perFace")
-			expectEqual(grid.count, PanelGrid.faceCount * 6 * 6, "count")
+	test("panels per face follow the layer size, clamped 3..6 (about 4 studs a panel)", function()
+		for _, case in { { 6, 3 }, { 9, 3 }, { 12, 3 }, { 16, 4 }, { 20, 5 }, { 23.9, 5 }, { 24, 6 }, { 28, 6 } } do
+			local grid = PanelGrid.fromLayer(PAPER, case[1], Config.Panels)
+			expectEqual(grid.perFace, case[2], `{case[1]} studs`)
+			expectEqual(grid.count, PanelGrid.faceCount * case[2] * case[2], `{case[1]} studs count`)
 		end
 	end)
 
 	test("grid keeps the layer definition", function()
-		local grid = PanelGrid.fromLayer({ layerType = "Paper", depth = 2 }, 1, Config.Panels)
+		local grid = PanelGrid.fromLayer({ layerType = "Paper", depth = 2 }, Config.Tiers.Birthday.presentStuds, Config.Panels)
 		expectEqual(grid.layerType, "Paper", "layerType")
 		expectEqual(grid.depth, 2, "depth")
 	end)
 
 	test("a layer type that is not a panel grid is refused", function()
-		local ok = pcall(PanelGrid.fromLayer, { layerType = "BoxLid", depth = 5 }, 1, Config.Panels)
+		local ok = pcall(PanelGrid.fromLayer, { layerType = "BoxLid", depth = 5 }, Config.Tiers.Birthday.presentStuds, Config.Panels)
 		expectEqual(ok, false, "fromLayer(BoxLid) succeeded")
 	end)
 
 	test("panel ids map to face, row, col and back", function()
-		local grid = PanelGrid.fromLayer(PAPER, 1, Config.Panels)
+		local grid = PanelGrid.fromLayer(PAPER, Config.Tiers.Birthday.presentStuds, Config.Panels)
 		for id = 1, grid.count do
 			local face, row, col = PanelGrid.locate(grid, id)
 			expectEqual(PanelGrid.panelId(grid, face, row, col), id, `id {id}`)
@@ -43,15 +40,15 @@ return function(test, expectEqual)
 	end)
 
 	test("every panel starts whole", function()
-		local grid = PanelGrid.fromLayer(PAPER, 1, Config.Panels)
+		local grid = PanelGrid.fromLayer(PAPER, Config.Tiers.Birthday.presentStuds, Config.Panels)
 		for id = 1, grid.count do
 			expectEqual(PanelGrid.isTorn(grid, id), false, `panel {id}`)
 		end
 	end)
 
 	test("panel bitfield round-trips", function()
-		for _, tier in { 1, 3 } do
-			local grid = PanelGrid.fromLayer(PAPER, tier, Config.Panels)
+		for _, tier in { "Birthday", "Wedding" } do
+			local grid = PanelGrid.fromLayer(PAPER, Config.Tiers[tier].presentStuds, Config.Panels)
 			for id = 1, grid.count do
 				if id % 3 == 0 or id == 1 or id == grid.count then
 					PanelGrid.setTorn(grid, id, true)
@@ -59,7 +56,7 @@ return function(test, expectEqual)
 			end
 			PanelGrid.setTorn(grid, 3, false)
 
-			local copy = PanelGrid.fromLayer(PAPER, tier, Config.Panels)
+			local copy = PanelGrid.fromLayer(PAPER, Config.Tiers[tier].presentStuds, Config.Panels)
 			PanelGrid.decode(copy, PanelGrid.encode(grid))
 			for id = 1, grid.count do
 				expectEqual(PanelGrid.isTorn(copy, id), PanelGrid.isTorn(grid, id), `tier {tier} panel {id}`)
@@ -72,7 +69,7 @@ return function(test, expectEqual)
 	test("every panel sits on the cube surface, inside its face, at a unique spot", function()
 		local size = Config.Tiers.Birthday.presentStuds
 		local half = size / 2
-		local grid = PanelGrid.fromLayer(PAPER, 1, Config.Panels)
+		local grid = PanelGrid.fromLayer(PAPER, Config.Tiers.Birthday.presentStuds, Config.Panels)
 		local seen = {}
 		for id = 1, grid.count do
 			local p = PanelGrid.placement(grid, id, size)
