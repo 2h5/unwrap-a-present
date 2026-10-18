@@ -17,6 +17,8 @@ LICENSE from github.com/MadStudioRoblox/ProfileStore and change the hash here, i
 
 In Studio without "Enable Studio Access to API Services" ProfileStore runs on a mock: profiles load
 and save in memory and are gone when the play session stops. The toggle is a human task (N34).
+With it on, Studio saves to the real store; the rejoin, handoff and blocked-load checks are logged in
+DECISIONS.md. A lock held by a dead server is stolen after ProfileStore's 40 s `SESSION_STEAL`.
 
 ## Public API
 

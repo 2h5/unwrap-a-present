@@ -718,7 +718,7 @@ One paper layer on one cube, no textures, no loot.
 - [x] Core lid reveal animation and core roll, first-run seed to Uncommon or better
 - [x] Bank screen, shelf with 12 slots, index, duplicate mutation roll
 - [x] Shelf duplicates stack to ×9; one Index with core gifts starred; inner-third side-gifts roll the next tier's table
-- [ ] ProfileStore profile with the schema in Mechanics D, session lock, rejoin test
+- [x] ProfileStore profile with the schema in Mechanics D, session lock, rejoin test
 - [ ] **Gate B playtest:** a party of 2 completes a run end to end and sees their shelf
 
 ### Phase 3: Lobby, economy
