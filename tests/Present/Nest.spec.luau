@@ -196,6 +196,27 @@ return function(test, expectEqual)
 		assert(taped > 0 and taped < paperBeyond0, `taped {taped} of {paperBeyond0} paper layers`)
 	end)
 
+	test("lid tape: every BoxLid gets one strip per side from tier 2, none at tier 1 (N36)", function()
+		local PanelGrid = require("../../src/server/Tear/PanelGrid")
+		local perFaceOf = function(studs)
+			return PanelGrid.gridPerFace(studs, Config.Panels)
+		end
+		local cfg = config(Config.LaunchLayerTypes)
+		for tierNumber, tier in Config.Tiers.order do
+			for seed = 1, 50 do
+				local nest = Nest.generate(seed, tier, cfg, Rng)
+				local sizes = Nest.sizes(nest, Config.Tiers[tier].presentStuds, Config.Tiers.coreBoxStuds)
+				Nest.tape(nest, sizes, perFaceOf, Config.TapeOverlay, PanelGrid.faceCount, PanelGrid.BOTTOM, Rng, tierNumber)
+				for _, layer in nest.layers do
+					if layer.layerType == "BoxLid" then
+						local want = if tierNumber >= Config.TapeOverlay.boxLidFromTier then Config.TapeOverlay.boxLidStrips else 0
+						expectEqual(#(layer.tapeStrips or {}), want, `{tier}/{seed} lid at {layer.depth}`)
+					end
+				end
+			end
+		end
+	end)
+
 	test("tape is the same for the same seed and does not change the layer types", function()
 		local PanelGrid = require("../../src/server/Tear/PanelGrid")
 		local perFaceOf = function(studs)

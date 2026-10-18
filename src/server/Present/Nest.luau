@@ -28,12 +28,15 @@ export type RngApi = {
 }
 
 -- A strip on a full grid line of one face: along "row" sits between rows `line` and `line + 1`,
--- along "col" between columns `line` and `line + 1`.
-export type TapeStrip = { seamIndex: number, face: number, along: string, line: number, cut: boolean }
+-- along "col" between columns `line` and `line + 1`. A box lid's strips are along "lid": strip `line` crosses
+-- the lid seam on the lid's `line`-th side; LayerModel picks the face.
+export type TapeStrip = { seamIndex: number, face: number?, along: string, line: number, cut: boolean }
 
 export type TapeConfig = {
 	paperChanceByBand: { number },
 	seamFraction: { number }, -- { min, max }
+	boxLidFromTier: number,
+	boxLidStrips: number,
 }
 
 local LID = "BoxLid"
@@ -103,7 +106,8 @@ end
 -- Lays tape on Paper layers (never depth 0): a layer is taped with its band's chance, and a taped
 -- layer tapes seamFraction of its seams, chosen from the seed. Seams are the full grid lines of the
 -- faces off the floor (`bottomFace` is skipped). Tape uses its own stream (seed + 1) so the layer
--- types a seed gives never change with tape rules. Sets layer.tapeStrips; returns the nest.
+-- types a seed gives never change with tape rules. From `tape.boxLidFromTier` every BoxLid gets
+-- `tape.boxLidStrips` strips across its seam (N36), no seed needed. Sets layer.tapeStrips; returns the nest.
 function Nest.tape(
 	nest: Nest,
 	sizes: { [number]: number },
@@ -111,11 +115,20 @@ function Nest.tape(
 	tape: TapeConfig,
 	faceCount: number,
 	bottomFace: number,
-	Rng: RngApi
+	Rng: RngApi,
+	tierNumber: number?
 ): Nest
 	local rng = Rng.new(nest.seed + 1)
 	local count = #nest.layers
+	local lidsTaped = (tierNumber or 1) >= tape.boxLidFromTier
 	for _, layer in nest.layers do
+		if layer.layerType == LID and lidsTaped then
+			local strips = {}
+			for side = 1, tape.boxLidStrips do
+				table.insert(strips, { seamIndex = side, along = "lid", line = side, cut = false })
+			end
+			layer.tapeStrips = strips
+		end
 		if layer.layerType == FIRST and layer.depth > 0 then
 			local band = Nest.band(layer.depth, count)
 			if Rng.next(rng) < tape.paperChanceByBand[band] then

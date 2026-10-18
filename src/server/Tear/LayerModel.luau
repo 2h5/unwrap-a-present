@@ -20,7 +20,7 @@ export type Item = {
 	face: number?,
 	row: number?,
 	col: number?,
-	along: string?, -- tape: "row" | "col"
+	along: string?, -- tape: "row" | "col" | "lid"
 	line: number?, -- tape
 	band: string?, -- ribbon segment: "A" (faces top, +Z, bottom, -Z) | "B" (top, +X, bottom, -X)
 }
@@ -124,11 +124,29 @@ local function ribbon(layer: any, wrappedPerFace: number, rules: Rules): Model
 	return finish(layer, wrappedPerFace, items)
 end
 
+-- The lid is always item 1. Its tape (tier 2+, N36) is one strip per side across the lid seam; the
+-- lid cannot lift until every strip is cut.
+local LID_SIDES = { 1, 2, 5, 6 } -- +X, -X, +Z, -Z
+
 local function lid(layer: any, rules: Rules): Model
 	local rule = rules.layerTable.BoxLid
-	return finish(layer, 1, {
+	local items: { Item } = {
 		{ kind = "Lid", action = rule.action, grade = rule.grade, bottom = false, blockedBy = {} },
-	})
+	}
+	for _, strip in layer.tapeStrips or {} do
+		table.insert(items, {
+			kind = "Tape",
+			action = rules.tape.action,
+			grade = rules.tape.grade,
+			bottom = false,
+			blockedBy = {},
+			face = LID_SIDES[strip.line],
+			along = "lid",
+			line = strip.line,
+		})
+		table.insert(items[1].blockedBy, #items)
+	end
+	return finish(layer, 1, items)
 end
 
 -- `perFace` is the layer's own grid for Paper, and the grid of the layer it wraps for Ribbon.

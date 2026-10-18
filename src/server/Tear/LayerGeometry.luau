@@ -4,7 +4,7 @@
 	up axis, size along the face (sizeX, sizeY) and thickness (depth). Also a box layer's walls.
 	Shapes: paper panels inset in the shell; tape on top of the paper along a full grid line; ribbon
 	bands one panel wide hugging the layer they wrap (band B sits over band A where they cross); a bow
-	on top; a lid as the box's top slab.
+	on top; a lid as the box's top slab, its tape down each side wall from the seam.
 	Must never: call game:GetService or touch an Instance. The caller turns this into CFrames.
 	Read first: src/server/Tear/README.md
 ]=]
@@ -45,6 +45,12 @@ function LayerGeometry.place(model: LayerModel.Model, id: number, size: number, 
 		local c, n, v = onFace(item.face :: number, size, du, dv, -thickness / 2)
 		return { center = c, normal = n, up = v, sizeX = w, sizeY = w, depth = thickness }
 	elseif item.kind == "Tape" then
+		if item.along == "lid" then
+			-- Down the side wall from the lid seam, a quarter of the wall long, just outside it.
+			local length = size / 4
+			local c, n, v = onFace(item.face :: number, size, 0, half - length / 2 + thickness, thickness / 2)
+			return { center = c, normal = n, up = v, sizeX = tapeStuds, sizeY = length, depth = thickness }
+		end
 		local offset = -half + (item.line :: number) * w
 		local du, dv, sx, sy
 		if item.along == "row" then

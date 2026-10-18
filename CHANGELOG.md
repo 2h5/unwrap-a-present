@@ -2,6 +2,7 @@
 
 Date · change · who. Newest first. Prune monthly.
 
+- 2026-10-17 · N31–N37 logged; cash per panel = tier number, side-gift cash and sell rates in Config, four lid tape strips from tier 2, reach = max(20, present + 4), Studio NextTier replay; 54 specs pass · Claude Code
 - 2026-10-17 · Phase 2: rarity rolls (Loot/Rarity) with side, core, Lucky, first-run and mutation rules; 52 specs pass · Claude Code
 - 2026-10-17 · Phase 1 done: layer stack from the Nest, tape strips, ribbon, box lids (two-player lift), tools and scissors pickup, run shop and cash, HUD bar and shop, Studio seed replay · Claude Code
 - 2026-10-17 · N26–N30: depth 0 paper, middle lids, full-line tape seams, ribbon as 9 panels, size-based panel grid; Nest and PanelGrid updated · Claude Code

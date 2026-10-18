@@ -26,7 +26,8 @@ Must never: Trust a client position or timer.
   `LidLift("Begin", depth, panelId)` / `("End")` for box lids. Both rate-limited.
 - Begin is refused unless: depth is the current layer, the item exists, it is not on the floor, every
   tape strip touching it is cut, the player's tools can do its action (`Tools.best`), and the panel is
-  within `Config.Tear.reachStuds` of the server's character position.
+  within max(`Config.Tear.reachMinStuds`, present studs + `reachPadStuds`) of the server's character
+  position (N37).
 - Down `TearState { depth, panelId, state, progress, seconds, u, v }` to everyone; state is
   "Holding" | "Released" | "Torn" | "Lifted". To one player: `{ state = "Refused", reason }`
   ("Needs scissors", "Cut the tape first", "Needs 2 players").
@@ -36,7 +37,8 @@ Must never: Trust a client position or timer.
 - Invariant 7: the server decides; the client only asks and animates.
 - Must never: Trust a client position or timer. Holds are timed on the server clock.
 - One holder per panel, one panel per holder; early release keeps progress. Lids take
-  `LidSession.requiredHolders` (two from tier 2, never more than the players present).
+  `LidSession.requiredHolders` (two from tier 2, never more than the players present). From tier 2 a
+  lid carries four tape strips (N36) and refuses "Cut the tape first" until all are cut.
 - A layer clears when everything off the floor is done; its floor items drop with it. Then depth
   advances (`Present` attribute `CurrentDepth`), the next layers build, and cleared parts are
   destroyed after `Config.Tear.flutterSeconds`.

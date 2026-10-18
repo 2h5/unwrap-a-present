@@ -46,6 +46,7 @@ Config.TapeOverlay = {
 	paperChanceByBand = { 0.4, 0.6, 0.8 }, -- outer, middle, inner third
 	seamFraction = { 0.25, 0.5 }, -- min, max share of a taped paper layer's seams, chosen from the seed
 	boxLidFromTier = 2, -- BoxLid always taped at tier 2+, never at tier 1; lid cannot lift until cut
+	boxLidStrips = 4, -- one per side across the lid seam (N36)
 	layerTypes = { "Paper", "BoxLid" }, -- no other layer type takes tape
 	stripStuds = 1, -- a strip's width; it runs the full line
 }
@@ -101,9 +102,11 @@ Config.HUD = {
 	buttonColor = "#F2C230", -- sun yellow
 }
 
--- Cash (PLAN-TABLES.txt TABLE 7): per panel torn, 1 at tier 1. Other tiers: not set yet.
+-- Cash (PLAN-TABLES.txt TABLE 7): per panel torn = the tier number (N35); per side-gift on pickup, paid
+-- to the player it flies to (N32). Cash left at bank is gone.
 Config.Cash = {
-	perPanel = { Birthday = 1 },
+	perPanel = { Birthday = 1, Christmas = 2, Wedding = 3, ThePackage = 4 },
+	perSideGift = { Common = 5, Uncommon = 12, Rare = 30, Epic = 75, Mythic = 200, Secret = 0 },
 }
 
 -- The Tick is a side box in one middle-third layer; 40% of nests fuse it across the lid seam.
@@ -127,7 +130,8 @@ Config.Tear = {
 	pitchVariance = 0.1,
 	chainsawShakeSeconds = 0.1,
 	maxRequestsPerSecond = 8, -- server-enforced
-	reachStuds = 20, -- server-enforced: max distance from the character to a panel it tears
+	reachMinStuds = 20, -- server-enforced reach = max(reachMinStuds, present studs + reachPadStuds) (N37)
+	reachPadStuds = 4,
 }
 
 -- Sounds (PLAN-TABLES.txt TABLE 14, SFX launch set). Three variants each; pitch randomized by Config.Tear.pitchVariance.
@@ -170,6 +174,7 @@ Config.Loot = {
 	mutationMinRarity = "Rare",
 	families = { "plush", "vehicle", "figure", "candy", "trinket", "tech", "odd", "seasonal" },
 	launchMutations = { "Giant", "Golden" }, -- Content list: frosted and glitched come in updates
+	sellGems = { Common = 1, Uncommon = 2, Rare = 4, Epic = 8, Mythic = 20 }, -- N33; Secret cannot be sold
 }
 
 Config.Shelf = {

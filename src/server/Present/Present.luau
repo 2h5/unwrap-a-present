@@ -49,16 +49,21 @@ end
 
 -- Starts a run: new Nest, tape, sizes, cash reset, and the present built by Tear.
 function Present.startRun(tier: string, seed: number?)
-	-- Studio only: set Workspace attribute NextSeed to replay a seed on the next run.
+	-- Studio only: Workspace attributes NextSeed and NextTier replay a seed or tier on the next run.
 	local replay = if RunService:IsStudio() then workspace:GetAttribute("NextSeed") else nil
 	if typeof(replay) == "number" then
 		workspace:SetAttribute("NextSeed", nil)
 		seed = replay
 	end
+	local nextTier = if RunService:IsStudio() then workspace:GetAttribute("NextTier") else nil
+	if typeof(nextTier) == "string" and Config.Tiers[nextTier] then
+		workspace:SetAttribute("NextTier", nil)
+		tier = nextTier
+	end
 	local nest = Present.newNest(tier, seed)
 	local sizes = Nest.sizes(nest, Config.Tiers[tier].presentStuds, Config.Tiers.coreBoxStuds)
-	Nest.tape(nest, sizes, perFaceOf, Config.TapeOverlay, PanelGrid.faceCount, PanelGrid.BOTTOM, Rng)
 	local tierNumber = table.find(Config.Tiers.order, tier) or 1
+	Nest.tape(nest, sizes, perFaceOf, Config.TapeOverlay, PanelGrid.faceCount, PanelGrid.BOTTOM, Rng, tierNumber)
 	Economy.resetRun(tierNumber)
 	Tear.loadNest(nest, sizes, tierNumber, presentBase(tier))
 

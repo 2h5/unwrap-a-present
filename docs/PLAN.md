@@ -258,8 +258,8 @@ third 60%, inner third 80%; depth 0 is never taped. A seam is a full grid line a
 chosen from the seed. Each tape strip is one panel: action Cut, tool grade 1 (scissors), 0.8 s per
 strip with scissors, 0.6 s with box cutter, 0.3 s with chainsaw. A strip runs its full line and blocks
 every paper panel it touches (8 at 4×4); a panel cannot be started until every strip touching it is
-cut. BoxLid layers are taped always at tier 2 and above, never at tier 1; the lid cannot lift until
-its tape is cut. No other layer type takes tape.
+cut. BoxLid layers are taped always at tier 2 and above, never at tier 1: four strips, one per side
+across the lid seam, same action, grade and times as paper tape; the lid cannot lift until its tape is cut. No other layer type takes tape.
 
 **Panels.** Panels per face = clamp(floor(layer size in studs ÷ 4), 3, 6), so a panel is always about
 4 studs, a thumb-sized target (a 16-stud paper layer is 4×4 per face, 96 panels). Tape strips sit on
@@ -310,7 +310,8 @@ more than doubles a band.
 
 **Side-gifts.** When a layer's last panel goes, the server rolls 1–3 side-gifts from that tier's table
 and spawns them as physical items that fly into the nearest player's run bag after 1 second. The bag
-is shared by the party. Side-gifts are small toy objects (see Art bible A) in 8 families at launch:
+is shared by the party. A side-gift's rarity is its own roll, shown as its glow; the item is random
+from a random family. Its cash (PLAN-TABLES.txt, TABLE 7) is paid on pickup to the player it flies to. Side-gifts are small toy objects (see Art bible A) in 8 families at launch:
 plush, vehicle, figure, candy, trinket, tech, odd, seasonal. Going deeper pays more: layers in the
 inner third roll the next tier's table instead of the current one (exact rule in PLAN-TABLES.txt,
 TABLE 6).
@@ -331,17 +332,17 @@ screen. A first-ever run is seeded to land Uncommon or better.
 
 **Index.** Every gift type the player has ever found, with a count and the depth it was first seen.
 The index never loses entries, even when the shelf item is stolen. Side-gifts and core gifts share one
-Index; core gifts are starred. Completing a family unlocks a wrapping-paper pattern for the shelf and a
+Index; core gifts are starred. A side-gift's entry keeps the best rarity it has been found at. Completing a family unlocks a wrapping-paper pattern for the shelf and a
 badge, which gives collectors a goal that stealing cannot touch.
 
 **Shelf.** Each player has a shelf in the lobby with 12 slots at start, upgradeable to 24 with gems
 and to 36 with a gamepass. Items occupy slots by rarity. Duplicates stack on the slot they already
 hold, up to ×9. A full shelf forces a choice at the bank screen: replace or sell. Sold items become
-gems at a flat rate per rarity (rates not set yet). Each shelf has one like button; the lobby shows a board of the
+gems at a flat rate per rarity (PLAN-TABLES.txt, TABLE 6); Secret items cannot be sold. Each shelf has one like button; the lobby shows a board of the
 most-liked shelves. No comments.
 
-**Bank.** At run end the run bag converts: side-gifts and the core gift go to shelf and index, cash is
-kept, gems are awarded (3 for a completed run, 5 with no downs, 8 with the Tick survived; a flat 1 at
+**Bank.** At run end the run bag converts: side-gifts and the core gift go to shelf and index, cash left
+over is gone, gems are awarded (3 for a completed run, 5 with no downs, 8 with the Tick survived; a flat 1 at
 any tier below your highest unlocked tier). On a wipe
 the run bag is gone and the index still records what was seen, so even a wiped run teaches the player
 what exists.
@@ -407,8 +408,8 @@ gone. Krampus never touches a player below 8, never takes Secret items, and neve
 Cash is earned and spent inside a run, gems carry between runs, and Robux buys time and cosmetics,
 never a gift. The numbers below are starting values for phase 3 tuning; the shapes are fixed.
 
-**Cash (run currency).** Earned per panel torn (1 at tier 1, scaling with tier), per side-gift banked
-(5–200 by rarity). Spent in the run room shop. Cash resets to 0 at
+**Cash (run currency).** Earned per panel torn (equal to the tier number), per side-gift picked up
+(5–200 by rarity, paid to the player it flies to). Spent in the run room shop. Cash resets to 0 at
 run start, so every run begins with hands.
 
 | Shop item | Cost | Effect |
@@ -478,7 +479,7 @@ a cap. The game has no end. Numbers in PLAN-TABLES.txt, TABLE 9.
 - `tier`, `prestigeCount`, `gems`, `naughty`, `naughtyUpdatedAt`
 - `shelf`: array of `{giftId, rarity, mutation, slotIndex, count}` (count stacks duplicates, up to 9)
 - `vault`: array of the same shape
-- `index`: map of `giftId → {count, firstDepth, firstSeenAt}`
+- `index`: map of `giftId → {count, firstDepth, firstSeenAt, bestRarity}` (a mutation is its own entry)
 - `classes`: array of owned class ids; `activeClass`
 - `passes`: map of gamepass id → boolean, re-checked on join
 - `stats`: `runs`, `completions`, `wipes`, `ticksSurvived`, `stolen`, `stolenFrom`, `mythicsFound`, `fastestBirthdayRunSeconds`

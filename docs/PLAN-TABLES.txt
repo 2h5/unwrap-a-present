@@ -149,12 +149,12 @@ Bubble wrap; action=Pop; tool grade=0; outer=0; middle=20; inner=20
 Foil; action=Tear; tool grade=0; outer=0; middle=15; inner=15
 Chains; action=Cut; tool grade=2 (box cutter); outer=0; middle=5; inner=20
 Ice; action=Chip; tool grade=2; outer=0; middle=5; inner=15
-Box lid; action=Lift; tool grade=0, two players on tier 2 and above; outer=0; middle=15; inner=20; placement=always the last two layers of every nest, and at least one more in the middle third; notes=taped at tier 2 and above
+Box lid; action=Lift; tool grade=0, two players on tier 2 and above; outer=0; middle=15; inner=20; placement=always the last two layers of every nest, and at least one more in the middle third; notes=taped at tier 2 and above: 4 strips, one per side across the lid seam (N36)
 Layer count by tier: Birthday=6; Christmas=9; Wedding=12; The Package=16
 Present size by tier (depth 0, studs across): Birthday=16; Christmas=20; Wedding=24; The Package=28; core box=6; shells between shrink evenly (ribbon wraps the layer beneath and takes no step)
 Tick placement: a side box, side-gift sized, same paper as its layer, in a layer at a random depth in the middle third. blocking=false in 60% of nests (optional, beside the path); blocking=true in 40% (fused across that layer's lid seam; the lid cannot lift until the Tick is opened). Opening it starts the Night and drops the run's best side-gifts.
 Panels: panels per face = clamp(floor(layer studs / 4), 3, 6), so a panel is about 4 studs (16-stud layer = 4x4 per face, 96 panels). Tape strips sit on seams and must be cut before the panels they touch can tear. The bottom face rests on the floor: its panels (and a ribbon's two bottom segments) are never interactive and fall away when the rest of the layer clears, so a 4x4 paper layer is 80 panels by hand and a ribbon 7 snips.
-TAPE OVERLAY RULES: a Paper layer is taped with chance by depth band: outer third=40%; middle third=60%; inner third=80%; depth 0 never. A seam is a full grid line across a face (n-1 across and n-1 down: 6 per face and 36 per layer at 4x4). A taped paper layer tapes 25% to 50% of its seams, chosen from the seed (9 to 18 strips at 4x4). Each tape strip is one panel: action=Cut; tool grade=1 (scissors); seconds per strip=0.8 with scissors, 0.6 with box cutter, 0.3 with chainsaw. A strip runs its full line and blocks every paper panel it touches (8 at 4x4); a panel cannot be started until every strip touching it is cut. Strip width=1 stud. Tape is laid only on the five faces off the floor (the bottom face is never interactive). BoxLid layers are taped always at tier 2 and above, never at tier 1; the lid cannot lift until its tape is cut. No other layer type takes tape.
+TAPE OVERLAY RULES: a Paper layer is taped with chance by depth band: outer third=40%; middle third=60%; inner third=80%; depth 0 never. A seam is a full grid line across a face (n-1 across and n-1 down: 6 per face and 36 per layer at 4x4). A taped paper layer tapes 25% to 50% of its seams, chosen from the seed (9 to 18 strips at 4x4). Each tape strip is one panel: action=Cut; tool grade=1 (scissors); seconds per strip=0.8 with scissors, 0.6 with box cutter, 0.3 with chainsaw. A strip runs its full line and blocks every paper panel it touches (8 at 4x4); a panel cannot be started until every strip touching it is cut. Strip width=1 stud. Tape is laid only on the five faces off the floor (the bottom face is never interactive). BoxLid layers are taped always at tier 2 and above, never at tier 1: 4 strips, one per side across the lid seam, same action, grade and seconds per strip as paper tape (N36); the lid cannot lift until its tape is cut. No other layer type takes tape.
 
 ==================================================================
 TABLE 5. TOOLS (tool; grade; actions; seconds per panel; notes)
@@ -165,7 +165,7 @@ Box cutter; grade=2; actions=Cut, Chip, Tear at 0.6 s; seconds per panel=0.6; no
 Chainsaw; grade=3; actions=everything at 0.3 s, tears a 2x2 of panels; seconds per panel=0.3; notes=shop, prestige tier 2 and above, loud
 
 Tear feel spec: press-and-hold grows a tear line for the panel time, then release; early release keeps the rip line (progress never lost). On release: torn-edge mesh swap, small impulse away from the present, 2 s physics flutter, return to pool. Max 40 live debris per client, oldest recycled first. Audio: crinkle on hold start, rip on release, soft thud on landing; 3 variants each, pitch randomized within 10%. No camera shake on single panels; one 0.1 s shake on a chainsaw 2x2. One light haptic tap on release (mobile). Other players see the growing rip line.
-Tear numbers set in the build (DECISIONS.md): reach=20 studs from the character, server-enforced; one holder per panel; the rip line keeps the first touch point. Debris: impulse=8 studs/s away from the present; spin=up to 4 rad/s per axis; gravity while fluttering=35%; after the 2 s flutter a piece settles where it lies and stays until recycled.
+Tear numbers set in the build (DECISIONS.md): reach=max(20, present studs + 4) from the character's server position, server-enforced (N37: Birthday 20, Christmas 24, Wedding 28, The Package 32; supersedes N21's 12); one holder per panel; the rip line keeps the first touch point. Debris: impulse=8 studs/s away from the present; spin=up to 4 rad/s per axis; gravity while fluttering=35%; after the 2 s flutter a piece settles where it lies and stays until recycled.
 Greybox only, Phase 0–1 (DECISIONS.md): panel thickness=0.2 studs; Phase 0 checker=#A3A2A5 and #BDBCBF; Phase 1 paper=the layer's palette color checkered with the same color 15% toward white; tool pickup=2-stud white Neon block; HUD bar=#2B1E14, shop=#B98A52, buttons=#F2C230, toast 2 s; shop counter 6 studs in from its corner of the 60-stud run room; rip line=0.15 studs, #2B1E14; torn pieces keep their panel's color until a TornPanel mesh exists; present sits one present-width behind the origin.
 
 ==================================================================
@@ -182,6 +182,8 @@ Wedding odds (shift taken entirely from Common): Common=37%; Uncommon=28%; Rare=
 Rules: 1 to 3 side-gifts per cleared layer; 8 side-gift families at launch (plush, vehicle, figure, candy, trinket, tech, odd, seasonal); first-ever run seeded to Uncommon or better; shelf starts at 12 slots, 24 with gems, 36 with gamepass; gems per completed run = 3, or 5 with no downs, or 8 with the Tick survived; duplicate core gift of Rare or above = 20% mutation roll (frosted, giant, glitched, golden), each mutation is its own index entry.
 Depth rule: side-gifts in the outer and middle thirds roll the current tier's table; the inner third rolls the next tier's table; The Package's inner third rolls its core table with Secret at 2% (the extra 1% taken from Common, as N3).
 Shelf and Index: duplicates stack on their existing shelf slot up to x9; selling a duplicate gives gems; a steal takes one from the stack. One Index for side-gifts and core gifts, core gifts starred. Completing an Index family gives a wrapping-paper pattern for the shelf plus a badge.
+Side-gifts (N31): rarity is its own roll, shown as the glow; the item is random from a random family; the Index keeps the best rarity seen per side-gift. Core gifts are tied to their band. Catalogue: 32 side-gifts (8 families x 4) and 18 core gifts (3 per band), generic objects only, in src/shared/Gifts/Gifts.luau.
+Sell rates in gems (N33): Common=1; Uncommon=2; Rare=4; Epic=8; Mythic=20; Secret=cannot be sold.
 
 ==================================================================
 TABLE 7. RUN ROOM SHOP (item; cost in cash; effect). Cash resets to 0 at run start.
@@ -193,8 +195,8 @@ Grip tape; cost=60; effect=panel time -15% for this run
 Flashlight; cost=40; effect=Night lighting 30% to 60% for the holder
 Spare lid; cost=80; effect=one extra shutter prop
 Lucky bow; cost=150; effect=next layer rolls one extra side-gift
-Cash sources: per panel torn (1 at tier 1, scaling with tier); per side-gift banked (5 to 200 by rarity).
-Gem sources: 3 to 8 per completed run at your highest unlocked tier, a flat 1 per completed run at any lower tier; 35 from the daily reward every 6 hours; login streak +10 per consecutive day, capped at day 7; bring-a-friend +2 per run for every player in a party of 2 or more; 100 one-time for group join and like; 10 back for a duplicate class roll; selling shelf overflow at a flat rate per rarity (rates not set yet). Gem sinks: class spin 25; shelf slots 50 per 4 slots up to 24; permanent track (see TABLE 19); cosmetics 50 to 500.
+Cash sources: per panel torn = the tier number (N35: Birthday 1, Christmas 2, Wedding 3, The Package 4); per side-gift picked up, paid to the player it flies to (N32): Common=5; Uncommon=12; Rare=30; Epic=75; Mythic=200; Secret=0. Cash left at bank is gone.
+Gem sources: 3 to 8 per completed run at your highest unlocked tier, a flat 1 per completed run at any lower tier; 35 from the daily reward every 6 hours; login streak +10 per consecutive day, capped at day 7; bring-a-friend +2 per run for every player in a party of 2 or more; 100 one-time for group join and like; 10 back for a duplicate class roll; selling shelf overflow at a flat rate per rarity (TABLE 6, N33). Gem sinks: class spin 25; shelf slots 50 per 4 slots up to 24; permanent track (see TABLE 19); cosmetics 50 to 500.
 
 ==================================================================
 TABLE 8. CLASSES (class; rarity and spin odds; passive; starts with). Spin = 25 gems. You own every class you roll and pick one before each run; a duplicate roll refunds 10 gems.
@@ -230,7 +232,7 @@ DATA SCHEMA (one profile per player, server-only):
   tier, prestigeCount, gems, naughty, naughtyUpdatedAt
   shelf: array of {giftId, rarity, mutation, slotIndex, count}; count stacks duplicates up to 9
   vault: array of the same shape
-  index: map giftId -> {count, firstDepth, firstSeenAt}
+  index: map giftId -> {count, firstDepth, firstSeenAt, bestRarity}; bestRarity is the best rarity a side-gift has been found at (N31); a mutated core gift has its own key, giftId:Mutation
   classes: array of owned class ids; activeClass
   passes: map gamepass id -> boolean, re-checked on join
   stats: runs, completions, wipes, ticksSurvived, stolen, stolenFrom, mythicsFound, fastestBirthdayRunSeconds

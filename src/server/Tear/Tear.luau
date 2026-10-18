@@ -361,7 +361,7 @@ local function validate(player: Player, depth: any, id: any): (any, BasePart?)
 	end
 	local character = player.Character
 	local root = character and character:FindFirstChild("HumanoidRootPart") :: BasePart?
-	if not root or (root.Position - part.Position).Magnitude > Config.Tear.reachStuds then
+	if not root or (root.Position - part.Position).Magnitude > run.reach then
 		return nil, nil
 	end
 	local ok, reason = LayerModel.canStart(model, id)
@@ -478,6 +478,7 @@ function Tear.loadNest(nest: any, sizes: { [number]: number }, tierNumber: numbe
 		sizes = sizes,
 		tierNumber = tierNumber,
 		base = base,
+		reach = math.max(Config.Tear.reachMinStuds, sizes[0] + Config.Tear.reachPadStuds), -- N37
 		present = present,
 		props = props,
 		models = {},

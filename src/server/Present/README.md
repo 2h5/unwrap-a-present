@@ -28,6 +28,8 @@ Must never: Be called by the client.
   guaranteed in the middle third (N27); the last two are BoxLid. Same seed and tier, same Nest.
 - `Nest.sizes(nest, presentStuds, coreBoxStuds)`: shells shrink evenly; a ribbon takes the size of the
   layer it wraps (N29, N30).
+- `Nest.tape(..., Rng, tierNumber?)`: paper tape from the seed; from tier 2 every BoxLid gets one strip
+  per side across its seam (N36).
 
 ## How to add a new one
 

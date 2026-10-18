@@ -96,6 +96,33 @@ return function(test, expectEqual)
 		expectEqual(m.items[1].action, "Lift", "action")
 	end)
 
+	test("taped lid: one strip per side, the lid waits for every strip", function()
+		local strips = {}
+		for side = 1, Config.TapeOverlay.boxLidStrips do
+			table.insert(strips, { seamIndex = side, along = "lid", line = side, cut = false })
+		end
+		local m = LayerModel.build({ layerType = "BoxLid", depth = 4, tapeStrips = strips }, 1, RULES)
+		expectEqual(m.count, 1 + Config.TapeOverlay.boxLidStrips, "count")
+		expectEqual(m.items[1].kind, "Lid", "lid is item 1")
+		local faces = {}
+		for id = 2, m.count do
+			local item = m.items[id]
+			expectEqual(item.action, Config.TapeOverlay.action, "strip action")
+			assert(item.face ~= PanelGrid.TOP and item.face ~= PanelGrid.BOTTOM, "strip on a side")
+			assert(not faces[item.face], "two strips on one side")
+			faces[item.face] = true
+			local p = LayerGeometry.place(m, id, SIZE, T, Config.TapeOverlay.stripStuds)
+			assert(p.center.y + p.sizeY / 2 > SIZE / 2, "strip reaches the seam")
+		end
+		local ok, reason = LayerModel.canStart(m, 1)
+		expectEqual(ok, false, "lid blocked")
+		expectEqual(reason, "taped", "reason")
+		for id = 2, m.count do
+			PanelGrid.setTorn(m, id, true)
+		end
+		expectEqual(LayerModel.canStart(m, 1), true, "lid free once every strip is cut")
+	end)
+
 	test("a layer clears when everything off the floor is done; the floor items then drop", function()
 		local m = LayerModel.build({ layerType = "Ribbon", depth = 1 }, PER, RULES)
 		local last

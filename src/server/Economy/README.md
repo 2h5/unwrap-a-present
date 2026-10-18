@@ -11,7 +11,7 @@ Must never: Grant a gift for Robux.
 ## Public API
 
 - `Economy.cashPerPanel(tier)`, `addCash(player, n)`, `getCash(player)` — run cash, kept as the player
-  attribute `Cash` (Phase 1: Birthday only; other tiers not set yet).
+  attribute `Cash`. Per panel = the tier number (N35).
 - `Economy.resetRun(tierNumber)` — cash to 0 and run items cleared at run start (Table 7).
 - `Economy.setupShop(roomCenter)` — the run room counter with a `ShopPrompt` ProximityPrompt.
 - Up `ShopBuy(item)`: rate-limited; refused unless the item exists, its `minTier` is met, it is not
