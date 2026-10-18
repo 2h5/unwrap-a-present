@@ -884,7 +884,7 @@ Runs append to docs/DECISIONS.md, newest first. The table below is the seed copy
 - [x] Rojo + git from day one (recommended) or Studio-only for phase 0 — **Rojo + git** (repo created 2026-10-17)
 - [x] Which test runner the repo adopts — **Jest-Lua**, pure-logic modules, fallback Lune
 - [x] Who owns art assets — **a mix**: commission the icon, then the 18 core gifts, then side-gifts; world and paper tiles in-house
-- [ ] In-app search for "unwrap" and "present" done and clear (human, in the Roblox app, before Phase 3)
+- [x] In-app search for "unwrap" and "present" done and clear (human, in the Roblox app, before Phase 3) — **done**
 - [x] Gem cost per level — **Pockets 20 +10 per level, Night Eyes 30 +15 per level**
 - [x] Runs per repeat of The Package and mutation step — **10 runs, +2% per repeat**
 - [x] Tier shifts and Lucky — **shifts come from Common; Lucky rolls side-gifts twice, keeps the better**

@@ -2,6 +2,7 @@
 
 Date · change · who. Newest first. Prune monthly.
 
+- 2026-10-17 · N8 in-app name search done (human) · Claude Code
 - 2026-10-17 · Phase 3: lobby place (lobby.project.json) to Diagram D: pads (solo, party, join anyone), booths, house and porch with demo present, shelf row drawn by the client Shelf system, vault crates, tier decoration, party tokens, teleport and rejoin (untested until the places exist); 75 specs pass · Claude Code
 - 2026-10-17 · Phase 3: HUD per Table 13 (cash, depth bars, Night timer, tool with hold ring, party, bottom-third prompt) · Claude Code
 - 2026-10-17 · Phase 3: gems, daily / group / streak rewards, class spin and pick with starting kits and perks, permanent track, shelf slots, prestige to Christmas with vault and reclaims, tier replay, gamepass and dev product wiring (ids pending), Classes / Rewards / Shop screens, profile schema v2; Gate B deferred; 71 specs pass · Claude Code
