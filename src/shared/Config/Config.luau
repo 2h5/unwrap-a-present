@@ -273,9 +273,9 @@ Config.GamepassOrder = { "DoubleCash", "BigShelf", "ToolKeeper", "Lucky" }
 
 -- Dev products (Table 10). Gems only: no product grants a gift (invariant 6). Paper packs wait for cosmetics.
 Config.DevProducts = {
-	Gems100 = { robux = 99, id = 0, gems = 100 },
-	Gems500 = { robux = 399, id = 0, gems = 500 },
-	Gems1200 = { robux = 799, id = 0, gems = 1200 },
+	Gems100 = { robux = 99, id = 3719386348, gems = 100 },
+	Gems500 = { robux = 399, id = 3719386432, gems = 500 },
+	Gems1200 = { robux = 799, id = 3719386483, gems = 1200 },
 }
 Config.DevProductOrder = { "Gems100", "Gems500", "Gems1200" }
 Config.PurchaseHistoryMax = 50 -- receipt ids kept in the profile to never grant one twice

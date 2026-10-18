@@ -34,7 +34,7 @@ Must never: Grant a gift for Robux.
 - Invariant 7: the server decides; the client only asks and animates. Requests are rate-limited and
   refused in Building, Reveal and Bank.
 - Receipts: a dev product is granted once (receipt ids kept in `purchases`) and saved at once.
-- Ids still 0 (the gem products, the group) show as "Soon" in the Shop.
+- Ids still 0 (the group) show as "Soon" in the Shop.
 - Player attribute `Lucky` (set from the pass) draws the 🍀 by the owner's name on the party panel.
 - Studio only: Workspace `DevGems` (adds gems), `DevPasses` ("DoubleCash,Lucky" pretends to own).
 
