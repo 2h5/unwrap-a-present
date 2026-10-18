@@ -318,7 +318,7 @@ badge, which gives collectors a goal that stealing cannot touch.
 **Shelf.** Each player has a shelf in the lobby with 12 slots at start, upgradeable to 24 with gems
 and to 36 with a gamepass. Items occupy slots by rarity. Duplicates stack on the slot they already
 hold, up to ×9. A full shelf forces a choice at the bank screen: replace or sell. Sold items become
-cash at a flat rate per rarity. Each shelf has one like button; the lobby shows a board of the
+gems at a flat rate per rarity (rates not set yet). Each shelf has one like button; the lobby shows a board of the
 most-liked shelves. No comments.
 
 **Bank.** At run end the run bag converts: side-gifts and the core gift go to shelf and index, cash is
@@ -389,7 +389,7 @@ Cash is earned and spent inside a run, gems carry between runs, and Robux buys t
 never a gift. The numbers below are starting values for phase 3 tuning; the shapes are fixed.
 
 **Cash (run currency).** Earned per panel torn (1 at tier 1, scaling with tier), per side-gift banked
-(5–200 by rarity), and from selling shelf overflow. Spent in the run room shop. Cash resets to 0 at
+(5–200 by rarity). Spent in the run room shop. Cash resets to 0 at
 run start, so every run begins with hands.
 
 | Shop item | Cost | Effect |

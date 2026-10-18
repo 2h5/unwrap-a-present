@@ -180,7 +180,7 @@ Christmas odds (shift taken entirely from Common): Common=46%; Uncommon=28%; Rar
 Wedding odds (shift taken entirely from Common): Common=37%; Uncommon=28%; Rare=22%; Epic=10%; Mythic=2.9%; Secret=0.1%
 Rules: 1 to 3 side-gifts per cleared layer; 8 side-gift families at launch (plush, vehicle, figure, candy, trinket, tech, odd, seasonal); first-ever run seeded to Uncommon or better; shelf starts at 12 slots, 24 with gems, 36 with gamepass; gems per completed run = 3, or 5 with no downs, or 8 with the Tick survived; duplicate core gift of Rare or above = 20% mutation roll (frosted, giant, glitched, golden), each mutation is its own index entry.
 Depth rule: side-gifts in the outer and middle thirds roll the current tier's table; the inner third rolls the next tier's table; The Package's inner third rolls its core table with Secret at 2%.
-Shelf and Index: duplicates stack on their existing shelf slot up to x9; selling a duplicate gives cash; a steal takes one from the stack. One Index for side-gifts and core gifts, core gifts starred. Completing an Index family gives a wrapping-paper pattern for the shelf plus a badge.
+Shelf and Index: duplicates stack on their existing shelf slot up to x9; selling a duplicate gives gems; a steal takes one from the stack. One Index for side-gifts and core gifts, core gifts starred. Completing an Index family gives a wrapping-paper pattern for the shelf plus a badge.
 
 ==================================================================
 TABLE 7. RUN ROOM SHOP (item; cost in cash; effect). Cash resets to 0 at run start.
@@ -192,8 +192,8 @@ Grip tape; cost=60; effect=panel time -15% for this run
 Flashlight; cost=40; effect=Night lighting 30% to 60% for the holder
 Spare lid; cost=80; effect=one extra shutter prop
 Lucky bow; cost=150; effect=next layer rolls one extra side-gift
-Cash sources: per panel torn (1 at tier 1, scaling with tier); per side-gift banked (5 to 200 by rarity); selling shelf overflow.
-Gem sources: 3 to 8 per completed run at your highest unlocked tier, a flat 1 per completed run at any lower tier; 35 from the daily reward every 6 hours; login streak +10 per consecutive day, capped at day 7; bring-a-friend +2 per run for every player in a party of 2 or more; 100 one-time for group join and like; 10 back for a duplicate class roll. Gem sinks: class spin 25; shelf slots 50 per 4 slots up to 24; permanent track (see TABLE 19); cosmetics 50 to 500.
+Cash sources: per panel torn (1 at tier 1, scaling with tier); per side-gift banked (5 to 200 by rarity).
+Gem sources: 3 to 8 per completed run at your highest unlocked tier, a flat 1 per completed run at any lower tier; 35 from the daily reward every 6 hours; login streak +10 per consecutive day, capped at day 7; bring-a-friend +2 per run for every player in a party of 2 or more; 100 one-time for group join and like; 10 back for a duplicate class roll; selling shelf overflow at a flat rate per rarity (rates not set yet). Gem sinks: class spin 25; shelf slots 50 per 4 slots up to 24; permanent track (see TABLE 19); cosmetics 50 to 500.
 
 ==================================================================
 TABLE 8. CLASSES (class; rarity and spin odds; passive; starts with). Spin = 25 gems. You own every class you roll and pick one before each run; a duplicate roll refunds 10 gems.

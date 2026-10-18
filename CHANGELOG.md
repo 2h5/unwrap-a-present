@@ -2,6 +2,7 @@
 
 Date · change · who. Newest first. Prune monthly.
 
+- 2026-10-17 · N25: selling shelf overflow pays gems (rates not set yet) · Claude Code
 - 2026-10-17 · Softer paper landing sounds (two solid clips replaced) · Claude Code
 - 2026-10-17 · Phase 0: touch verified on the iPhone XR emulator; movement controls never start a tear; release haptic; greybox panel checker · Claude Code
 - 2026-10-17 · Phase 0: tear sounds (crinkle, rip, land; 3 variants each, pitch ±10%) via Shared/Sfx · Claude Code
