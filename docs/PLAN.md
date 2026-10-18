@@ -175,7 +175,7 @@ tells Loot and Night what happened; Steal and Loot both end in Economy and Data.
 client can change a number.
 
 **Remotes** (`ReplicatedStorage/Shared/Remotes`) — Up: `TearRequest`, `LidLift`, `ShopBuy`,
-`ClassSpin`, `StealRequest`, `Revive`. Down: `RunState`, `LootEvent`, `NightState`, `ShelfState`, `TearState`.
+`ClassSpin`, `StealRequest`, `Revive`, `BankChoice`. Down: `RunState`, `LootEvent`, `NightState`, `ShelfState`, `TearState`.
 
 **Two places.** The game is a lobby place and a run place. Pads teleport the party into a private
 reserved server of the run place. The run place accepts only players whose teleport data carries a
@@ -714,10 +714,10 @@ One paper layer on one cube, no textures, no loot.
 
 ### Phase 2: Loot, bank, data
 - [x] Rarity tables per tier, summing to 100, server rolls only
-- [ ] Side-gift spawn, fly-to-bag, shared RunBag
-- [ ] Core lid reveal animation and core roll, first-run seed to Uncommon or better
-- [ ] Bank screen, shelf with 12 slots, index, duplicate mutation roll
-- [ ] Shelf duplicates stack to ×9; one Index with core gifts starred; inner-third side-gifts roll the next tier's table
+- [x] Side-gift spawn, fly-to-bag, shared RunBag
+- [x] Core lid reveal animation and core roll, first-run seed to Uncommon or better
+- [x] Bank screen, shelf with 12 slots, index, duplicate mutation roll
+- [x] Shelf duplicates stack to ×9; one Index with core gifts starred; inner-third side-gifts roll the next tier's table
 - [ ] ProfileStore profile with the schema in Mechanics D, session lock, rejoin test
 - [ ] **Gate B playtest:** a party of 2 completes a run end to end and sees their shelf
 

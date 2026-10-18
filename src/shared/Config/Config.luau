@@ -78,6 +78,11 @@ Config.Greybox = {
 	checkerLighten = 0.15, -- paper checker: the layer color and this much toward white
 	pickupStuds = 2, -- the glowing tool pickup
 	pickupColor = "#FFFFFF",
+	sideGiftStuds = 1.5, -- Art bible A: a side-gift is 1 to 2 studs
+	coreGiftStuds = 3, -- a core gift is 3 to 6 studs
+	giftPopStuds = 3, -- a side-gift rises this far while it waits to fly
+	giftLightRange = 8, -- the rarity glow (PointLight)
+	secretHueSeconds = 2, -- one full hue sweep for Secret items
 }
 
 -- Layer palette (PLAN-TABLES.txt TABLE 12). Hex strings; the client and server convert with Color3.fromHex.
@@ -97,6 +102,8 @@ Config.RunRoom = {
 -- HUD greybox (Phase 1): colors from the palette, Art bible B UI style comes in Phase 5.
 Config.HUD = {
 	toastSeconds = 2,
+	feedSeconds = 3, -- a side-gift line in the loot feed
+	tileTextMax = 22, -- shelf tiles share one text size cap
 	barColor = "#2B1E14", -- dark wood
 	shopColor = "#B98A52", -- cardboard
 	buttonColor = "#F2C230", -- sun yellow
@@ -166,7 +173,9 @@ Config.RarityOdds = {
 Config.Loot = {
 	sideGiftsPerLayer = { 1, 3 },
 	flyToBagDelay = 1,
+	flySeconds = 0.8, -- the arc to the bag (Table 14: beam 0.8 s)
 	coreRevealSeconds = 3,
+	revealBeatSeconds = 1, -- the quiet beat between the reveal and the bank screen
 	firstRunMinRarity = "Uncommon",
 	mutationChance = 0.2, -- duplicate core gift of Rare or above
 	innerThirdRollsNextTier = true, -- side-gifts in the inner third roll the next tier's table
@@ -251,6 +260,12 @@ Config.Gamepasses = {
 	ExtraToolSlot = { robux = 149 },
 	-- Side-gift rolls happen twice, keep the better rarity; never the core (invariant 6: 2p - p^2 < 2p)
 	Lucky = { robux = 399, rollTwice = true },
+}
+
+-- Data (N34): one ProfileStore profile per player, key = keyPrefix .. UserId.
+Config.Data = {
+	storeName = "PlayerData",
+	keyPrefix = "Player_",
 }
 
 -- Two places (DECISIONS.md N10, N11)

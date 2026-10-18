@@ -14,6 +14,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Config = require(ReplicatedStorage.Shared.Config.Config)
 local Remotes = require(ReplicatedStorage.Shared.Remotes.Remotes)
 local RateLimit = require(script.Parent.Parent.Tear.RateLimit)
+local RunState = require(script.Parent.Parent.Present.RunState)
 
 local Economy = {}
 
@@ -100,7 +101,7 @@ function Economy.init()
 		resetPlayer(player)
 	end
 	Remotes.get("ShopBuy").OnServerEvent:Connect(function(player, item)
-		if RateLimit.allow(limiter, player, os.clock()) then
+		if RunState.canTear() and RateLimit.allow(limiter, player, os.clock()) then
 			buy(player, item)
 		end
 	end)

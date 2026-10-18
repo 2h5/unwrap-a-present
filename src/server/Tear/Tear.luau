@@ -11,10 +11,12 @@
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 
 local Config = require(ReplicatedStorage.Shared.Config.Config)
 local Remotes = require(ReplicatedStorage.Shared.Remotes.Remotes)
 local Economy = require(script.Parent.Parent.Economy.Economy)
+local RunState = require(script.Parent.Parent.Present.RunState)
 local PanelGrid = require(script.Parent.PanelGrid)
 local LayerModel = require(script.Parent.LayerModel)
 local LayerGeometry = require(script.Parent.LayerGeometry)
@@ -434,6 +436,33 @@ local function beginLid(player: Player, depth: any, id: any)
 	end
 end
 
+-- Studio only: setting the Workspace attribute DevClear clears the current layer at once (no cash),
+-- so a whole run can be checked without tearing every panel. Never runs in a live server.
+local function devClear()
+	if not run or run.done or not RunState.canTear() then
+		return
+	end
+	local depth = run.current
+	local model = run.models[depth]
+	if model.items[1].kind == "Lid" then
+		for id = 2, model.count do
+			PanelGrid.setTorn(model :: any, id, true)
+			hide(run.parts[depth][id])
+		end
+		run.lids[depth] = run.lids[depth] or LidSession.new(1, 0)
+		liftLid(depth)
+		return
+	end
+	for id, item in model.items do
+		if not item.bottom and not PanelGrid.isTorn(model :: any, id) then
+			PanelGrid.setTorn(model :: any, id, true)
+			broadcast(depth, id, "Torn", 1, 0)
+			hide(run.parts[depth][id])
+		end
+	end
+	clearLayer(depth)
+end
+
 ---------------------------------------------------------------- public
 
 function Tear.onLayerCleared(listener: (depth: number, layerType: string) -> ())
@@ -446,6 +475,14 @@ end
 
 function Tear.getModel(depth: number): LayerModel.Model?
 	return run and run.models[depth]
+end
+
+-- What Loot needs to place gifts: the Nest, layer sizes by depth, the floor point under the present.
+function Tear.getRunInfo(): { nest: any, sizes: { [number]: number }, base: Vector3, tierNumber: number }?
+	if not run then
+		return nil
+	end
+	return { nest = run.nest, sizes = run.sizes, base = run.base, tierNumber = run.tierNumber }
 end
 
 -- Replaces the present with a fresh one built from `nest` (Present -> Tear: Nest).
@@ -498,13 +535,20 @@ end
 
 function Tear.init()
 	tearState = Remotes.get("TearState")
+	if RunService:IsStudio() then
+		workspace:GetAttributeChangedSignal("DevClear"):Connect(function()
+			if workspace:GetAttribute("DevClear") then
+				workspace:SetAttribute("DevClear", nil)
+				devClear()
+			end
+		end)
+	end
 
 	Remotes.get("TearRequest").OnServerEvent:Connect(function(player, kind, depth, panelId, u, v)
-		-- No RunState yet; validate it here first once Lobby starts runs (Phase 3).
 		if not RateLimit.allow(limiter, player, os.clock()) then
 			return
 		end
-		if kind == "Begin" then
+		if kind == "Begin" and RunState.canTear() then
 			beginTear(player, depth, panelId, u, v)
 		elseif kind == "End" then
 			endHold(player, os.clock())
@@ -515,7 +559,7 @@ function Tear.init()
 		if not RateLimit.allow(limiter, player, os.clock()) then
 			return
 		end
-		if kind == "Begin" then
+		if kind == "Begin" and RunState.canTear() then
 			beginLid(player, depth, panelId)
 		elseif kind == "End" then
 			endHold(player, os.clock())

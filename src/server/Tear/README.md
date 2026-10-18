@@ -47,6 +47,7 @@ Must never: Trust a client position or timer.
   `Tool_Scissors`. Tools and upgrades are player attributes set by Economy or the pickup.
 - Each finished item pays `Economy.cashPerPanel(tier)` to the player(s) who finished it.
 - Greybox: server Parts (DECISIONS.md); real meshes come in Phase 5.
+- Begin is ignored unless `RunState.canTear()`. Studio only: Workspace `DevClear` clears the current layer.
 
 ## How to add a new one
 

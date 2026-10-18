@@ -3,7 +3,8 @@
 	Owns: Seed, Nest generation, layer table, Tick placement.
 	Must never: Be called by the client. The seed is rolled here, on the server, never sent up.
 	Nest rules are pure and tested: Nest.luau. This file rolls the seed, lays the tape, sizes the
-	layers, hands the Nest to Tear and, until Lobby exists, starts a new Birthday run when one ends.
+	layers, hands the Nest to Tear and Loot, sets RunState, and until Lobby exists starts a new
+	Birthday run when the bank is done.
 	Read first: src/server/Present/README.md
 ]=]
 
@@ -16,6 +17,8 @@ local Nest = require(script.Parent.Nest)
 local PanelGrid = require(script.Parent.Parent.Tear.PanelGrid)
 local Tear = require(script.Parent.Parent.Tear.Tear)
 local Economy = require(script.Parent.Parent.Economy.Economy)
+local Loot = require(script.Parent.Parent.Loot.Loot)
+local RunState = require(script.Parent.RunState)
 
 local Present = {}
 
@@ -60,12 +63,15 @@ function Present.startRun(tier: string, seed: number?)
 		workspace:SetAttribute("NextTier", nil)
 		tier = nextTier
 	end
+	RunState.set("Building")
 	local nest = Present.newNest(tier, seed)
 	local sizes = Nest.sizes(nest, Config.Tiers[tier].presentStuds, Config.Tiers.coreBoxStuds)
 	local tierNumber = table.find(Config.Tiers.order, tier) or 1
 	Nest.tape(nest, sizes, perFaceOf, Config.TapeOverlay, PanelGrid.faceCount, PanelGrid.BOTTOM, Rng, tierNumber)
 	Economy.resetRun(tierNumber)
 	Tear.loadNest(nest, sizes, tierNumber, presentBase(tier))
+	Loot.startRun(nest, tierNumber)
+	RunState.set("Unwrapping")
 
 	local names = {}
 	for _, layer in nest.layers do
@@ -76,9 +82,9 @@ function Present.startRun(tier: string, seed: number?)
 end
 
 function Present.init()
-	-- Until Lobby and Data exist (Phase 3), every server runs Birthday presents back to back.
-	Tear.onRunComplete(function()
-		task.wait(Config.Loot.coreRevealSeconds)
+	-- Until Lobby exists (Phase 3), every server runs Birthday presents back to back: the next one
+	-- starts when every player has closed the bank screen.
+	Loot.onBankDone(function()
 		Present.startRun("Birthday")
 	end)
 	task.defer(function()

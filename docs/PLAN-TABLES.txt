@@ -63,7 +63,7 @@ SERVER SYSTEMS (ServerScriptService), 8:
   Steal: shelf tears, Naughty; Krampus takes
 
 REMOTES (ReplicatedStorage.Shared.Remotes):
-  Client to server: TearRequest, LidLift, ShopBuy, ClassSpin, StealRequest, Revive
+  Client to server: TearRequest, LidLift, ShopBuy, ClassSpin, StealRequest, Revive, BankChoice
   Server to client: RunState, LootEvent, NightState, ShelfState, TearState
 
 TWO PLACES (lobby place and run place):
@@ -167,6 +167,7 @@ Chainsaw; grade=3; actions=everything at 0.3 s, tears a 2x2 of panels; seconds p
 Tear feel spec: press-and-hold grows a tear line for the panel time, then release; early release keeps the rip line (progress never lost). On release: torn-edge mesh swap, small impulse away from the present, 2 s physics flutter, return to pool. Max 40 live debris per client, oldest recycled first. Audio: crinkle on hold start, rip on release, soft thud on landing; 3 variants each, pitch randomized within 10%. No camera shake on single panels; one 0.1 s shake on a chainsaw 2x2. One light haptic tap on release (mobile). Other players see the growing rip line.
 Tear numbers set in the build (DECISIONS.md): reach=max(20, present studs + 4) from the character's server position, server-enforced (N37: Birthday 20, Christmas 24, Wedding 28, The Package 32; supersedes N21's 12); one holder per panel; the rip line keeps the first touch point. Debris: impulse=8 studs/s away from the present; spin=up to 4 rad/s per axis; gravity while fluttering=35%; after the 2 s flutter a piece settles where it lies and stays until recycled.
 Greybox only, Phase 0–1 (DECISIONS.md): panel thickness=0.2 studs; Phase 0 checker=#A3A2A5 and #BDBCBF; Phase 1 paper=the layer's palette color checkered with the same color 15% toward white; tool pickup=2-stud white Neon block; HUD bar=#2B1E14, shop=#B98A52, buttons=#F2C230, toast 2 s; shop counter 6 studs in from its corner of the 60-stud run room; rip line=0.15 studs, #2B1E14; torn pieces keep their panel's color until a TornPanel mesh exists; present sits one present-width behind the origin.
+Greybox loot, Phase 2 (DECISIONS.md): side-gift=1.5-stud Neon block in its rarity color with an 8-stud PointLight, rises 3 studs for the 1 s wait, then arcs to the nearest player in 0.8 s (the Table 14 beam time); core gift=3-stud block rising out of the core box for the 3 s reveal, then a 1 s quiet beat before the bank screen; Secret sweeps the hue once every 2 s; loot feed line 3 s; shelf tile text capped at 22.
 
 ==================================================================
 TABLE 6. RARITY (Mechanics B) (rarity; color; odds at Birthday tier; odds at The Package; shelf slot size; example core gifts)

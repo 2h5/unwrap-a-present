@@ -14,6 +14,6 @@ Required automated tests (PLAN.md › Testing and telemetry):
 - [x] Rarity tables sum to 100 per tier ([Loot/Rarity.spec.luau](Loot/Rarity.spec.luau))
 - [x] Panel bitfield round-trips ([Tear/PanelGrid.spec.luau](Tear/PanelGrid.spec.luau))
 - [ ] Naughty decay math
-- [ ] Profile schema migration from version n-1
+- [x] Profile schema migration from version n-1 ([Data/Schema.spec.luau](Data/Schema.spec.luau))
 - [ ] Present parts at The Package tier ≤ 1,200 (performance budget)
 

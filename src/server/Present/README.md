@@ -11,7 +11,10 @@ Must never: Be called by the client.
 ## Public API
 
 - `Present.init()` — until Lobby and Data exist (Phase 3), runs Birthday presents back to back.
-- `Present.startRun(tier, seed?)` — Nest, `Nest.tape`, `Nest.sizes`, `Economy.resetRun`, `Tear.loadNest`.
+- `Present.startRun(tier, seed?)` — Nest, `Nest.tape`, `Nest.sizes`, `Economy.resetRun`, `Tear.loadNest`,
+  `Loot.startRun`; RunState Building → Unwrapping. Studio only: Workspace `NextSeed`, `NextTier`.
+- [RunState.luau](RunState.luau): `get()`, `set(state)` (Workspace attribute + Down `RunState`),
+  `canTear()` (Unwrapping, Night, CoreLid). Every up remote checks it (N21).
   Studio only: Workspace attribute `NextSeed` replays a seed on the next run.
 - `Present.newNest(tier, seed?): Nest` — builds the run's Nest from a server-rolled seed (or a given one).
 - `Present.getNest(): Nest?` — the current run's Nest.

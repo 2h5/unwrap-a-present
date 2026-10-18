@@ -24,8 +24,10 @@ Must never: Grant a gift for Robux.
 - Permanent track level n costs `costLevel1 + costStep * (n - 1)` gems (N1).
 - Lucky gamepass: side-gift rolls happen twice and keep the better; never the core gift (N4,
   invariant 6: 2p − p² < 2p).
-- Phase 1 shop effects: tools and grip tape work now; flashlight, spare lid and lucky bow are bought
-  and kept as attributes until Night (Phase 4) and side-gifts (Phase 2) read them.
+- Shop effects: tools and grip tape (Tear), lucky bow (Loot: the next cleared layer rolls one extra
+  side-gift, then the attribute becomes "Used"). Flashlight and spare lid wait for the Night (Phase 4).
+- Side-gift cash is paid by Loot on pickup (`Config.Cash.perSideGift`, N32). ShopBuy acts only while
+  `RunState.canTear()`.
 
 ## How to add a new one
 

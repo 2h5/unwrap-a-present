@@ -9,6 +9,8 @@ the client: no secrets, no server-only rules, no docs modules.
 - [Remotes](Remotes/Remotes.luau) — RemoteEvent names. Up = requests, Down = replicated state.
 - [Sfx](Sfx/Sfx.luau) — client-side: plays one `Config.Sounds` clip at a position, pitch randomized; preloads all.
 - [Rng](Rng/Rng.luau) — seeded xorshift32 (pure): `new(seed)`, `next`, `int`, `weighted`. Seeds are rolled on the server.
+- [Gifts](Gifts/Gifts.luau) — the launch gift catalogue (N31): 32 side-gifts in 8 families, 18 core gifts
+  by band; `byId`, `displayName(giftId, mutation?)`, `corePool(rarity, tier)`. Names only; Loot rolls.
 
 ## Rules
 

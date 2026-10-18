@@ -46,12 +46,14 @@ export type ShelfItem = {
 	rarity: Rarity,
 	mutation: Mutation?,
 	slotIndex: number,
+	count: number, -- duplicates stack up to Config.Shelf.stackMax
 }
 
 export type IndexEntry = {
 	count: number,
 	firstDepth: number,
 	firstSeenAt: number,
+	bestRarity: Rarity?, -- side-gifts: the best rarity found (N31)
 }
 
 return {}

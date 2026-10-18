@@ -17,9 +17,9 @@ per tier, so the letter grows as tiers ship (and with repeatable prestige after 
 
 | # | Tier | Secret item | Line of the letter |
 |---|---|---|---|
-| 1 | Birthday | _TBD_ | _TBD_ |
-| 2 | Christmas | _TBD_ | _TBD_ |
-| 3 | Wedding | _TBD_ | _TBD_ |
+| 1 | Birthday | Blank gift tag (draft) | _TBD_ |
+| 2 | Christmas | Wax-sealed envelope (draft) | _TBD_ |
+| 3 | Wedding | Brass key (draft) | _TBD_ |
 | 4 | The Package | _TBD_ | _TBD_ |
 
 ## Rules for writing it

@@ -3,7 +3,8 @@
 	Owns: Cash, depth, Night timer, bank, shop, classes, rewards screens.
 	Must never: Compute a value it displays. Cash, tools and depth are attributes the server sets.
 	Phase 1 greybox: a top bar (cash, depth, tools), a short toast for refusals ("Needs scissors"),
-	and the run room shop, opened from the counter's ProximityPrompt; Buy sends ShopBuy.
+	and the run room shop, opened from the counter's ProximityPrompt; Buy sends ShopBuy. Loot feed,
+	core banner, bank and shelf screens: LootScreens.luau (Phase 2).
 	Touch-first (invariant 3): every control is a large tap target; nothing needs a keyboard.
 	Read first: src/client/HUD/README.md
 ]=]
@@ -14,6 +15,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Config = require(ReplicatedStorage.Shared.Config.Config)
 local Remotes = require(ReplicatedStorage.Shared.Remotes.Remotes)
+local LootScreens = require(script.Parent.LootScreens)
 
 local HUD = {}
 
@@ -77,7 +79,7 @@ local function refresh()
 	for _, entry in SHOP do
 		local button = buttons[entry.item]
 		local info = Config.Shop[entry.item]
-		local owned = player:GetAttribute(attributeFor(entry)) == true
+		local owned = player:GetAttribute(attributeFor(entry)) ~= nil -- a used lucky bow stays bought
 		local locked = info.minTier ~= nil and tier < info.minTier
 		button.Text = if owned then `{entry.label} · owned` elseif locked then `{entry.label} · tier {info.minTier}` else `{entry.label} · {info.cost}`
 		local can = not owned and not locked and cash >= info.cost
@@ -156,6 +158,12 @@ function HUD.init()
 	toastLabel = label(gui, "Toast", UDim2.fromScale(0.4, 0.06), UDim2.fromScale(0.3, 0.1))
 	toastLabel.Visible = false
 	buildShop()
+	LootScreens.init(gui, HUD.toast)
+	Remotes.get("RunState").OnClientEvent:Connect(function(state)
+		if state ~= "Unwrapping" and state ~= "Night" then
+			shopFrame.Visible = false
+		end
+	end)
 
 	ProximityPromptService.PromptTriggered:Connect(function(prompt)
 		if prompt.Name == "ShopPrompt" then

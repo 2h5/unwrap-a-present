@@ -14,6 +14,8 @@ local SPECS = {
 	{ name = "Debris/DebrisPool", run = require("./Debris/DebrisPool.spec") },
 	{ name = "Present/Nest", run = require("./Present/Nest.spec") },
 	{ name = "Loot/Rarity", run = require("./Loot/Rarity.spec") },
+	{ name = "Loot/Bank", run = require("./Loot/Bank.spec") },
+	{ name = "Data/Schema", run = require("./Data/Schema.spec") },
 }
 
 local passed, failed = 0, 0
