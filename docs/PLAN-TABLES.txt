@@ -63,8 +63,8 @@ SERVER SYSTEMS (ServerScriptService), 8:
   Steal: shelf tears, Naughty; Krampus takes
 
 REMOTES (ReplicatedStorage.Shared.Remotes):
-  Client to server: TearRequest, LidLift, ShopBuy, ClassSpin, StealRequest, Revive, BankChoice
-  Server to client: RunState, LootEvent, NightState, ShelfState, TearState
+  Client to server: TearRequest, LidLift, ShopBuy, ClassSpin, StealRequest, Revive, BankChoice, EconomyRequest
+  Server to client: RunState, LootEvent, NightState, ShelfState, TearState, ProfileState
 
 TWO PLACES (lobby place and run place):
   Pads teleport the party into a private reserved server of the run place.
@@ -242,6 +242,7 @@ DATA SCHEMA (one profile per player, server-only):
   likesReceived; likedShelves: set of shelf owner ids this player has liked
   rejoin: {accessCode, expiresAt}; written at teleport, valid 120 s (the only teleport data kept in the profile)
   dailyClaimedAt, groupClaimed
+  v2 (schemaVersion 2): tierCompletions (tier number -> completed runs at that tier), shelfSlots (12, +4 per 50 gems to 24), vaultReclaimsLeft (3 after each completed run), purchases (dev product receipt ids, last 50)
   Run state (RunBag, panel bitfields, Nest, Night timer) lives in server memory only, never in the profile.
 
 ==================================================================
@@ -389,7 +390,7 @@ Events to log, server-side: join, first_tear, layer_cleared (depth, type, second
 TABLE 19. KEEPING PLAYERS PLAYING (feature; numbers; when)
 ==================================================================
 Permanent track (gems, never resets); Pockets=+10 starting cash per level, 10 levels; Night Eyes=+5% Night lighting per level, cap 30%; cost=Pockets 20 gems at level 1, +10 per level (650 for all 10); Night Eyes 30 gems at level 1, +15 per level (405 for all 6); when=Phase 3. No permanent tear-speed line (invariant 5).
-Login streak; +10 gems per consecutive day, capped at day 7; when=Phase 3
+Login streak; +10 gems per consecutive day, capped at day 7 (day n of a streak pays 10 x n, so day 7 and on pay 70; a missed day starts again at day 1); when=Phase 3
 Bring-a-friend; +2 gems per run for every player in a party of 2 or more; when=Phase 3
 Featured present of the day; one modifier per UTC calendar date, the same on every server; modifiers=All Ice, Double Tick, Tape Everywhere, Giant (2x panels), Tiny (half panels), Golden Hour (Mythic odds 2x), Silent Night (Night from depth 1); when=Phase 6, first retention feature built
 Leaderboards; fastest Birthday run, most Mythics, longest streak, most repeats of The Package; when=Phase 6

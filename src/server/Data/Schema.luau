@@ -9,7 +9,7 @@
 
 local Schema = {}
 
-Schema.VERSION = 1
+Schema.VERSION = 2
 
 -- A fresh profile. ProfileStore copies it for a new player and fills missing keys on load.
 -- Optional fields are empty strings or zeros, never nil, so Reconcile can see them.
@@ -44,6 +44,11 @@ function Schema.template(): { [string]: any }
 		rejoin = { accessCode = "", expiresAt = 0 },
 		dailyClaimedAt = 0,
 		groupClaimed = false,
+		-- v2
+		tierCompletions = {}, -- tier number as a string -> completed runs at that tier (prestige, P4)
+		shelfSlots = 12, -- bought with gems up to 24; the Big Shelf pass adds the rest at runtime
+		vaultReclaimsLeft = 0, -- set to 3 by each completed run (P2)
+		purchases = {}, -- dev product receipt ids already granted, newest last
 	}
 end
 
@@ -63,6 +68,13 @@ Schema.migrations = {
 	-- 0 -> 1: profiles from before versioning. Keep everything they have, fill the rest.
 	function(data)
 		Schema.reconcile(data, Schema.template())
+	end,
+	-- 1 -> 2: per-tier run counts start from the completions so far (every v1 run was Birthday).
+	function(data)
+		Schema.reconcile(data, Schema.template())
+		if next(data.tierCompletions) == nil and data.stats.completions > 0 then
+			data.tierCompletions["1"] = data.stats.completions
+		end
 	end,
 }
 

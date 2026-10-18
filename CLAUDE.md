@@ -33,7 +33,7 @@ the plan does not describe, check Art bible B budgets, play one full run on a ph
 3. `docs/DECISIONS.md` — anything **Proposed** waiting on a human.
 4. The `README.md` inside the system folder you are touching (`src/server/<System>/`, etc.).
 
-Current phase: **Gate B playtest** (Phase 2 criteria all ticked), then Phase 3 (Phases 0–1 done; build order: PLAN-TABLES.txt Diagram E). No fixed dates.
+Current phase: **Phase 3 — Lobby, economy** (Phases 0–2 done; Gate B deferred, see DECISIONS.md; build order: PLAN-TABLES.txt Diagram E). No fixed dates.
 
 ## Layout
 

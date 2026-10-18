@@ -175,7 +175,7 @@ tells Loot and Night what happened; Steal and Loot both end in Economy and Data.
 client can change a number.
 
 **Remotes** (`ReplicatedStorage/Shared/Remotes`) — Up: `TearRequest`, `LidLift`, `ShopBuy`,
-`ClassSpin`, `StealRequest`, `Revive`, `BankChoice`. Down: `RunState`, `LootEvent`, `NightState`, `ShelfState`, `TearState`.
+`ClassSpin`, `StealRequest`, `Revive`, `BankChoice`, `EconomyRequest`. Down: `RunState`, `LootEvent`, `NightState`, `ShelfState`, `TearState`, `ProfileState`.
 
 **Two places.** The game is a lobby place and a run place. Pads teleport the party into a private
 reserved server of the run place. The run place accepts only players whose teleport data carries a
@@ -488,6 +488,7 @@ a cap. The game has no end. Numbers in PLAN-TABLES.txt, TABLE 9.
 - `likesReceived`, `likedShelves`
 - `rejoin`: `{accessCode, expiresAt}`, written at teleport (the only teleport data kept in the profile)
 - `dailyClaimedAt`, `groupClaimed`
+- v2: `tierCompletions` (tier → completed runs), `shelfSlots`, `vaultReclaimsLeft`, `purchases` (receipt ids)
 
 Run state (`RunBag`, panel bitfields, Nest, Night timer) lives in server memory only and is never
 written to the profile.
@@ -719,17 +720,17 @@ One paper layer on one cube, no textures, no loot.
 - [x] Bank screen, shelf with 12 slots, index, duplicate mutation roll
 - [x] Shelf duplicates stack to ×9; one Index with core gifts starred; inner-third side-gifts roll the next tier's table
 - [x] ProfileStore profile with the schema in Mechanics D, session lock, rejoin test
-- [ ] **Gate B playtest:** a party of 2 completes a run end to end and sees their shelf
+- [ ] **Gate B playtest:** a party of 2 completes a run end to end and sees their shelf (deferred to the first two-player lobby playtest, DECISIONS.md)
 
 ### Phase 3: Lobby, economy
 - [ ] Lobby built to the plan in Art bible B; pads, party of 4, teleport
-- [ ] Cash, gems, daily and group rewards, class spin with the launch odds
+- [x] Cash, gems, daily and group rewards, class spin with the launch odds (group reward waits for the group id)
 - [ ] Gamepasses and dev products wired, with the invariant 6 check in code review
 - [ ] HUD complete per the table in Art bible B
-- [ ] Prestige to Christmas tier
+- [x] Prestige to Christmas tier
 - [ ] Start pads: solo, party, join anyone
-- [ ] Owned classes with pick-before-run and duplicate refund
-- [ ] Permanent track (Pockets, Night Eyes), login streak, bring-a-friend gems
+- [x] Owned classes with pick-before-run and duplicate refund
+- [x] Permanent track (Pockets, Night Eyes), login streak, bring-a-friend gems
 - [ ] Prestige run counts per tier, vault crate with reclaims, replay any unlocked tier at reduced gems
 
 ### Phase 4: Night and Jack

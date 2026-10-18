@@ -389,6 +389,10 @@ local function beginTear(player: Player, depth: any, id: any, u: any, v: any)
 		return
 	end
 	local seconds = Tools.best(owned(player), item.action, item.grade, Config.Tools, timeScale(player))
+	if not seconds and item.kind == "Tape" and Economy.classOf(player) == "Wrapper" then
+		-- Wrapper: tape takes grade 0, so bare hands cut it at the hands time.
+		seconds = Config.Tools.Hands.seconds * timeScale(player)
+	end
 	if not seconds then
 		refuse(player, toolHint(item.grade))
 		return

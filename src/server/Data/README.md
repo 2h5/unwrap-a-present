@@ -28,6 +28,8 @@ DECISIONS.md. A lock held by a dead server is stolen after ProfileStore's 40 s `
 - `Data.onLoaded(fn(player, data))` — every profile that loads, and those already loaded.
 - `Data.beforeRelease(fn(player, data))` — on leave, before the profile is saved and released.
 - `Data.storeState()` — "Access", "NoAccess", "NoInternet" or "NotReady".
+- `Data.save(player)` — save now (after a Robux purchase).
+- Studio only: Workspace `DevMockData` = true loads every profile from ProfileStore's mock store.
 
 ## Invariants and rules
 

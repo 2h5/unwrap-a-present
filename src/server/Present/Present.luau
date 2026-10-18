@@ -82,10 +82,10 @@ function Present.startRun(tier: string, seed: number?)
 end
 
 function Present.init()
-	-- Until Lobby exists (Phase 3), every server runs Birthday presents back to back: the next one
-	-- starts when every player has closed the bank screen.
+	-- Until Lobby exists, the server runs presents back to back: the next one starts when every
+	-- player has closed the bank screen, at the host's picked tier (Economy.nextRunTier).
 	Loot.onBankDone(function()
-		Present.startRun("Birthday")
+		Present.startRun(Economy.nextRunTier())
 	end)
 	task.defer(function()
 		Economy.setupShop(presentBase("Birthday"))

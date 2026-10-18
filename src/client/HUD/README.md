@@ -16,6 +16,10 @@ Must never: Compute a value it displays.
 - [LootScreens.luau](LootScreens.luau) (Phase 2): loot feed (side-gifts, 3 s a line), core reveal banner,
   bank screen (outcomes, gems, Sell / Replace… / Done as `BankChoice`) and the Shelf button and screen
   (slots by rarity, ★ on core gifts, gems, Index count). Reads `LootEvent`, `ShelfState`, `RunState`.
+- [MetaScreens.luau](MetaScreens.luau) (Phase 3): Shop (Robux passes and gem products), Classes (spin, pick)
+  and Rewards (daily, group, streak, track, shelf slots, prestige, next tier, vault) screens from
+  `ProfileState`; taps send `EconomyRequest` / `ClassSpin`. Right-edge buttons: Shelf, Shop, Classes, Rewards.
+- [Widgets.luau](Widgets.luau): shared builders (`make`, `text`, `button`, `enable`, `list`, `screen`, `row`).
 
 ## Invariants and rules
 

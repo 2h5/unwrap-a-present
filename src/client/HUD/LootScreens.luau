@@ -14,6 +14,7 @@ local RunService = game:GetService("RunService")
 local Config = require(ReplicatedStorage.Shared.Config.Config)
 local Gifts = require(ReplicatedStorage.Shared.Gifts.Gifts)
 local Remotes = require(ReplicatedStorage.Shared.Remotes.Remotes)
+local Widgets = require(script.Parent.Widgets)
 
 local LootScreens = {}
 
@@ -34,8 +35,7 @@ local replacing: number? = nil -- pending index waiting for a shelf slot to repl
 local bankChoice: RemoteEvent
 local secretLabels: { [GuiObject]: boolean } = {}
 
-local DARK = Color3.fromHex(Config.HUD.barColor)
-local BUTTON = Color3.fromHex(Config.HUD.buttonColor)
+local DARK = Widgets.DARK
 
 local function rarityColor(rarity: string): Color3
 	local hex = Config.Rarity[rarity] and Config.Rarity[rarity].color
@@ -55,56 +55,7 @@ local function paint(object: GuiObject, rarity: string, property: string)
 	end
 end
 
-local function make(className: string, props: { [string]: any }): any
-	local object = Instance.new(className)
-	for key, value in props do
-		if key ~= "Parent" then
-			(object :: any)[key] = value
-		end
-	end
-	if object:IsA("GuiObject") and className ~= "ScrollingFrame" then
-		Instance.new("UICorner").Parent = object
-	end
-	object.Parent = props.Parent
-	return object
-end
-
-local function text(parent: Instance, value: string, size: UDim2, order: number?): TextLabel
-	return make("TextLabel", {
-		Parent = parent,
-		Size = size,
-		LayoutOrder = order or 0,
-		Text = value,
-		TextScaled = true,
-		Font = Enum.Font.GothamBold,
-		TextColor3 = Color3.new(1, 1, 1),
-		BackgroundTransparency = 1,
-	})
-end
-
-local function button(parent: Instance, value: string, size: UDim2, onTap: () -> ()): TextButton
-	local b = make("TextButton", {
-		Parent = parent,
-		Size = size,
-		Text = value,
-		TextScaled = true,
-		Font = Enum.Font.GothamBold,
-		BackgroundColor3 = BUTTON,
-	})
-	b.Activated:Connect(onTap)
-	return b
-end
-
-local function list(parent: Instance, horizontal: boolean?, wraps: boolean?)
-	return make("UIListLayout", {
-		Parent = parent,
-		FillDirection = if horizontal then Enum.FillDirection.Horizontal else Enum.FillDirection.Vertical,
-		Wraps = wraps or false,
-		Padding = UDim.new(0, 6),
-		SortOrder = Enum.SortOrder.LayoutOrder,
-		HorizontalAlignment = Enum.HorizontalAlignment.Center,
-	})
-end
+local make, text, button, list = Widgets.make, Widgets.text, Widgets.button, Widgets.list
 
 ---------------------------------------------------------------- feed and banner
 
@@ -212,7 +163,7 @@ local function buildShelf()
 		shelfFrame.Visible = not shelfFrame.Visible
 	end)
 	open.Name = "ShelfButton"
-	open.Position = UDim2.fromScale(0.88, 0.45)
+	open.Position = UDim2.fromScale(0.88, 0.27)
 end
 
 ---------------------------------------------------------------- bank screen

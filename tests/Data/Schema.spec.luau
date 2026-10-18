@@ -34,6 +34,19 @@ return function(test, expectEqual)
 		expectEqual(old.tier, 1, "missing number filled")
 	end)
 
+	test("v1 -> v2: per-tier run counts start from the completions so far", function()
+		local v1 = { schemaVersion = 1, tier = 1, gems = 40, stats = { runs = 6, completions = 4 } }
+		expectEqual(Schema.migrate(v1), true, "migrates")
+		expectEqual(v1.schemaVersion, 2, "version")
+		expectEqual(v1.tierCompletions["1"], 4, "Birthday completions carried")
+		expectEqual(v1.shelfSlots, 12, "shelf slots filled")
+		expectEqual(v1.vaultReclaimsLeft, 0, "reclaims filled")
+		expectEqual(v1.gems, 40, "gems kept")
+		local fresh = { schemaVersion = 1 }
+		Schema.migrate(fresh)
+		expectEqual(next(fresh.tierCompletions), nil, "no runs, no counts")
+	end)
+
 	test("migrating twice changes nothing", function()
 		local data = { gems = 5 }
 		Schema.migrate(data)

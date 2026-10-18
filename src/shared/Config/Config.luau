@@ -51,6 +51,9 @@ Config.TapeOverlay = {
 	stripStuds = 1, -- a strip's width; it runs the full line
 }
 
+-- Tiers this build ships (Content list): prestige stops at the last one.
+Config.LaunchTiers = { "Birthday", "Christmas" }
+
 -- Launch ships these (Content list) plus the tape overlay; post-launch updates add the rest, one per update.
 Config.LaunchLayerTypes = { "Paper", "Ribbon", "BoxLid" }
 
@@ -245,22 +248,37 @@ Config.Gems = {
 }
 
 -- Passives and starting kit: PLAN.md › Mechanics D › Classes. Players own every class they roll.
+Config.ClassOrder = { "Kid", "Wrapper", "Sprinter", "Collector", "Heir", "KrampusKid" }
 Config.Classes = {
-	Kid = { rarity = "Common", odds = 40 },
-	Wrapper = { rarity = "Uncommon", odds = 28 },
-	Sprinter = { rarity = "Rare", odds = 16 },
-	Collector = { rarity = "Epic", odds = 10 },
-	Heir = { rarity = "Legendary", odds = 4.5 },
-	KrampusKid = { rarity = "Mythic", odds = 1.5 },
+	Kid = { rarity = "Common", odds = 40, name = "Kid", cashBonus = 0.05 },
+	Wrapper = { rarity = "Uncommon", odds = 28, name = "Wrapper", startCash = 20, tapeGrade = 0 },
+	Sprinter = { rarity = "Rare", odds = 16, name = "Sprinter", walkSpeedBonus = 3, jackLungeScale = 0.75, startUpgrades = { "Flashlight" } },
+	Collector = { rarity = "Epic", odds = 10, name = "Collector", lidSideGifts = 1, gemBonus = 0.1, startCash = 50, startTools = { "Scissors" } },
+	Heir = { rarity = "Legendary", odds = 4.5, name = "Heir", coreRolls = 2, startCash = 100, startTools = { "BoxCutter" } },
+	KrampusKid = { rarity = "Mythic", odds = 1.5, name = "Krampus's Kid" }, -- Krampus immunity and steal rules: Phase 6
 }
 
+-- Gamepass and dev product ids are created on Roblox by a human; 0 = not created yet (shown, not buyable).
 Config.Gamepasses = {
-	DoubleCash = { robux = 199 },
-	BigShelf = { robux = 299 },
-	ExtraToolSlot = { robux = 149 },
+	DoubleCash = { robux = 199, id = 0, name = "2x Cash", cashScale = 2 },
+	BigShelf = { robux = 299, id = 0, name = "Big Shelf" },
+	ExtraToolSlot = { robux = 149, id = 0, name = "Extra Tool Slot" },
 	-- Side-gift rolls happen twice, keep the better rarity; never the core (invariant 6: 2p - p^2 < 2p)
-	Lucky = { robux = 399, rollTwice = true },
+	Lucky = { robux = 399, id = 0, name = "Lucky", rollTwice = true },
 }
+Config.GamepassOrder = { "DoubleCash", "BigShelf", "ExtraToolSlot", "Lucky" }
+
+-- Dev products (Table 10). Gems only: no product grants a gift (invariant 6). Paper packs wait for cosmetics.
+Config.DevProducts = {
+	Gems100 = { robux = 99, id = 0, gems = 100 },
+	Gems500 = { robux = 399, id = 0, gems = 500 },
+	Gems1200 = { robux = 799, id = 0, gems = 1200 },
+}
+Config.DevProductOrder = { "Gems100", "Gems500", "Gems1200" }
+Config.PurchaseHistoryMax = 50 -- receipt ids kept in the profile to never grant one twice
+
+-- The group for the one-time reward (Table 7); 0 = not created yet.
+Config.Group = { id = 0 }
 
 -- Data (N34): one ProfileStore profile per player, key = keyPrefix .. UserId.
 Config.Data = {
@@ -282,7 +300,7 @@ Config.Matchmaking = {
 -- Level n costs costLevel1 + costStep * (n - 1) gems.
 Config.PermanentTrack = {
 	Pockets = { startCashPerLevel = 10, maxLevel = 10, costLevel1 = 20, costStep = 10 },
-	NightEyes = { lightingPerLevel = 0.05, maxBonus = 0.3, costLevel1 = 30, costStep = 15 },
+	NightEyes = { lightingPerLevel = 0.05, maxBonus = 0.3, maxLevel = 6, costLevel1 = 30, costStep = 15 },
 }
 
 Config.RepeatPrestige = {

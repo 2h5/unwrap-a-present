@@ -16,6 +16,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Config = require(ReplicatedStorage.Shared.Config.Config)
 local Remotes = require(ReplicatedStorage.Shared.Remotes.Remotes)
 local LootScreens = require(script.Parent.LootScreens)
+local MetaScreens = require(script.Parent.MetaScreens)
 
 local HUD = {}
 
@@ -159,6 +160,7 @@ function HUD.init()
 	toastLabel.Visible = false
 	buildShop()
 	LootScreens.init(gui, HUD.toast)
+	MetaScreens.init(gui, HUD.toast)
 	Remotes.get("RunState").OnClientEvent:Connect(function(state)
 		if state ~= "Unwrapping" and state ~= "Night" then
 			shopFrame.Visible = false

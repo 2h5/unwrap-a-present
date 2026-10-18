@@ -9,6 +9,7 @@
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 
 local Config = require(ReplicatedStorage.Shared.Config.Config)
 local ProfileStore = require(script.Parent.ProfileStore.ProfileStore)
@@ -22,7 +23,10 @@ local loadedListeners: { (player: Player, data: { [string]: any }) -> () } = {}
 local releaseListeners: { (player: Player, data: { [string]: any }) -> () } = {}
 
 local function load(player: Player)
-	local profile = store:StartSessionAsync(`{Config.Data.keyPrefix}{player.UserId}`, {
+	-- Studio only: Workspace attribute DevMockData loads from ProfileStore's mock, so tests never touch
+	-- a real profile.
+	local useMock = RunService:IsStudio() and workspace:GetAttribute("DevMockData") == true
+	local profile = (if useMock then store.Mock else store):StartSessionAsync(`{Config.Data.keyPrefix}{player.UserId}`, {
 		Cancel = function()
 			return player.Parent ~= Players
 		end,
@@ -35,10 +39,11 @@ local function load(player: Player)
 		return
 	end
 	profile:AddUserId(player.UserId) -- GDPR
-	profile:Reconcile()
+	-- Migrate before reconciling, so an old profile is not stamped with the new version first.
 	if not Schema.migrate(profile.Data) then
 		warn(`Data: {player.Name}'s profile is from a newer build (v{profile.Data.schemaVersion}); not touched`)
 	end
+	profile:Reconcile()
 	profile.OnSessionEnd:Connect(function()
 		profiles[player] = nil
 		player:Kick("Your data was opened on another server. Please rejoin.")
@@ -71,6 +76,14 @@ end
 -- so a system can settle what it owes them (Loot sells unclaimed bank overflow). Must not yield.
 function Data.beforeRelease(listener: (player: Player, data: { [string]: any }) -> ())
 	table.insert(releaseListeners, listener)
+end
+
+-- Asks ProfileStore to save now (after a Robux purchase), without waiting.
+function Data.save(player: Player)
+	local profile = profiles[player]
+	if profile then
+		profile:Save()
+	end
 end
 
 -- Whether saves reach the real DataStore ("Access"), or a mock in Studio without API access.

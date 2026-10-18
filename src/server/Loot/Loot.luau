@@ -66,8 +66,18 @@ local giftsFolder: Folder
 
 ---------------------------------------------------------------- helpers
 
-local function capacity(_data: any): number
-	return Config.Shelf.startSlots -- gem and gamepass slots come with Phase 3
+local function capacity(player: Player, data: any): number
+	return Economy.shelfCapacity(player, data)
+end
+
+-- Whether anyone in the run has `class` (class perks apply to the whole team, N14).
+local function teamHas(class: string): boolean
+	for _, player in Players:GetPlayers() do
+		if Economy.classOf(player) == class then
+			return true
+		end
+	end
+	return false
 end
 
 local function sendShelf(player: Player)
@@ -80,7 +90,7 @@ local function sendShelf(player: Player)
 		found += 1
 	end
 	shelfState:FireClient(player, {
-		capacity = capacity(data),
+		capacity = capacity(player, data),
 		items = data.shelf,
 		gems = data.gems,
 		indexCount = found,
@@ -215,7 +225,7 @@ local function spawnSide(thisRun: any, item: BagItem, slot: number, of: number)
 	})
 end
 
-local function layerCleared(depth: number)
+local function layerCleared(depth: number, layerType: string)
 	if not run then
 		return
 	end
@@ -234,9 +244,16 @@ local function layerCleared(depth: number)
 			player:SetAttribute("Upgrade_LuckyBow", "Used")
 		end
 	end
+	if layerType == "BoxLid" and teamHas("Collector") then
+		count += Config.Classes.Collector.lidSideGifts
+	end
+	local lucky = false
+	for _, player in Players:GetPlayers() do
+		lucky = lucky or Economy.hasPass(player, "Lucky")
+	end
 	for slot = 1, count do
-		-- The Lucky gamepass (double roll) is wired with gamepasses in Phase 3; until then, false.
-		local rarity = Rarity.rollSide(run.rng, RARITY, run.tier, band, false, Rng)
+		-- Lucky (any player in the run owns it): roll twice, keep the better. Never the core (invariant 6).
+		local rarity = Rarity.rollSide(run.rng, RARITY, run.tier, band, lucky, Rng)
 		local gift = pickSide(run.rng)
 		task.spawn(spawnSide, run, { giftId = gift.id, rarity = rarity, kind = "Side", depth = depth }, slot, count)
 	end
@@ -312,7 +329,7 @@ local function bankRun()
 			table.insert(items, core)
 			local outcomes, pending = {}, {}
 			for _, item in items do
-				local outcome = Shelf.place(data.shelf, item, capacity(data), SHELF)
+				local outcome = Shelf.place(data.shelf, item, capacity(player, data), SHELF)
 				if outcome == "full" then
 					table.insert(pending, item)
 				end
@@ -322,8 +339,8 @@ local function bankRun()
 				table.insert(outcomes, { giftId = item.giftId, rarity = item.rarity, mutation = item.mutation, kind = item.kind, outcome = outcome })
 			end
 			-- No downs until the Night exists (Phase 4), so every completed run is a no-downs run.
-			local gems = Bank.runGems(GEMS, 0, false, data.tier > run.tierNumber)
-			data.gems += gems
+			local base = Bank.runGems(GEMS, 0, false, data.tier > run.tierNumber)
+			local gems = Economy.bankRun(player, data, base, #Players:GetPlayers(), run.tierNumber)
 			data.stats.completions += 1
 			if run.tier == "Birthday" and (data.stats.fastestBirthdayRunSeconds == 0 or seconds < data.stats.fastestBirthdayRunSeconds) then
 				data.stats.fastestBirthdayRunSeconds = seconds
@@ -368,7 +385,7 @@ local function bankChoice(player: Player, kind: any, i: any, slotIndex: any)
 		if not removed then
 			return
 		end
-		if Shelf.place(data.shelf, item, capacity(data), SHELF) == "full" then
+		if Shelf.place(data.shelf, item, capacity(player, data), SHELF) == "full" then
 			table.insert(data.shelf, removed)
 			table.sort(data.shelf, function(a, b)
 				return a.slotIndex < b.slotIndex
@@ -398,6 +415,15 @@ local function reveal()
 		end
 	end
 	local rarity = Rarity.rollCore(run.rng, RARITY, run.tier, firstRun, Rng)
+	if teamHas("Heir") then
+		-- Heir: the core rolls twice and keeps the better, for the whole team (N14). Gem-spun, not Robux.
+		for _ = 2, Config.Classes.Heir.coreRolls do
+			local again = Rarity.rollCore(run.rng, RARITY, run.tier, firstRun, Rng)
+			if Rarity.rank(RARITY, again) > Rarity.rank(RARITY, rarity) then
+				rarity = again
+			end
+		end
+	end
 	local pool = Gifts.corePool(rarity, run.tier)
 	local gift = pool[Rng.int(run.rng, 1, #pool)]
 	local depth = run.layerCount - 1
@@ -477,6 +503,7 @@ function Loot.init()
 	Data.onLoaded(function(player)
 		sendShelf(player)
 	end)
+	Economy.onProfileChanged(sendShelf)
 	Data.beforeRelease(function(player)
 		if banking[player] then
 			settle(player)
