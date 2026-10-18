@@ -10,8 +10,8 @@ Must never: Compute a value it displays.
 
 ## Public API
 
-- `HUD.init()` — top bar (cash, layer n / count, tools) from player and `Present` attributes; the run
-  room shop, opened by the counter's `ShopPrompt`, Buy sends `ShopBuy`.
+- `HUD.init()` — builds every screen; the run room shop (`RunShop`), opened by the counter's `ShopPrompt`,
+  Buy sends `ShopBuy`. `HUD.hold(progress?, seconds?)` drives the hold ring.
 - `HUD.toast(text)` — a short message for `Config.HUD.toastSeconds` (TearInput shows refusals here).
 - [LootScreens.luau](LootScreens.luau) (Phase 2): loot feed (side-gifts, 3 s a line), core reveal banner,
   bank screen (outcomes, gems, Sell / Replace… / Done as `BankChoice`) and the Shelf button and screen
@@ -19,6 +19,11 @@ Must never: Compute a value it displays.
 - [MetaScreens.luau](MetaScreens.luau) (Phase 3): Shop (Robux passes and gem products), Classes (spin, pick)
   and Rewards (daily, group, streak, track, shelf slots, prestige, next tier, vault) screens from
   `ProfileState`; taps send `EconomyRequest` / `ClassSpin`. Right-edge buttons: Shelf, Shop, Classes, Rewards.
+- [Status.luau](Status.luau) (Table 13): cash top left; depth top centre as coloured bars (Present
+  attribute `LayerColors`, set by Tear); Night timer in red over the depth line while `NightState` carries
+  `{ secondsLeft }`; tool bottom centre (player attribute `Tool`) with the hold ring (`HUD.hold`, from
+  TearInput); party on the left edge (name, `Class`, `Down`); prompts with Custom style drawn in the bottom
+  third, tap or key.
 - [Widgets.luau](Widgets.luau): shared builders (`make`, `text`, `button`, `enable`, `list`, `screen`, `row`).
 
 ## Invariants and rules

@@ -404,6 +404,7 @@ function Economy.setupShop(roomCenter: Vector3)
 	prompt.ActionText = "Shop"
 	prompt.ObjectText = "Run room shop"
 	prompt.RequiresLineOfSight = false
+	prompt.Style = Enum.ProximityPromptStyle.Custom -- drawn by the HUD in the bottom third (Table 13)
 	prompt.Parent = counter
 	counter.Parent = workspace
 end

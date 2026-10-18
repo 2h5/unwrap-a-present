@@ -532,6 +532,15 @@ function Tear.loadNest(nest: any, sizes: { [number]: number }, tierNumber: numbe
 		lidsLifted = 0,
 		done = false,
 	}
+	-- Layer colours for the HUD's depth stack (the client never works out a layer's colour).
+	local colors = {}
+	for _, layer in nest.layers do
+		local hex = if layer.layerType == "Paper" then paperColor(layer.depth):ToHex()
+			elseif layer.layerType == "Ribbon" then Config.Palette.ribbon.color
+			else Config.Palette.cardboard
+		table.insert(colors, (string.gsub(hex, "#", "")))
+	end
+	present:SetAttribute("LayerColors", table.concat(colors, ","))
 	buildVisible()
 	present.Parent = workspace
 	props.Parent = workspace
@@ -576,7 +585,23 @@ function Tear.init()
 			endHold(player, os.clock())
 		end)
 	end
+	-- The HUD shows the best tool a player owns (player attribute "Tool").
+	local function bestTool(player: Player)
+		local best = "Hands"
+		for _, name in Tools.order do
+			if player:GetAttribute(`Tool_{name}`) then
+				best = name
+			end
+		end
+		player:SetAttribute("Tool", best)
+	end
 	local function watchPlayer(player: Player)
+		bestTool(player)
+		player.AttributeChanged:Connect(function(name)
+			if string.sub(name, 1, 5) == "Tool_" then
+				bestTool(player)
+			end
+		end)
 		player.CharacterAdded:Connect(function(character)
 			watchCharacter(player, character)
 		end)

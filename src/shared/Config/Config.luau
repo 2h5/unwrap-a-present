@@ -107,6 +107,7 @@ Config.HUD = {
 	toastSeconds = 2,
 	feedSeconds = 3, -- a side-gift line in the loot feed
 	tileTextMax = 22, -- shelf tiles share one text size cap
+	nightTimerColor = "#E23D3D", -- Table 13: the Night timer is red (candy red from the palette)
 	barColor = "#2B1E14", -- dark wood
 	shopColor = "#B98A52", -- cardboard
 	buttonColor = "#F2C230", -- sun yellow

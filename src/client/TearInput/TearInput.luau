@@ -100,6 +100,14 @@ local function onTearState(state: { [string]: any })
 	end
 	local key = `{state.depth}:{state.panelId}`
 	local line = lines[key]
+	if key == myKey then
+		-- The tool's hold ring follows this player's own hold.
+		if state.state == "Holding" then
+			HUD.hold(state.progress, state.seconds)
+		else
+			HUD.hold(nil)
+		end
+	end
 	if state.state == "Lifted" then
 		if line then
 			line.part:Destroy()
@@ -221,6 +229,7 @@ function TearInput.init()
 		if same then
 			activeInput = nil
 			myKey = nil
+			HUD.hold(nil)
 			if activeRemote then
 				activeRemote:FireServer("End")
 				activeRemote = nil

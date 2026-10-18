@@ -2,6 +2,7 @@
 
 Date · change · who. Newest first. Prune monthly.
 
+- 2026-10-17 · Phase 3: HUD per Table 13 (cash, depth bars, Night timer, tool with hold ring, party, bottom-third prompt) · Claude Code
 - 2026-10-17 · Phase 3: gems, daily / group / streak rewards, class spin and pick with starting kits and perks, permanent track, shelf slots, prestige to Christmas with vault and reclaims, tier replay, gamepass and dev product wiring (ids pending), Classes / Rewards / Shop screens, profile schema v2; Gate B deferred; 71 specs pass · Claude Code
 - 2026-10-17 · Phase 2: ProfileStore verified on the real DataStore: rejoin keeps shelf, gems and Index; a second server takes the session in 1.1 s; a dead server's lock is stolen after about 45 s · Claude Code
 - 2026-10-17 · Phase 2: side-gifts fly to the nearest player (cash on pickup) into a shared RunBag, core reveal with first-run seeding, bank screen with sell / replace, shelf of 12 with ×9 stacks, Index with best rarity and starred cores, mutation roll, gift catalogue (Shared/Gifts), RunState, ProfileStore vendored with schema and migration (mock in Studio); 64 specs pass · Claude Code

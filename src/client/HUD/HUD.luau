@@ -2,9 +2,9 @@
 	HUD (client system)
 	Owns: Cash, depth, Night timer, bank, shop, classes, rewards screens.
 	Must never: Compute a value it displays. Cash, tools and depth are attributes the server sets.
-	Phase 1 greybox: a top bar (cash, depth, tools), a short toast for refusals ("Needs scissors"),
-	and the run room shop, opened from the counter's ProximityPrompt; Buy sends ShopBuy. Loot feed,
-	core banner, bank and shelf screens: LootScreens.luau (Phase 2).
+	This file: the toast for refusals and the run room shop (cash), opened from the counter's prompt;
+	Buy sends ShopBuy. Cash, depth, tool, party, prompt: Status. Loot feed, reveal, bank, shelf:
+	LootScreens. Classes, Rewards, Robux shop: MetaScreens.
 	Touch-first (invariant 3): every control is a large tap target; nothing needs a keyboard.
 	Read first: src/client/HUD/README.md
 ]=]
@@ -17,6 +17,7 @@ local Config = require(ReplicatedStorage.Shared.Config.Config)
 local Remotes = require(ReplicatedStorage.Shared.Remotes.Remotes)
 local LootScreens = require(script.Parent.LootScreens)
 local MetaScreens = require(script.Parent.MetaScreens)
+local Status = require(script.Parent.Status)
 
 local HUD = {}
 
@@ -33,7 +34,6 @@ local SHOP = {
 
 local player = Players.LocalPlayer
 local gui: ScreenGui
-local bar: TextLabel
 local toastLabel: TextLabel
 local shopFrame: Frame
 local buttons: { [string]: TextButton } = {}
@@ -64,18 +64,9 @@ local function attributeFor(entry): string
 end
 
 local function refresh()
+	Status.refresh()
 	local cash = player:GetAttribute("Cash") or 0
 	local p = present()
-	local depth = p and p:GetAttribute("CurrentDepth") or 0
-	local count = p and p:GetAttribute("LayerCount") or 0
-	local tools = { "Hands" }
-	for _, entry in SHOP do
-		if entry.tool and player:GetAttribute(attributeFor(entry)) then
-			table.insert(tools, entry.label)
-		end
-	end
-	bar.Text = `Cash {cash}   ·   Layer {math.min(depth + 1, count)} / {count}   ·   {table.concat(tools, ", ")}`
-
 	local tier = p and p:GetAttribute("TierNumber") or 1
 	for _, entry in SHOP do
 		local button = buttons[entry.item]
@@ -87,6 +78,11 @@ local function refresh()
 		button.AutoButtonColor = can
 		button.BackgroundTransparency = if can then 0 else 0.5
 	end
+end
+
+-- This player's own hold for the tool's hold ring (TearInput): progress and seconds, or nil when it ends.
+function HUD.hold(progress: number?, seconds: number?)
+	Status.hold(progress, seconds)
 end
 
 -- Shows a short message near the top of the screen (refusals like "Needs scissors").
@@ -104,7 +100,7 @@ end
 
 local function buildShop()
 	shopFrame = Instance.new("Frame")
-	shopFrame.Name = "Shop"
+	shopFrame.Name = "RunShop"
 	shopFrame.Size = UDim2.fromScale(0.5, 0.7)
 	shopFrame.Position = UDim2.fromScale(0.25, 0.15)
 	shopFrame.BackgroundColor3 = Color3.fromHex(Config.HUD.shopColor)
@@ -155,8 +151,8 @@ function HUD.init()
 	gui.ResetOnSpawn = false
 	gui.Parent = player:WaitForChild("PlayerGui")
 
-	bar = label(gui, "Bar", UDim2.fromScale(0.6, 0.06), UDim2.fromScale(0.2, 0.02))
-	toastLabel = label(gui, "Toast", UDim2.fromScale(0.4, 0.06), UDim2.fromScale(0.3, 0.1))
+	Status.init(gui)
+	toastLabel = label(gui, "Toast", UDim2.fromScale(0.4, 0.06), UDim2.fromScale(0.3, 0.32))
 	toastLabel.Visible = false
 	buildShop()
 	LootScreens.init(gui, HUD.toast)

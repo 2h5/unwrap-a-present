@@ -726,7 +726,7 @@ One paper layer on one cube, no textures, no loot.
 - [ ] Lobby built to the plan in Art bible B; pads, party of 4, teleport
 - [x] Cash, gems, daily and group rewards, class spin with the launch odds (group reward waits for the group id)
 - [ ] Gamepasses and dev products wired, with the invariant 6 check in code review
-- [ ] HUD complete per the table in Art bible B
+- [x] HUD complete per the table in Art bible B (Night timer and down state are wired; Phase 4 sends them)
 - [x] Prestige to Christmas tier
 - [ ] Start pads: solo, party, join anyone
 - [x] Owned classes with pick-before-run and duplicate refund
