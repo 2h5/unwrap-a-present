@@ -2,6 +2,7 @@
 
 Date · change · who. Newest first. Prune monthly.
 
+- 2026-10-17 · Gate A passed; Phase 0 done, Phase 1 started · Claude Code
 - 2026-10-17 · N25: selling shelf overflow pays gems (rates not set yet) · Claude Code
 - 2026-10-17 · Softer paper landing sounds (two solid clips replaced) · Claude Code
 - 2026-10-17 · Phase 0: touch verified on the iPhone XR emulator; movement controls never start a tear; release haptic; greybox panel checker · Claude Code

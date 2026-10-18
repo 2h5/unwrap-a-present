@@ -682,7 +682,7 @@ One paper layer on one cube, no textures, no loot.
 - [x] Torn-edge mesh swap, physics flutter, pool of 40, recycle oldest
 - [x] Three tear sounds, pitch randomized
 - [x] Works with touch on a phone-sized viewport
-- [ ] **Gate A playtest:** three people tap for one minute each and want to keep going
+- [x] **Gate A playtest:** three people tap for one minute each and want to keep going
 
 ### Phase 1: Nest and tools
 - [ ] Nest generation from seed, layer table weights, never the same type twice in a row, last two layers are lids
