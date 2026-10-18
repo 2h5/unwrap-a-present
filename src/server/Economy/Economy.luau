@@ -60,6 +60,11 @@ function Economy.hasPass(player: Player, name: string): boolean
 	return typeof(dev) == "string" and table.find(string.split(dev, ","), name) ~= nil
 end
 
+-- Passes other players can see: Lucky shows an icon by the owner's name on the party panel.
+local function showPasses(player: Player)
+	player:SetAttribute("Lucky", if Economy.hasPass(player, "Lucky") then true else nil)
+end
+
 local function checkPasses(player: Player)
 	passes[player] = passes[player] or {}
 	local data = Data.get(player)
@@ -75,6 +80,7 @@ local function checkPasses(player: Player)
 			end
 		end
 	end
+	showPasses(player)
 end
 
 ---------------------------------------------------------------- cash
@@ -116,7 +122,7 @@ local function applyWalkSpeed(player: Player)
 	end
 end
 
--- Starting kit once per run: Pockets cash plus the class's cash, tools and upgrades.
+-- Starting kit once per run: Pockets cash plus the class's cash, tools and upgrades, and Tool Keeper's tools.
 local function giveKit(player: Player)
 	local data = Data.get(player)
 	if not data or player:GetAttribute("KitGiven") then
@@ -133,6 +139,11 @@ local function giveKit(player: Player)
 		end
 		for _, upgrade in class.startUpgrades or {} do
 			player:SetAttribute(`Upgrade_{upgrade}`, true)
+		end
+	end
+	if Economy.hasPass(player, "ToolKeeper") then
+		for _, tool in Config.Gamepasses.ToolKeeper.startTools do
+			player:SetAttribute(`Tool_{tool}`, true)
 		end
 	end
 	player:SetAttribute("Cash", (player:GetAttribute("Cash") or 0) + cash)
@@ -442,6 +453,7 @@ function Economy.init()
 					passes[player][name] = true
 				end
 			end
+			showPasses(player)
 			changed(player, "Thanks!")
 		end
 	end)

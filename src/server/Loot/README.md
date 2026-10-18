@@ -32,7 +32,7 @@ Must never: Roll on the client or re-roll on request.
   player with no completions) rolls the core Uncommon or better. Mutation roll per player (DECISIONS).
 - Index records on sight for everyone in the run; the shelf changes only at bank. Every finisher banks
   a copy of the bag and the core (N14). Overflow: sell (gems, N33) or replace; Secrets go to the vault.
-- Lucky gamepass is `false` until gamepasses are wired (Phase 3). Shelf capacity is 12 until then.
+- Lucky: any player in the run owning the pass makes side-gifts roll twice (party-wide, non-stacking).
 
 ## How to add a new one
 

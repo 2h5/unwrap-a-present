@@ -2,6 +2,7 @@
 
 Date · change · who. Newest first. Prune monthly.
 
+- 2026-10-17 · Auto-tools logged; Extra Tool Slot replaced by Tool Keeper (scissors in every kit, tools kept when downed in Phase 4); Lucky party-wide, non-stacking, with a 🍀 on the party panel; all four pass ids in Config (off sale until priced); 75 specs pass · Claude Code
 - 2026-10-17 · Run place created, place ids and 2x Cash / Big Shelf pass ids in Config; Studio always uses local play; 75 specs pass · Claude Code
 - 2026-10-17 · N8 in-app name search done (human) · Claude Code
 - 2026-10-17 · Phase 3: lobby place (lobby.project.json) to Diagram D: pads (solo, party, join anyone), booths, house and porch with demo present, shelf row drawn by the client Shelf system, vault crates, tier decoration, party tokens, teleport and rejoin (untested until the places exist); 75 specs pass · Claude Code

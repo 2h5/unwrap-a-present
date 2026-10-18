@@ -85,7 +85,8 @@ local function refreshParty()
 	for i, other in Players:GetPlayers() do
 		local class = Config.Classes[other:GetAttribute("Class") or ""]
 		local down = other:GetAttribute("Down") == true
-		local line = Widgets.text(partyFrame, `{other.DisplayName}{if class then ` · {class.name}` else ""}{if down then " · DOWN" else ""}`, UDim2.new(1, 0, 0.24, 0), i)
+		local lucky = if other:GetAttribute("Lucky") == true then " 🍀" else "" -- Lucky covers the whole party
+		local line = Widgets.text(partyFrame, `{other.DisplayName}{lucky}{if class then ` · {class.name}` else ""}{if down then " · DOWN" else ""}`, UDim2.new(1, 0, 0.24, 0), i)
 		line.BackgroundColor3 = Widgets.DARK
 		line.BackgroundTransparency = 0.35
 		line.TextColor3 = if down then Color3.fromHex(Config.Rarity.Common.color) else Color3.new(1, 1, 1)
@@ -161,7 +162,7 @@ function Status.init(gui: ScreenGui)
 
 	local function watchPlayer(other: Player)
 		other.AttributeChanged:Connect(function(name)
-			if name == "Class" or name == "Down" then
+			if name == "Class" or name == "Down" or name == "Lucky" then
 				refreshParty()
 			end
 		end)

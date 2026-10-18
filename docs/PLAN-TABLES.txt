@@ -224,8 +224,8 @@ TABLE 10. MONETIZATION (product; type; price in Robux; what it does). Invariant 
 ==================================================================
 2x Cash; type=gamepass; price=199; effect=doubles cash in runs
 Big Shelf; type=gamepass; price=299; effect=36 shelf slots
-Extra Tool Slot; type=gamepass; price=149; effect=hold two tools, swap with one tap
-Lucky; type=gamepass; price=399; effect=side-gift rolls happen twice and keep the better rarity, never the core gift (invariant 6 check: 2p - p^2 < 2p, so no band ever doubles)
+Tool Keeper; type=gamepass; price=149; effect=tools are never dropped when downed; every run starts with scissors in hand (convenience only: no gift impact, no permanent tear-speed line, P5)
+Lucky; type=gamepass; price=399; effect=side-gift rolls happen twice and keep the better rarity, never the core gift (invariant 6 check: 2p - p^2 < 2p, so no band ever doubles); party-wide and non-stacking (one owner in the run covers everyone, two owners change nothing); a Lucky icon shows by the owner's name on the party panel
 Gems 100 / 500 / 1200; type=dev product; price=99 / 399 / 799; effect=gems
 Paper packs; type=dev product; price=49 to 199; effect=cosmetic wrapping patterns for your shelf and nameplate
 

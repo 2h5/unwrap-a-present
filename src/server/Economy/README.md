@@ -28,12 +28,14 @@ Must never: Grant a gift for Robux.
 ## Invariants and rules
 
 - Invariant 6: products pay gems only; passes scale cash, shelf size or side-gift luck (Lucky: twice,
-  keep the better, 2p − p² < 2p), never the core and never a named gift. Heir's double core roll comes
+  keep the better, 2p − p² < 2p; party-wide, non-stacking), never the core and never a named gift.
+  Tool Keeper: scissors in every starting kit, tools kept when downed (Phase 4). Heir's double core roll comes
   from a gem spin, not a pass.
 - Invariant 7: the server decides; the client only asks and animates. Requests are rate-limited and
   refused in Building, Reveal and Bank.
 - Receipts: a dev product is granted once (receipt ids kept in `purchases`) and saved at once.
-- Ids for passes, products and the group are 0 until created on Roblox; the Shop shows them as "Soon".
+- Ids still 0 (the gem products, the group) show as "Soon" in the Shop.
+- Player attribute `Lucky` (set from the pass) draws the 🍀 by the owner's name on the party panel.
 - Studio only: Workspace `DevGems` (adds gems), `DevPasses` ("DoubleCash,Lucky" pretends to own).
 
 ## How to add a new one

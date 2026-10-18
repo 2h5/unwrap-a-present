@@ -271,7 +271,9 @@ is a bitfield on the server; the client renders from it.
 **Tools.** Hands → Scissors → Box cutter → Chainsaw. Each tool has a grade, an action set, a per-panel
 time, and a hold-to-use input. Tools are bought with cash in the run room shop (prices in Mechanics D)
 and found as glowing pickups in the room at a fixed depth so a fresh party is never stuck. The
-scissors pickup spawns beside the present the moment depth 0 clears, as depth 1 is revealed.
+scissors pickup spawns beside the present the moment depth 0 clears, as depth 1 is revealed. Tools are
+never held or swapped: every tool a player owns is in use, and each panel gets the fastest one that
+can do its action (auto-tools, one thumb).
 
 | Tool | Grade | Actions | Seconds per panel | Notes |
 |---|---|---|---|---|
@@ -379,7 +381,8 @@ can crouch behind a lid (hide) or hold a lid up as a shield (shutter) for up to 
 breaks Jack's line of sight. Shutter is the clip: two players holding a lid between them while a third
 tears.
 
-**Downs and wipes.** A downed player drops their held tool and can be revived by a teammate holding E
+**Downs and wipes.** A downed player drops their highest-grade tool on the floor, where anyone, a
+teammate included, can pick it up (Tool Keeper owners keep theirs). A downed player can be revived by a teammate holding E
 for 3 seconds. A solo player who goes down is revived automatically after 10 seconds with one Common
 side-gift removed from the bag. A wipe is every living player down at once: the run ends, the run bag
 is lost, the index keeps what was seen.
@@ -469,8 +472,8 @@ a cap. The game has no end. Numbers in PLAN-TABLES.txt, TABLE 9.
 |---|---|---|---|
 | 2x Cash | Gamepass | 199 | Doubles cash in runs |
 | Big Shelf | Gamepass | 299 | 36 shelf slots |
-| Extra Tool Slot | Gamepass | 149 | Hold two tools, swap with one tap |
-| Lucky | Gamepass | 399 | Side-gift rolls happen twice and keep the better rarity; never the core gift |
+| Tool Keeper | Gamepass | 149 | Your tools are never dropped when you go down; every run starts with scissors in hand |
+| Lucky | Gamepass | 399 | Side-gift rolls happen twice and keep the better rarity; never the core gift. Party-wide, non-stacking: one owner covers the run |
 | Gems 100 / 500 / 1200 | Dev products | 99 / 399 / 799 | Gems |
 | Paper packs | Dev products | 49–199 | Cosmetic wrapping patterns for your shelf and nameplate |
 

@@ -263,11 +263,13 @@ Config.Classes = {
 Config.Gamepasses = {
 	DoubleCash = { robux = 199, id = 2039841362, name = "2x Cash", cashScale = 2 },
 	BigShelf = { robux = 299, id = 2037525496, name = "Big Shelf" },
-	ExtraToolSlot = { robux = 149, id = 0, name = "Extra Tool Slot" },
-	-- Side-gift rolls happen twice, keep the better rarity; never the core (invariant 6: 2p - p^2 < 2p)
-	Lucky = { robux = 399, id = 0, name = "Lucky", rollTwice = true },
+	-- Tools are never dropped when downed (Phase 4); every run starts with these in hand. No gift impact.
+	ToolKeeper = { robux = 149, id = 2037021484, name = "Tool Keeper", keepToolsWhenDowned = true, startTools = { "Scissors" } },
+	-- Side-gift rolls happen twice, keep the better rarity; never the core (invariant 6: 2p - p^2 < 2p).
+	-- Party-wide and non-stacking: one owner in the run is enough, two owners change nothing.
+	Lucky = { robux = 399, id = 2040345077, name = "Lucky", rollTwice = true },
 }
-Config.GamepassOrder = { "DoubleCash", "BigShelf", "ExtraToolSlot", "Lucky" }
+Config.GamepassOrder = { "DoubleCash", "BigShelf", "ToolKeeper", "Lucky" }
 
 -- Dev products (Table 10). Gems only: no product grants a gift (invariant 6). Paper packs wait for cosmetics.
 Config.DevProducts = {

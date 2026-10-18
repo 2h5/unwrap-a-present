@@ -22,7 +22,7 @@ Must never: Compute a value it displays.
 - [Status.luau](Status.luau) (Table 13): cash top left; depth top centre as coloured bars (Present
   attribute `LayerColors`, set by Tear); Night timer in red over the depth line while `NightState` carries
   `{ secondsLeft }`; tool bottom centre (player attribute `Tool`) with the hold ring (`HUD.hold`, from
-  TearInput); party on the left edge (name, `Class`, `Down`); prompts with Custom style drawn in the bottom
+  TearInput); party on the left edge (name, 🍀 for `Lucky`, `Class`, `Down`); prompts with Custom style drawn in the bottom
   third, tap or key.
 - [Widgets.luau](Widgets.luau): shared builders (`make`, `text`, `button`, `enable`, `list`, `screen`, `row`).
 
