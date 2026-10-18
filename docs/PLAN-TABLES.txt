@@ -320,7 +320,7 @@ Player down; effect=greyscale vignette for that player; budget=post-process only
 Krampus walk; effect=footprints that fade, sack jingle; budget=2 decals per step
 Steal success; effect=item lifts, red flash on the victim's shelf; budget=1 flash
 SFX launch set, 24 clips: tear hold start x3, tear release x3, paper land x3, tape cut x2, ribbon snip x2, lid lift x3, side-gift pop x3, core reveal sting x1, Tick ticking loop x1, Jack crank x1, Jack lunge x1, player down x1. All under 2 s except the two loops. Pitch randomized within 10%.
-SFX chosen so far (DECISIONS.md; Roblox-licensed ProSoundEffects): tear hold start=9113248978, 9113249956, 9113249814; tear release=9125724621, 9117624703, 9117624735; paper land=9114121637, 9113562807, 9118732737.
+SFX chosen so far (DECISIONS.md; Roblox-licensed ProSoundEffects plus one Roblox UI clip): tear hold start=9113248978, 9113249956, 9113249814; tear release=9125724621, 9117624703, 9117624735; paper land=9114121637, 15675037413, 9125723208.
 
 ==================================================================
 TABLE 15. PERFORMANCE BUDGETS, hard limits (budget; limit; checked by)
