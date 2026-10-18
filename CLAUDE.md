@@ -37,8 +37,8 @@ Current phase: **Phase 3 — Lobby, economy** (Phases 0–2 done; Gate B deferre
 
 ## Layout
 
-- `default.project.json` is the **run place**. The lobby place gets its own project file in Phase 3
-  (two places; pads teleport parties into private reserved run servers).
+- `default.project.json` is the **run place**; `lobby.project.json` is the **lobby place** (Workspace
+  attribute `PlaceKind = "Lobby"`). Pads teleport parties into private reserved run servers.
 - `src/server/` → ServerScriptService.Server (8 systems, each a folder with `README.md`)
 - `src/shared/` → ReplicatedStorage.Shared (`Types`, `Config`, `Remotes`)
 - `src/client/` → StarterPlayer.StarterPlayerScripts.Client (4 systems)

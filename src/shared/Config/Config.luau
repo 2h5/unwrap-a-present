@@ -287,6 +287,30 @@ Config.Data = {
 	keyPrefix = "Player_",
 }
 
+-- Place ids, created on Roblox by a human; 0 = not created yet (teleports are skipped, Studio loops runs).
+-- Which place this is comes from the Workspace attribute PlaceKind ("Lobby"; absent = the run place).
+Config.Places = { lobby = 0, run = 0 }
+
+-- Lobby greybox (Diagram D; numbers set in the build, DECISIONS.md). x grows east, z grows south.
+Config.Lobby = {
+	fieldStuds = { 100, 80 }, -- x, z
+	spawn = { 0, 30 }, -- centre-bottom, facing the pads (east)
+	padsX = 12, -- Diagram D: the pads are 12 studs from spawn
+	padStuds = 8,
+	padGapStuds = 4,
+	padColors = { "#5FD3A0", "#2F5BD9", "#F2C230" }, -- solo, party, join anyone
+	boothsZ = -30, -- along the top
+	boothsX = { -15, 0, 15 }, -- rewards, classes, shop
+	house = { -38, -28 }, -- top-left, porch on its south side
+	shelfRow = { -40, -2 }, -- first shelf, clear of the porch; the row runs south
+	shelfSpacingStuds = 7,
+	updateBoard = { 40, -32 }, -- top-right corner
+	padPollSeconds = 0.25,
+	tokenSeconds = 120, -- a party token lives this long in MemoryStore (N9)
+	arrivalWaitSeconds = 15, -- the run place waits this long for the whole party before starting
+	colors = { field = "#6FBF4A", house = "#E8D9C0", roof = "#8E3B2F", tree = "#2E7D4F" }, -- world tier, stock materials
+}
+
 -- Two places (DECISIONS.md N10, N11)
 Config.Run = {
 	rejoinWindowSeconds = 120,

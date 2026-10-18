@@ -10,7 +10,7 @@ local RunService = game:GetService("RunService")
 local Remotes = {}
 
 -- Client → server: requests only.
-Remotes.Up = { "TearRequest", "LidLift", "ShopBuy", "ClassSpin", "StealRequest", "Revive", "BankChoice", "EconomyRequest" }
+Remotes.Up = { "TearRequest", "LidLift", "ShopBuy", "ClassSpin", "StealRequest", "Revive", "BankChoice", "EconomyRequest", "LobbyRequest" }
 
 -- Server → client: replicated state.
 Remotes.Down = { "RunState", "LootEvent", "NightState", "ShelfState", "TearState", "ProfileState" }

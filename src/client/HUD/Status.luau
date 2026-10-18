@@ -137,6 +137,12 @@ function Status.init(gui: ScreenGui)
 			prompt:InputHoldEnd()
 		end
 	end)
+	if workspace:GetAttribute("PlaceKind") == "Lobby" then
+		-- Cash, depth and tool belong to a run; the lobby shows the party and the prompt only.
+		for _, item in { cashLabel, depthFrame, depthLabel, tool } do
+			item.Visible = false
+		end
+	end
 	promptButton.Name = "Prompt"
 	promptButton.Position = UDim2.fromScale(0.38, 0.72)
 	promptButton.Visible = false

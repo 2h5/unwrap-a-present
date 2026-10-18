@@ -17,6 +17,7 @@ local SPECS = {
 	{ name = "Loot/Bank", run = require("./Loot/Bank.spec") },
 	{ name = "Data/Schema", run = require("./Data/Schema.spec") },
 	{ name = "Economy/Meta", run = require("./Economy/Meta.spec") },
+	{ name = "Lobby/Party", run = require("./Lobby/Party.spec") },
 }
 
 local passed, failed = 0, 0

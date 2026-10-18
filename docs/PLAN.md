@@ -175,7 +175,7 @@ tells Loot and Night what happened; Steal and Loot both end in Economy and Data.
 client can change a number.
 
 **Remotes** (`ReplicatedStorage/Shared/Remotes`) — Up: `TearRequest`, `LidLift`, `ShopBuy`,
-`ClassSpin`, `StealRequest`, `Revive`, `BankChoice`, `EconomyRequest`. Down: `RunState`, `LootEvent`, `NightState`, `ShelfState`, `TearState`, `ProfileState`.
+`ClassSpin`, `StealRequest`, `Revive`, `BankChoice`, `EconomyRequest`, `LobbyRequest`. Down: `RunState`, `LootEvent`, `NightState`, `ShelfState`, `TearState`, `ProfileState`.
 
 **Two places.** The game is a lobby place and a run place. Pads teleport the party into a private
 reserved server of the run place. The run place accepts only players whose teleport data carries a
@@ -731,7 +731,7 @@ One paper layer on one cube, no textures, no loot.
 - [ ] Start pads: solo, party, join anyone
 - [x] Owned classes with pick-before-run and duplicate refund
 - [x] Permanent track (Pockets, Night Eyes), login streak, bring-a-friend gems
-- [ ] Prestige run counts per tier, vault crate with reclaims, replay any unlocked tier at reduced gems
+- [x] Prestige run counts per tier, vault crate with reclaims, replay any unlocked tier at reduced gems
 
 ### Phase 4: Night and Jack
 - [ ] Tick side box placement (blocking and non-blocking) and ticking audio ramp

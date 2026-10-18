@@ -63,7 +63,7 @@ SERVER SYSTEMS (ServerScriptService), 8:
   Steal: shelf tears, Naughty; Krampus takes
 
 REMOTES (ReplicatedStorage.Shared.Remotes):
-  Client to server: TearRequest, LidLift, ShopBuy, ClassSpin, StealRequest, Revive, BankChoice, EconomyRequest
+  Client to server: TearRequest, LidLift, ShopBuy, ClassSpin, StealRequest, Revive, BankChoice, EconomyRequest, LobbyRequest
   Server to client: RunState, LootEvent, NightState, ShelfState, TearState, ProfileState
 
 TWO PLACES (lobby place and run place):
@@ -298,6 +298,8 @@ Zones:
   Start a Run (right side, tall zone): three pads stacked vertically: solo pad, party pad (friends, up to 4), join-anyone pad (waits up to 20 s to fill a team of 4, then starts with whoever is there, even one player; no backfill into a running run)
   Spawn (center-bottom): faces the pads
 Zone count is 7: house and porch, shelf row, rewards, classes, shop, update board, Start a Run. Spawn and the Krampus walk are markers, not zones.
+
+Greybox numbers set in the build (DECISIONS.md): field 100 x 80 studs; spawn at (0, 30) facing east; pads 8 studs square, 4 apart, stacked north from the spawn line, 12 studs east of spawn; booths along z = -30 at x = -15, 0, 15; house 16 x 12 x 12 at (-38, -28) with an 8-stud porch on its south side; shelf row from (-40, -2) running south, 7 studs apart; update board at (40, -32); party token 120 s; the run place waits 15 s for the party.
 
 Run room: single interior 60 by 60 studs, warm wood floor, one wide window with daylight, present centered and scaled to tier (Birthday 16 studs across, Christmas 20, Wedding 24, The Package 28). No props except the shop counter in one corner and the lid props the team creates. Night drops window light and adds a cold rim light from the Tick box.
 

@@ -163,10 +163,15 @@ function HUD.init()
 		end
 	end)
 
+	local BOOTHS = { RewardsPrompt = "Rewards", ClassesPrompt = "Classes", StorePrompt = "Shop" }
 	ProximityPromptService.PromptTriggered:Connect(function(prompt)
 		if prompt.Name == "ShopPrompt" then
 			shopFrame.Visible = not shopFrame.Visible
 			refresh()
+		elseif BOOTHS[prompt.Name] then
+			MetaScreens.open(BOOTHS[prompt.Name])
+		elseif prompt.Name == "VaultPrompt" and prompt:GetAttribute("OwnerId") == player.UserId then
+			MetaScreens.open("Rewards") -- the vault list is on the Rewards screen
 		end
 	end)
 

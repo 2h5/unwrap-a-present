@@ -18,6 +18,7 @@ local PanelGrid = require(script.Parent.Parent.Tear.PanelGrid)
 local Tear = require(script.Parent.Parent.Tear.Tear)
 local Economy = require(script.Parent.Parent.Economy.Economy)
 local Loot = require(script.Parent.Parent.Loot.Loot)
+local Lobby = require(script.Parent.Parent.Lobby.Lobby)
 local RunState = require(script.Parent.RunState)
 
 local Present = {}
@@ -82,14 +83,16 @@ function Present.startRun(tier: string, seed: number?)
 end
 
 function Present.init()
-	-- Until Lobby exists, the server runs presents back to back: the next one starts when every
-	-- player has closed the bank screen, at the host's picked tier (Economy.nextRunTier).
+	-- After the bank the party goes back to the lobby (Lobby.runEnded); in local play the next run starts here.
 	Loot.onBankDone(function()
-		Present.startRun(Economy.nextRunTier())
+		if not Lobby.runEnded() then
+			Present.startRun(Economy.nextRunTier())
+		end
 	end)
 	task.defer(function()
 		Economy.setupShop(presentBase("Birthday"))
-		Present.startRun("Birthday")
+		-- The run place waits for its party and uses their tier (N13); local play starts at once.
+		Present.startRun(Lobby.waitForParty() or "Birthday")
 	end)
 end
 

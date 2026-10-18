@@ -199,6 +199,7 @@ local function sendState(player: Player, message: string?)
 		vault = data.vault,
 		vaultReclaimsLeft = data.vaultReclaimsLeft,
 		passes = owned,
+		rejoinSecondsLeft = if data.rejoin.accessCode ~= "" and data.rejoin.expiresAt > os.time() then data.rejoin.expiresAt - os.time() else nil,
 	})
 end
 

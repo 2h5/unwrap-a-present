@@ -177,8 +177,26 @@ function MetaScreens.init(gui: ScreenGui, toast: (text: string) -> ())
 		open.Name = `{spec.name}Button`
 		open.Position = UDim2.fromScale(0.88, spec.y)
 	end
+	-- Rejoin a run left mid-way (N10): shown in the lobby while the 2-minute window is open.
+	local rejoinEndsAt: number? = nil
+	local rejoinButton = Widgets.button(gui, "", UDim2.fromScale(0.3, 0.08), function()
+		Remotes.get("LobbyRequest"):FireServer("Rejoin")
+	end)
+	rejoinButton.Name = "Rejoin"
+	rejoinButton.Position = UDim2.fromScale(0.35, 0.12)
+	rejoinButton.Visible = false
+	task.spawn(function()
+		while true do
+			local left = if rejoinEndsAt then math.ceil(rejoinEndsAt - os.clock()) else 0
+			rejoinButton.Visible = left > 0
+			rejoinButton.Text = string.format("Rejoin run (%d:%02d)", left // 60, left % 60)
+			task.wait(0.5)
+		end
+	end)
+
 	Remotes.get("ProfileState").OnClientEvent:Connect(function(new)
 		state = new
+		rejoinEndsAt = if new.rejoinSecondsLeft then os.clock() + new.rejoinSecondsLeft else nil
 		if new.message then
 			toast(new.message)
 		end
@@ -188,6 +206,13 @@ function MetaScreens.init(gui: ScreenGui, toast: (text: string) -> ())
 			end
 		end
 	end)
+end
+
+-- Opens one screen ("Shop", "Classes", "Rewards"), closing the others (lobby booths and the vault crate).
+function MetaScreens.open(name: string)
+	for key, s in screens do
+		s.frame.Visible = key == name and state ~= nil
+	end
 end
 
 -- Gems for the HUD bar, or nil before the profile loads.

@@ -21,6 +21,7 @@ local store = ProfileStore.New(Config.Data.storeName, Schema.template())
 local profiles: { [Player]: any } = {}
 local loadedListeners: { (player: Player, data: { [string]: any }) -> () } = {}
 local releaseListeners: { (player: Player, data: { [string]: any }) -> () } = {}
+local releasing: { [Player]: boolean } = {} -- released on purpose (teleport): leaving is not a kick
 
 local function load(player: Player)
 	-- Studio only: Workspace attribute DevMockData loads from ProfileStore's mock, so tests never touch
@@ -46,7 +47,9 @@ local function load(player: Player)
 	profile:Reconcile()
 	profile.OnSessionEnd:Connect(function()
 		profiles[player] = nil
-		player:Kick("Your data was opened on another server. Please rejoin.")
+		if not releasing[player] then
+			player:Kick("Your data was opened on another server. Please rejoin.")
+		end
 	end)
 	if player.Parent ~= Players then
 		profile:EndSession()
@@ -78,6 +81,30 @@ function Data.beforeRelease(listener: (player: Player, data: { [string]: any }) 
 	table.insert(releaseListeners, listener)
 end
 
+-- Saves and releases the profile before a teleport (N19), so the next place loads it at once.
+-- Yields until the release is written. If the teleport fails, call Data.reload.
+function Data.release(player: Player)
+	local profile = profiles[player]
+	if not profile then
+		return
+	end
+	releasing[player] = true
+	profiles[player] = nil
+	profile:EndSession()
+	local waited = 0
+	while profile:IsActive() and waited < 10 do
+		waited += task.wait(0.1)
+	end
+end
+
+-- Loads the profile again after a failed teleport.
+function Data.reload(player: Player)
+	releasing[player] = nil
+	if not profiles[player] and player.Parent == Players then
+		task.spawn(load, player)
+	end
+end
+
 -- Asks ProfileStore to save now (after a Robux purchase), without waiting.
 function Data.save(player: Player)
 	local profile = profiles[player]
@@ -98,6 +125,7 @@ function Data.init()
 	end
 	Players.PlayerRemoving:Connect(function(player)
 		local profile = profiles[player]
+		releasing[player] = nil
 		if profile then
 			for _, listener in releaseListeners do
 				local ok, err = pcall(listener, player, profile.Data)
