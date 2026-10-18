@@ -10,7 +10,10 @@ Must never: Be called by the client.
 
 ## Public API
 
-_None yet._ List each public function here as it lands: signature, one line of what it does.
+- `Present.init()` — until Lobby and Data exist (Phase 3), rolls one Birthday Nest per server and prints it.
+- `Present.newNest(tier, seed?): Nest` — builds the run's Nest from a server-rolled seed (or a given one).
+- `Present.getNest(): Nest?` — the current run's Nest.
+- [Nest.luau](Nest.luau) (pure, tested in `tests/Present`): `generate(seed, tier, config, Rng)`, `band(depth, n)`.
 
 ## Invariants and rules
 
@@ -18,7 +21,11 @@ _None yet._ List each public function here as it lands: signature, one line of w
 - Must never: Be called by the client.
 - The featured present modifier is chosen by the UTC calendar date, so every server shows the same
   one (N12). UTC midnight is 7–8 pm Eastern.
+- Nest: tier sets the count; each layer is picked by its band weight from the build's layer types
+  (`Config.LaunchLayerTypes`, in that order); a type never follows itself; the last two are BoxLid and
+  are exempt from the no-repeat rule. Same seed and tier always give the same Nest.
 
 ## How to add a new one
 
-_Fill in when the first one exists (e.g. how to add a layer type, gift, entity, screen)._
+A new layer type: give it weights in `Config.LayerTable` and add it to `Config.LaunchLayerTypes`
+(PLAN-TABLES Table 4 and Table 16 in the same commit). Nest picks it up; the specs cover all 7 types.

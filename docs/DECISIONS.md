@@ -5,6 +5,7 @@ waits for a human to mark it **Approved** in the next run before anything is bui
 
 | Date | Decision | Reason | By | Status |
 |---|---|---|---|---|
+| 2026-10-17 | Nest generation: seeded xorshift32 (`Shared/Rng`) so a seed gives the same Nest everywhere; the no-repeat rule skips the final two BoxLid layers; types come from `Config.LaunchLayerTypes`, so a launch nest alternates Paper and Ribbon before the lids | Mechanics A requires both "never twice in a row" and "last two layers are lids"; only Paper and Ribbon ship besides the lid (Table 16) | Claude Code | Approved |
 | 2026-10-17 | Gate A passed: three people tapped the greybox for a minute each and wanted to keep going. Phase 0 is done; Phase 1 starts. Feedback applied: two solid-sounding land clips replaced | Gate A playtest | Human | Approved |
 | 2026-10-17 | N25. Selling shelf overflow at the bank screen pays gems, not cash, at a flat rate per rarity. Rates not set yet; needed before Phase 2 builds the bank screen | Cash resets to 0 at run start, so selling for cash had no value; gems carry over and buy spins, slots and the permanent track | Human | Approved |
 | 2026-10-17 | Paper land clips: replaced the cardboard box (9113562807) and rubber mat (9118732737) with Roblox_UI_Paper_Swipe (15675037413) and a ProSoundEffects paper flip (9125723208); kept the paper bag (9114121637) | Human playtest: some landings sounded solid | Human | Approved |

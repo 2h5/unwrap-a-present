@@ -685,7 +685,7 @@ One paper layer on one cube, no textures, no loot.
 - [x] **Gate A playtest:** three people tap for one minute each and want to keep going
 
 ### Phase 1: Nest and tools
-- [ ] Nest generation from seed, layer table weights, never the same type twice in a row, last two layers are lids
+- [x] Nest generation from seed, layer table weights, never the same type twice in a row, last two layers are lids
 - [ ] Tape panels block the paper panels beside them
 - [ ] Ribbon layer and box lid with the two-player lift
 - [ ] Hands, scissors, box cutter with per-panel times; scissors pickup at depth 1
