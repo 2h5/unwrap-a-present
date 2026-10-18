@@ -10,10 +10,12 @@ Must never: Be called by the client.
 
 ## Public API
 
-- `Present.init()` — until Lobby and Data exist (Phase 3), rolls one Birthday Nest per server and prints it.
+- `Present.init()` — until Lobby and Data exist (Phase 3), runs Birthday presents back to back.
+- `Present.startRun(tier, seed?)` — Nest, `Nest.tape`, `Nest.sizes`, `Economy.resetRun`, `Tear.loadNest`.
+  Studio only: Workspace attribute `NextSeed` replays a seed on the next run.
 - `Present.newNest(tier, seed?): Nest` — builds the run's Nest from a server-rolled seed (or a given one).
 - `Present.getNest(): Nest?` — the current run's Nest.
-- [Nest.luau](Nest.luau) (pure, tested in `tests/Present`): `generate(seed, tier, config, Rng)`, `band(depth, n)`.
+- [Nest.luau](Nest.luau) (pure, tested in `tests/Present`): `generate(seed, tier, config, Rng)`, `tape(...)`, `sizes(...)`, `band`.
 
 ## Invariants and rules
 

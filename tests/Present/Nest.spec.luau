@@ -161,6 +161,61 @@ return function(test, expectEqual)
 		assert(count > 10, `only {count} distinct nests from 50 seeds`)
 	end)
 
+	test("tape: only Paper, never depth 0, never the floor face, 25-50% of the seams", function()
+		local PanelGrid = require("../../src/server/Tear/PanelGrid")
+		local perFaceOf = function(studs)
+			return PanelGrid.gridPerFace(studs, Config.Panels)
+		end
+		local taped, paperBeyond0 = 0, 0
+		eachNest(Config.LaunchLayerTypes, function(nest, tier, seed)
+			local sizes = Nest.sizes(nest, Config.Tiers[tier].presentStuds, Config.Tiers.coreBoxStuds)
+			Nest.tape(nest, sizes, perFaceOf, Config.TapeOverlay, PanelGrid.faceCount, PanelGrid.BOTTOM, Rng)
+			for _, layer in nest.layers do
+				local strips = layer.tapeStrips
+				if layer.layerType == "Paper" and layer.depth > 0 then
+					paperBeyond0 += 1
+				end
+				if strips then
+					taped += 1
+					assert(layer.layerType == "Paper" and layer.depth > 0, `{tier}/{seed}: tape on {layer.layerType} at {layer.depth}`)
+					local per = perFaceOf(sizes[layer.depth])
+					local seams = (PanelGrid.faceCount - 1) * 2 * (per - 1)
+					local lo = math.floor(Config.TapeOverlay.seamFraction[1] * seams + 0.5)
+					local hi = math.floor(Config.TapeOverlay.seamFraction[2] * seams + 0.5)
+					assert(#strips >= math.max(1, lo) and #strips <= hi, `{tier}/{seed}: {#strips} strips of {seams} seams`)
+					local seen = {}
+					for _, s in strips do
+						assert(s.face ~= PanelGrid.BOTTOM, "tape on the floor face")
+						assert(s.line >= 1 and s.line < per, "line off the grid")
+						assert(not seen[s.seamIndex], "same seam taped twice")
+						seen[s.seamIndex] = true
+					end
+				end
+			end
+		end)
+		assert(taped > 0 and taped < paperBeyond0, `taped {taped} of {paperBeyond0} paper layers`)
+	end)
+
+	test("tape is the same for the same seed and does not change the layer types", function()
+		local PanelGrid = require("../../src/server/Tear/PanelGrid")
+		local perFaceOf = function(studs)
+			return PanelGrid.gridPerFace(studs, Config.Panels)
+		end
+		local cfg = config(Config.LaunchLayerTypes)
+		for seed = 1, 50 do
+			local a = Nest.generate(seed, "Wedding", cfg, Rng)
+			local b = Nest.generate(seed, "Wedding", cfg, Rng)
+			local sizes = Nest.sizes(a, Config.Tiers.Wedding.presentStuds, Config.Tiers.coreBoxStuds)
+			Nest.tape(a, sizes, perFaceOf, Config.TapeOverlay, PanelGrid.faceCount, PanelGrid.BOTTOM, Rng)
+			Nest.tape(b, sizes, perFaceOf, Config.TapeOverlay, PanelGrid.faceCount, PanelGrid.BOTTOM, Rng)
+			local plain = Nest.generate(seed, "Wedding", cfg, Rng)
+			for i, layer in a.layers do
+				expectEqual(layer.layerType, plain.layers[i].layerType, `{seed} layer {i}`)
+				expectEqual(#(layer.tapeStrips or {}), #(b.layers[i].tapeStrips or {}), `{seed} strips {i}`)
+			end
+		end
+	end)
+
 	test("depth bands split the nest in thirds", function()
 		local bands = {}
 		for depth = 0, 5 do

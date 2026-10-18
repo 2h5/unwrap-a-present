@@ -3,7 +3,7 @@
 	Owns: Torn-panel pool, 40 live max, physics, recycle.
 	Must never: Exceed the budget (Config.Tear.maxLiveDebris). Pieces are local to this client.
 	On a tear: swaps the panel for a torn-edge piece (ReplicatedStorage.Assets.TornPanel if it
-	exists, else a greybox part), pushes it away from the present, flutters it, then it settles and
+	exists, else a part in the panel's color), pushes it away from the present, flutters it, then it settles and
 	stays until the pool recycles it, oldest first; a soft thud plays on first landing.
 	Slot logic is pure and tested: DebrisPool.luau.
 	Read first: src/client/Debris/README.md
@@ -30,9 +30,7 @@ local function template(): BasePart
 	if torn and torn:IsA("BasePart") then
 		return torn:Clone()
 	end
-	local part = Instance.new("Part")
-	part.Color = Color3.fromHex(Config.Greybox.tornPanelColor)
-	return part
+	return Instance.new("Part")
 end
 
 local function newPiece(): Piece
@@ -88,6 +86,9 @@ function Debris.spawn(panel: BasePart)
 	part.Anchored = true
 	part.Size = panel.Size
 	part.CFrame = panel.CFrame
+	part.Color = panel.Color -- torn paper is the same paper
+	part.Material = panel.Material
+	part.Reflectance = panel.Reflectance
 	part.CanCollide = true
 	part.CanTouch = true
 	part.Transparency = 0

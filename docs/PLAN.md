@@ -263,7 +263,9 @@ its tape is cut. No other layer type takes tape.
 
 **Panels.** Panels per face = clamp(floor(layer size in studs ÷ 4), 3, 6), so a panel is always about
 4 studs, a thumb-sized target (a 16-stud paper layer is 4×4 per face, 96 panels). Tape strips sit on
-seams and must be cut before the panels they touch can tear; this is the ordering puzzle. Panel state
+seams and must be cut before the panels they touch can tear; this is the ordering puzzle. The bottom
+face rests on the floor: its panels and tape (and a ribbon's two bottom segments) are never interactive
+and fall away when the rest of the layer clears. Panel state
 is a bitfield on the server; the client renders from it.
 
 **Tools.** Hands → Scissors → Box cutter → Chainsaw. Each tool has a grade, an action set, a per-panel
@@ -703,11 +705,11 @@ One paper layer on one cube, no textures, no loot.
 
 ### Phase 1: Nest and tools
 - [x] Nest generation from seed, layer table weights, never the same type twice in a row, last two layers are lids
-- [ ] Tape panels block the paper panels beside them
-- [ ] Ribbon layer and box lid with the two-player lift
-- [ ] Hands, scissors, box cutter with per-panel times; scissors pickup at depth 1
-- [ ] Run room shop with the launch item list
-- [ ] Automated tests for Nest rules
+- [x] Tape panels block the paper panels beside them
+- [x] Ribbon layer and box lid with the two-player lift
+- [x] Hands, scissors, box cutter with per-panel times; scissors pickup at depth 1
+- [x] Run room shop with the launch item list
+- [x] Automated tests for Nest rules
 
 ### Phase 2: Loot, bank, data
 - [ ] Rarity tables per tier, summing to 100, server rolls only

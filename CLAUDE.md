@@ -33,7 +33,7 @@ the plan does not describe, check Art bible B budgets, play one full run on a ph
 3. `docs/DECISIONS.md` — anything **Proposed** waiting on a human.
 4. The `README.md` inside the system folder you are touching (`src/server/<System>/`, etc.).
 
-Current phase: **Phase 1 — Nest and tools** (Phase 0 and Gate A passed; build order: PLAN-TABLES.txt Diagram E). No fixed dates.
+Current phase: **Phase 2 — Loot, bank, data**, then Gate B (Phases 0–1 done; build order: PLAN-TABLES.txt Diagram E). No fixed dates.
 
 ## Layout
 

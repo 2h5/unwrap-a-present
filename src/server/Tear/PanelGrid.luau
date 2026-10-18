@@ -44,6 +44,14 @@ local GRID_LAYER_TYPES = { Paper = true }
 local PanelGrid = {}
 
 PanelGrid.faceCount = #FACES
+PanelGrid.TOP = 3
+PanelGrid.BOTTOM = 4 -- rests on the floor: never interactive, falls away when the layer clears
+
+-- A face's outward normal and its in-plane axes (u = columns, v = rows).
+function PanelGrid.faceAxes(face: number): (Vec, Vec, Vec)
+	local f = FACES[face]
+	return f.n, f.u, f.v
+end
 
 -- Panels per face from the layer's size, so a panel is always about `panelStuds` across (N30).
 function PanelGrid.gridPerFace(layerStuds: number, panels: PanelsConfig): number
@@ -103,8 +111,8 @@ function PanelGrid.decode(grid: Grid, encoded: string)
 end
 
 -- Where a panel sits on a cube of side `size` centred on the origin: its centre, its outward
--- normal, and its edge length.
-function PanelGrid.placement(grid: Grid, id: number, size: number): { center: Vec, normal: Vec, width: number }
+-- normal, its up axis (the face's v axis), and its edge length.
+function PanelGrid.placement(grid: Grid, id: number, size: number): { center: Vec, normal: Vec, up: Vec, width: number }
 	local face, row, col = PanelGrid.locate(grid, id)
 	local f = FACES[face]
 	local width = size / grid.perFace
@@ -118,6 +126,7 @@ function PanelGrid.placement(grid: Grid, id: number, size: number): { center: Ve
 			z = f.n.z * half + f.u.z * du + f.v.z * dv,
 		},
 		normal = f.n,
+		up = f.v,
 		width = width,
 	}
 end

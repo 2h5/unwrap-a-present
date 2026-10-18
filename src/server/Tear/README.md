@@ -3,39 +3,50 @@
 Panel bitfields per layer, tool and action validation, panel timing, layer-cleared events.
 Must never: Trust a client position or timer.
 
-- **Built in:** Phase 0, build order in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E
-- **Rules:** [PLAN.md](../../../docs/PLAN.md), Mechanics A (panels, tools, the Tear feel spec)
-- **Numbers:** [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt), Table 4 (layer actions, panel grid), Table 5 (tools), Table 15 (TearRequest rate)
+- **Built in:** Phase 0–1, build order in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E
+- **Rules:** [PLAN.md](../../../docs/PLAN.md), Mechanics A (present, ribbon, tape, panels, tools, the Tear feel spec)
+- **Numbers:** [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt), Table 4 (layer table, panels, tape), Table 5 (tools, Tear numbers), Table 12 (palette), Table 15 (TearRequest rate)
 - **Code reads numbers from:** [Config.luau](../../shared/Config/Config.luau), never inline
 
 ## Public API
 
-- `Tear.init()` — Phase 0: builds one greybox Paper layer (depth 0, tier 1) as `Workspace.Present`.
-- `Tear.getGrid(depth): Grid?` — the panel grid for a layer.
-- [PanelGrid.luau](PanelGrid.luau) (pure, tested in `tests/Tear`): `fromLayer(layer, layerStuds, Config.Panels)`,
-  `gridPerFace`, `panelId`, `locate`, `isTorn`, `setTorn`, `encode`/`decode` (bitfield as a string),
-  `placement(grid, id, size)` (panel centre, normal, width on a cube centred at the origin).
-- [TearSession.luau](TearSession.luau) (pure, tested): `new(grid)`, `begin(session, holder, panelId, seconds, now)`
-  returns seconds still needed or nil + reason, `release(session, holder, now)` keeps progress or tears,
-  `fraction`, `holding`. [RateLimit.luau](RateLimit.luau) (pure, tested): `new(perSecond)`, `allow`, `forget`.
+- `Tear.loadNest(nest, sizes, tierNumber, base)` — replaces `Workspace.Present` with the run's layers
+  (Present → Tear). Builds the current layer, the one inside it, and the layer a ribbon wraps.
+- `Tear.onLayerCleared(fn(depth, layerType))`, `Tear.onRunComplete(fn())` — listeners (Loot in Phase 2).
+- `Tear.getModel(depth): Model?` — a layer's LayerModel.
+- Pure, tested in `tests/Tear`: [PanelGrid](PanelGrid.luau) (`gridPerFace(layerStuds)`, bitfield,
+  `faceAxes`, `TOP`/`BOTTOM`), [LayerModel](LayerModel.luau) (`build`, `canStart`, `remaining`,
+  `isCleared`, `dropBottom`), [LayerGeometry](LayerGeometry.luau) (`place`, `walls`),
+  [TearSession](TearSession.luau), [LidSession](LidSession.luau), [Tools](Tools.luau) (`best`),
+  [RateLimit](RateLimit.luau).
 
-## TearRequest and TearState
+## Remotes
 
-- Up `TearRequest("Begin", depth, panelId, u, v)` and `TearRequest("End")`. Rate-limited to
-  `Config.Tear.maxRequestsPerSecond`. Begin is refused unless the panel exists, is whole, is not held by
-  another player, and is within `Config.Tear.reachStuds` of the server's character position.
-- The server times every hold with its own clock and tears the panel when the time is reached; `u, v`
-  (the touch point, 0..1 on the panel) only place the rip line, and the first touch point is kept.
-- Down `TearState { depth, panelId, state = "Holding" | "Released" | "Torn", progress, seconds, u, v }`
-  to every client.
+- Up `TearRequest("Begin", depth, panelId, u, v)` / `("End")` for panels, tape, ribbon; Up
+  `LidLift("Begin", depth, panelId)` / `("End")` for box lids. Both rate-limited.
+- Begin is refused unless: depth is the current layer, the item exists, it is not on the floor, every
+  tape strip touching it is cut, the player's tools can do its action (`Tools.best`), and the panel is
+  within `Config.Tear.reachStuds` of the server's character position.
+- Down `TearState { depth, panelId, state, progress, seconds, u, v }` to everyone; state is
+  "Holding" | "Released" | "Torn" | "Lifted". To one player: `{ state = "Refused", reason }`
+  ("Needs scissors", "Cut the tape first", "Needs 2 players").
 
 ## Invariants and rules
 
 - Invariant 7: the server decides; the client only asks and animates.
-- Must never: Trust a client position or timer.
-- One holder per panel, one panel per holder. Early release keeps the seconds already torn.
+- Must never: Trust a client position or timer. Holds are timed on the server clock.
+- One holder per panel, one panel per holder; early release keeps progress. Lids take
+  `LidSession.requiredHolders` (two from tier 2, never more than the players present).
+- A layer clears when everything off the floor is done; its floor items drop with it. Then depth
+  advances (`Present` attribute `CurrentDepth`), the next layers build, and cleared parts are
+  destroyed after `Config.Tear.flutterSeconds`.
+- Lifted lids become upright props (`Workspace.LidProps`) round the present, for the Night; the box
+  walls go. The scissors pickup spawns when depth 0 clears (N26) and gives every player who touches it
+  `Tool_Scissors`. Tools and upgrades are player attributes set by Economy or the pickup.
+- Each finished item pays `Economy.cashPerPanel(tier)` to the player(s) who finished it.
+- Greybox: server Parts (DECISIONS.md); real meshes come in Phase 5.
 
 ## How to add a new one
 
-A new panel-grid layer type: add it to `GRID_LAYER_TYPES` in PanelGrid.luau and a spec case in
-`tests/Tear/PanelGrid.spec.luau`. Keep Roblox calls out of PanelGrid; they go in Tear.luau.
+A new layer type: add a builder in LayerModel (items, action, grade, blockers), its shape in
+LayerGeometry, a spec in `tests/Tear/Layer.spec.luau`, and its colors in `Config.Palette`.

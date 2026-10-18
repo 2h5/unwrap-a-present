@@ -2,43 +2,84 @@
 	Present (server system)
 	Owns: Seed, Nest generation, layer table, Tick placement.
 	Must never: Be called by the client. The seed is rolled here, on the server, never sent up.
-	Nest rules are pure and tested: Nest.luau. This file rolls the seed and keeps the run's Nest.
+	Nest rules are pure and tested: Nest.luau. This file rolls the seed, lays the tape, sizes the
+	layers, hands the Nest to Tear and, until Lobby exists, starts a new Birthday run when one ends.
 	Read first: src/server/Present/README.md
 ]=]
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 
 local Config = require(ReplicatedStorage.Shared.Config.Config)
 local Rng = require(ReplicatedStorage.Shared.Rng.Rng)
 local Nest = require(script.Parent.Nest)
+local PanelGrid = require(script.Parent.Parent.Tear.PanelGrid)
+local Tear = require(script.Parent.Parent.Tear.Tear)
+local Economy = require(script.Parent.Parent.Economy.Economy)
 
 local Present = {}
 
 local current: Nest.Nest? = nil
 
+local function perFaceOf(studs: number): number
+	return PanelGrid.gridPerFace(studs, Config.Panels)
+end
+
+-- The floor point under the present's centre: one present-width behind the origin, so it clears
+-- the default SpawnLocation (greybox placement, DECISIONS.md).
+local function presentBase(tier: string): Vector3
+	return Vector3.new(0, 0, -Config.Tiers[tier].presentStuds)
+end
+
 -- Builds a new Nest for `tier` from a fresh server-rolled seed (or the given one, for replays).
 function Present.newNest(tier: string, seed: number?): Nest.Nest
 	local useSeed = seed or Random.new():NextInteger(1, 2 ^ 31 - 1)
-	current = Nest.generate(useSeed, tier, {
+	local nest = Nest.generate(useSeed, tier, {
 		tiers = Config.Tiers,
 		layerTable = Config.LayerTable,
 		layerTypes = Config.LaunchLayerTypes,
 	}, Rng)
-	return current :: Nest.Nest
+	current = nest
+	return nest
 end
 
 function Present.getNest(): Nest.Nest?
 	return current
 end
 
-function Present.init()
-	-- Until Lobby and Data exist (Phase 3), every server is one Birthday run.
-	local nest = Present.newNest("Birthday")
+-- Starts a run: new Nest, tape, sizes, cash reset, and the present built by Tear.
+function Present.startRun(tier: string, seed: number?)
+	-- Studio only: set Workspace attribute NextSeed to replay a seed on the next run.
+	local replay = if RunService:IsStudio() then workspace:GetAttribute("NextSeed") else nil
+	if typeof(replay) == "number" then
+		workspace:SetAttribute("NextSeed", nil)
+		seed = replay
+	end
+	local nest = Present.newNest(tier, seed)
+	local sizes = Nest.sizes(nest, Config.Tiers[tier].presentStuds, Config.Tiers.coreBoxStuds)
+	Nest.tape(nest, sizes, perFaceOf, Config.TapeOverlay, PanelGrid.faceCount, PanelGrid.BOTTOM, Rng)
+	local tierNumber = table.find(Config.Tiers.order, tier) or 1
+	Economy.resetRun(tierNumber)
+	Tear.loadNest(nest, sizes, tierNumber, presentBase(tier))
+
 	local names = {}
 	for _, layer in nest.layers do
-		table.insert(names, layer.layerType)
+		local strips = layer.tapeStrips and ` (tape {#layer.tapeStrips})` or ""
+		table.insert(names, layer.layerType .. strips)
 	end
 	print(`Present: seed {nest.seed}, {nest.tier}: {table.concat(names, " > ")}`)
+end
+
+function Present.init()
+	-- Until Lobby and Data exist (Phase 3), every server runs Birthday presents back to back.
+	Tear.onRunComplete(function()
+		task.wait(Config.Loot.coreRevealSeconds)
+		Present.startRun("Birthday")
+	end)
+	task.defer(function()
+		Economy.setupShop(presentBase("Birthday"))
+		Present.startRun("Birthday")
+	end)
 end
 
 return Present

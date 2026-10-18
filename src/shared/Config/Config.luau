@@ -47,6 +47,7 @@ Config.TapeOverlay = {
 	seamFraction = { 0.25, 0.5 }, -- min, max share of a taped paper layer's seams, chosen from the seed
 	boxLidFromTier = 2, -- BoxLid always taped at tier 2+, never at tier 1; lid cannot lift until cut
 	layerTypes = { "Paper", "BoxLid" }, -- no other layer type takes tape
+	stripStuds = 1, -- a strip's width; it runs the full line
 }
 
 -- Launch ships these (Content list) plus the tape overlay; post-launch updates add the rest, one per update.
@@ -72,8 +73,37 @@ Config.Greybox = {
 	panelThickness = 0.2, -- studs
 	ripLineWidth = 0.15, -- studs
 	ripLineColor = "#2B1E14",
-	tornPanelColor = "#8E8D90", -- the greybox torn-edge stand-in, a step darker than the panel
-	panelColors = { "#A3A2A5", "#BDBCBF" }, -- checker, so each panel reads as its own target on a phone
+	panelColors = { "#A3A2A5", "#BDBCBF" }, -- Phase 0 checker (Phase 1 paper uses Config.Palette.paper)
+	checkerLighten = 0.15, -- paper checker: the layer color and this much toward white
+	pickupStuds = 2, -- the glowing tool pickup
+	pickupColor = "#FFFFFF",
+}
+
+-- Layer palette (PLAN-TABLES.txt TABLE 12). Hex strings; the client and server convert with Color3.fromHex.
+Config.Palette = {
+	paper = { "#E23D3D", "#5FD3A0", "#2F5BD9", "#F2C230", "#F06BA8", "#2FB8C9" },
+	tape = { color = "#FFF3C4", transparency = 0.35, reflectance = 0 }, -- "specular only": no reflectance in greybox
+	ribbon = { color = "#E0B13A", reflectance = 0.6 },
+	cardboard = "#B98A52",
+}
+
+-- Run room (PLAN-TABLES.txt DIAGRAM D): one interior, present centred, shop counter in one corner.
+Config.RunRoom = {
+	sizeStuds = 60,
+	shopInsetStuds = 6, -- the counter sits this far in from its corner
+}
+
+-- HUD greybox (Phase 1): colors from the palette, Art bible B UI style comes in Phase 5.
+Config.HUD = {
+	toastSeconds = 2,
+	barColor = "#2B1E14", -- dark wood
+	shopColor = "#B98A52", -- cardboard
+	buttonColor = "#F2C230", -- sun yellow
+}
+
+-- Cash (PLAN-TABLES.txt TABLE 7): per panel torn, 1 at tier 1. Other tiers: not set yet.
+Config.Cash = {
+	perPanel = { Birthday = 1 },
 }
 
 -- The Tick is a side box in one middle-third layer; 40% of nests fuse it across the lid seam.

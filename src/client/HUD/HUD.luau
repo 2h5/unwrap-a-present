@@ -1,14 +1,182 @@
 --[=[
 	HUD (client system)
 	Owns: Cash, depth, Night timer, bank, shop, classes, rewards screens.
-	Must never: Compute a value it displays.
+	Must never: Compute a value it displays. Cash, tools and depth are attributes the server sets.
+	Phase 1 greybox: a top bar (cash, depth, tools), a short toast for refusals ("Needs scissors"),
+	and the run room shop, opened from the counter's ProximityPrompt; Buy sends ShopBuy.
+	Touch-first (invariant 3): every control is a large tap target; nothing needs a keyboard.
 	Read first: src/client/HUD/README.md
 ]=]
 
+local Players = game:GetService("Players")
+local ProximityPromptService = game:GetService("ProximityPromptService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Config = require(ReplicatedStorage.Shared.Config.Config)
+local Remotes = require(ReplicatedStorage.Shared.Remotes.Remotes)
+
 local HUD = {}
 
+-- Shop order and labels follow PLAN-TABLES.txt Table 7.
+local SHOP = {
+	{ item = "Scissors", label = "Scissors", tool = true },
+	{ item = "BoxCutter", label = "Box cutter", tool = true },
+	{ item = "Chainsaw", label = "Chainsaw", tool = true },
+	{ item = "GripTape", label = "Grip tape" },
+	{ item = "Flashlight", label = "Flashlight" },
+	{ item = "SpareLid", label = "Spare lid" },
+	{ item = "LuckyBow", label = "Lucky bow" },
+}
+
+local player = Players.LocalPlayer
+local gui: ScreenGui
+local bar: TextLabel
+local toastLabel: TextLabel
+local shopFrame: Frame
+local buttons: { [string]: TextButton } = {}
+local toastToken = 0
+
+local function label(parent: Instance, name: string, size: UDim2, pos: UDim2): TextLabel
+	local l = Instance.new("TextLabel")
+	l.Name = name
+	l.Size = size
+	l.Position = pos
+	l.BackgroundColor3 = Color3.fromHex(Config.HUD.barColor)
+	l.BackgroundTransparency = 0.25
+	l.TextColor3 = Color3.new(1, 1, 1)
+	l.TextScaled = true
+	l.Font = Enum.Font.GothamBold
+	l.Parent = parent
+	local corner = Instance.new("UICorner")
+	corner.Parent = l
+	return l
+end
+
+local function present(): Instance?
+	return workspace:FindFirstChild("Present")
+end
+
+local function attributeFor(entry): string
+	return if entry.tool then `Tool_{entry.item}` else `Upgrade_{entry.item}`
+end
+
+local function refresh()
+	local cash = player:GetAttribute("Cash") or 0
+	local p = present()
+	local depth = p and p:GetAttribute("CurrentDepth") or 0
+	local count = p and p:GetAttribute("LayerCount") or 0
+	local tools = { "Hands" }
+	for _, entry in SHOP do
+		if entry.tool and player:GetAttribute(attributeFor(entry)) then
+			table.insert(tools, entry.label)
+		end
+	end
+	bar.Text = `Cash {cash}   ·   Layer {math.min(depth + 1, count)} / {count}   ·   {table.concat(tools, ", ")}`
+
+	local tier = p and p:GetAttribute("TierNumber") or 1
+	for _, entry in SHOP do
+		local button = buttons[entry.item]
+		local info = Config.Shop[entry.item]
+		local owned = player:GetAttribute(attributeFor(entry)) == true
+		local locked = info.minTier ~= nil and tier < info.minTier
+		button.Text = if owned then `{entry.label} · owned` elseif locked then `{entry.label} · tier {info.minTier}` else `{entry.label} · {info.cost}`
+		local can = not owned and not locked and cash >= info.cost
+		button.AutoButtonColor = can
+		button.BackgroundTransparency = if can then 0 else 0.5
+	end
+end
+
+-- Shows a short message near the top of the screen (refusals like "Needs scissors").
+function HUD.toast(text: string)
+	toastToken += 1
+	local token = toastToken
+	toastLabel.Text = text
+	toastLabel.Visible = true
+	task.delay(Config.HUD.toastSeconds, function()
+		if toastToken == token then
+			toastLabel.Visible = false
+		end
+	end)
+end
+
+local function buildShop()
+	shopFrame = Instance.new("Frame")
+	shopFrame.Name = "Shop"
+	shopFrame.Size = UDim2.fromScale(0.5, 0.7)
+	shopFrame.Position = UDim2.fromScale(0.25, 0.15)
+	shopFrame.BackgroundColor3 = Color3.fromHex(Config.HUD.shopColor)
+	shopFrame.Visible = false
+	shopFrame.Parent = gui
+	Instance.new("UICorner").Parent = shopFrame
+	local list = Instance.new("UIListLayout")
+	list.Padding = UDim.new(0.02, 0)
+	list.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	list.Parent = shopFrame
+	local pad = Instance.new("UIPadding")
+	pad.PaddingTop = UDim.new(0.03, 0)
+	pad.Parent = shopFrame
+
+	local buy = Remotes.get("ShopBuy")
+	for i, entry in SHOP do
+		local button = Instance.new("TextButton")
+		button.Name = entry.item
+		button.LayoutOrder = i
+		button.Size = UDim2.fromScale(0.9, 0.1)
+		button.BackgroundColor3 = Color3.fromHex(Config.HUD.buttonColor)
+		button.TextScaled = true
+		button.Font = Enum.Font.GothamBold
+		button.Parent = shopFrame
+		Instance.new("UICorner").Parent = button
+		button.Activated:Connect(function()
+			buy:FireServer(entry.item)
+		end)
+		buttons[entry.item] = button
+	end
+	local close = Instance.new("TextButton")
+	close.Name = "Close"
+	close.LayoutOrder = #SHOP + 1
+	close.Size = UDim2.fromScale(0.5, 0.1)
+	close.Text = "Close"
+	close.TextScaled = true
+	close.Font = Enum.Font.GothamBold
+	close.Parent = shopFrame
+	Instance.new("UICorner").Parent = close
+	close.Activated:Connect(function()
+		shopFrame.Visible = false
+	end)
+end
+
 function HUD.init()
-	-- Not built yet (Phase 3).
+	gui = Instance.new("ScreenGui")
+	gui.Name = "HUD"
+	gui.ResetOnSpawn = false
+	gui.Parent = player:WaitForChild("PlayerGui")
+
+	bar = label(gui, "Bar", UDim2.fromScale(0.6, 0.06), UDim2.fromScale(0.2, 0.02))
+	toastLabel = label(gui, "Toast", UDim2.fromScale(0.4, 0.06), UDim2.fromScale(0.3, 0.1))
+	toastLabel.Visible = false
+	buildShop()
+
+	ProximityPromptService.PromptTriggered:Connect(function(prompt)
+		if prompt.Name == "ShopPrompt" then
+			shopFrame.Visible = not shopFrame.Visible
+			refresh()
+		end
+	end)
+
+	player.AttributeChanged:Connect(refresh)
+	local function watchPresent(p: Instance)
+		if p.Name == "Present" then
+			p.AttributeChanged:Connect(refresh)
+			refresh()
+		end
+	end
+	workspace.ChildAdded:Connect(watchPresent)
+	local p = present()
+	if p then
+		watchPresent(p)
+	end
+	refresh()
 end
 
 return HUD

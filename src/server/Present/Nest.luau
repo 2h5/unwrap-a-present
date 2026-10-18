@@ -9,7 +9,7 @@
 	Read first: src/server/Present/README.md
 ]=]
 
-export type Layer = { layerType: string, depth: number }
+export type Layer = { layerType: string, depth: number, tapeStrips: { TapeStrip }? }
 
 export type Nest = { seed: number, tier: string, layers: { Layer } }
 
@@ -22,8 +22,18 @@ export type NestConfig = {
 -- Rng is passed in, not required, so this module needs no path into ReplicatedStorage.
 export type RngApi = {
 	new: (seed: number) -> any,
+	next: (rng: any) -> number,
 	int: (rng: any, lo: number, hi: number) -> number,
 	weighted: (rng: any, entries: { { value: string, weight: number } }) -> string?,
+}
+
+-- A strip on a full grid line of one face: along "row" sits between rows `line` and `line + 1`,
+-- along "col" between columns `line` and `line + 1`.
+export type TapeStrip = { seamIndex: number, face: number, along: string, line: number, cut: boolean }
+
+export type TapeConfig = {
+	paperChanceByBand: { number },
+	seamFraction: { number }, -- { min, max }
 }
 
 local LID = "BoxLid"
@@ -88,6 +98,58 @@ function Nest.generate(seed: number, tier: string, config: NestConfig, Rng: RngA
 		table.insert(layers, { layerType = LID, depth = depth })
 	end
 	return { seed = seed, tier = tier, layers = layers }
+end
+
+-- Lays tape on Paper layers (never depth 0): a layer is taped with its band's chance, and a taped
+-- layer tapes seamFraction of its seams, chosen from the seed. Seams are the full grid lines of the
+-- faces off the floor (`bottomFace` is skipped). Tape uses its own stream (seed + 1) so the layer
+-- types a seed gives never change with tape rules. Sets layer.tapeStrips; returns the nest.
+function Nest.tape(
+	nest: Nest,
+	sizes: { [number]: number },
+	perFaceOf: (studs: number) -> number,
+	tape: TapeConfig,
+	faceCount: number,
+	bottomFace: number,
+	Rng: RngApi
+): Nest
+	local rng = Rng.new(nest.seed + 1)
+	local count = #nest.layers
+	for _, layer in nest.layers do
+		if layer.layerType == FIRST and layer.depth > 0 then
+			local band = Nest.band(layer.depth, count)
+			if Rng.next(rng) < tape.paperChanceByBand[band] then
+				local per = perFaceOf(sizes[layer.depth])
+				local seams = {}
+				for face = 1, faceCount do
+					if face ~= bottomFace then
+						for line = 1, per - 1 do
+							table.insert(seams, { face = face, along = "row", line = line })
+							table.insert(seams, { face = face, along = "col", line = line })
+						end
+					end
+				end
+				local lo, hi = tape.seamFraction[1], tape.seamFraction[2]
+				local fraction = lo + Rng.next(rng) * (hi - lo)
+				local k = math.clamp(math.floor(fraction * #seams + 0.5), 1, #seams)
+				for i = 1, k do
+					local j = Rng.int(rng, i, #seams)
+					seams[i], seams[j] = seams[j], seams[i]
+				end
+				local strips = {}
+				for i = 1, k do
+					local s = seams[i]
+					local seamIndex = (s.face - 1) * 2 * (per - 1) + (if s.along == "row" then 0 else per - 1) + s.line
+					table.insert(strips, { seamIndex = seamIndex, face = s.face, along = s.along, line = s.line, cut = false })
+				end
+				table.sort(strips, function(a, b)
+					return a.seamIndex < b.seamIndex
+				end)
+				layer.tapeStrips = strips
+			end
+		end
+	end
+	return nest
 end
 
 -- Size in studs of every layer, by depth. Shells shrink evenly from `outerStuds` (depth 0) to

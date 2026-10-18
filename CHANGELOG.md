@@ -2,6 +2,7 @@
 
 Date · change · who. Newest first. Prune monthly.
 
+- 2026-10-17 · Phase 1 done: layer stack from the Nest, tape strips, ribbon, box lids (two-player lift), tools and scissors pickup, run shop and cash, HUD bar and shop, Studio seed replay · Claude Code
 - 2026-10-17 · N26–N30: depth 0 paper, middle lids, full-line tape seams, ribbon as 9 panels, size-based panel grid; Nest and PanelGrid updated · Claude Code
 - 2026-10-17 · Phase 1: Nest generation from seed (Present/Nest, Shared/Rng) with tests over 500 seeds × 4 tiers · Claude Code
 - 2026-10-17 · Gate A passed; Phase 0 done, Phase 1 started · Claude Code
