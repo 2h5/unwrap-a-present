@@ -261,8 +261,8 @@ Config.Classes = {
 
 -- Gamepass and dev product ids are created on Roblox by a human; 0 = not created yet (shown, not buyable).
 Config.Gamepasses = {
-	DoubleCash = { robux = 199, id = 0, name = "2x Cash", cashScale = 2 },
-	BigShelf = { robux = 299, id = 0, name = "Big Shelf" },
+	DoubleCash = { robux = 199, id = 2039841362, name = "2x Cash", cashScale = 2 },
+	BigShelf = { robux = 299, id = 2037525496, name = "Big Shelf" },
 	ExtraToolSlot = { robux = 149, id = 0, name = "Extra Tool Slot" },
 	-- Side-gift rolls happen twice, keep the better rarity; never the core (invariant 6: 2p - p^2 < 2p)
 	Lucky = { robux = 399, id = 0, name = "Lucky", rollTwice = true },
@@ -287,9 +287,9 @@ Config.Data = {
 	keyPrefix = "Player_",
 }
 
--- Place ids, created on Roblox by a human; 0 = not created yet (teleports are skipped, Studio loops runs).
+-- Place ids (experience 10771563436); 0 = not created yet. Teleports are skipped in Studio or while 0.
 -- Which place this is comes from the Workspace attribute PlaceKind ("Lobby"; absent = the run place).
-Config.Places = { lobby = 0, run = 0 }
+Config.Places = { lobby = 96472302491903, run = 98807937316780 }
 
 -- Lobby greybox (Diagram D; numbers set in the build, DECISIONS.md). x grows east, z grows south.
 Config.Lobby = {

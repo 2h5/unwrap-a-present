@@ -12,8 +12,8 @@ Must never: Hold any loot or cash logic.
 
 `lobby.project.json` builds the lobby place (Workspace attribute `PlaceKind = "Lobby"`);
 `default.project.json` builds the run place (no attribute). `Main.server.luau` boots the lobby's
-systems (Data, Economy, Loot, Steal, Lobby) or the run's. Place ids live in `Config.Places`; while
-they are 0 everything falls back to local play: pads say "The run place is not set up yet" and the
+systems (Data, Economy, Loot, Steal, Lobby) or the run's. Place ids live in `Config.Places`. In Studio
+(which cannot teleport), or while an id is 0, everything falls back to local play: pads say so and the
 run place loops runs. To try the lobby in Studio, set Workspace `PlaceKind` to "Lobby" before Play.
 
 ## Public API

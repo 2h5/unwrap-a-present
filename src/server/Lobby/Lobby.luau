@@ -5,7 +5,7 @@
 	Lobby place: builds the field (Field.luau), wires pads (Party.luau) and booths, mirrors each
 	player's shelf and vault crate, teleports a party with a token (N9, N19) and offers a rejoin (N10).
 	Run place: admits only players named by a valid token, holds the run until the party arrives, and
-	sends everyone back after the bank. With place ids still 0 (Studio) both sides fall back to local play.
+	sends everyone back after the bank. In Studio, or with place ids still 0, both sides fall back to local play.
 	Read first: src/server/Lobby/README.md
 ]=]
 
@@ -13,6 +13,7 @@ local HttpService = game:GetService("HttpService")
 local MemoryStoreService = game:GetService("MemoryStoreService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local TeleportService = game:GetService("TeleportService")
 
 local Config = require(ReplicatedStorage.Shared.Config.Config)
@@ -35,6 +36,11 @@ local tokens: MemoryStoreHashMap? = nil
 
 ---------------------------------------------------------------- shared
 
+-- True when teleports can work: a live server and both place ids created. Studio cannot teleport.
+local function linked(): boolean
+	return not RunService:IsStudio() and Config.Places.run ~= 0 and Config.Places.lobby ~= 0
+end
+
 local function tokenMap(): MemoryStoreHashMap?
 	if not tokens then
 		local ok, map = pcall(MemoryStoreService.GetHashMap, MemoryStoreService, TOKEN_MAP)
@@ -44,7 +50,7 @@ local function tokenMap(): MemoryStoreHashMap?
 end
 
 local function sendToLobby(players: { Player })
-	if Config.Places.lobby == 0 then
+	if not linked() then
 		return
 	end
 	for _, player in players do
@@ -93,9 +99,10 @@ local function launch(members: { Player }, tierNumber: number)
 			return
 		end
 	end
-	if Config.Places.run == 0 then
+	if not linked() then
+		local why = if RunService:IsStudio() then "Runs start in the live game, not in Studio" else "The run place is not set up yet"
 		for _, player in members do
-			Economy.refresh(player, "The run place is not set up yet")
+			Economy.refresh(player, why)
 		end
 		return
 	end
@@ -139,7 +146,7 @@ end
 
 local function rejoin(player: Player)
 	local data = Data.get(player)
-	if not data or Config.Places.run == 0 or data.rejoin.accessCode == "" or data.rejoin.expiresAt < os.time() then
+	if not data or not linked() or data.rejoin.accessCode == "" or data.rejoin.expiresAt < os.time() then
 		return
 	end
 	local options = Instance.new("TeleportOptions")
@@ -297,7 +304,7 @@ local runTier: number? = nil
 local partyKnown = Instance.new("BindableEvent")
 
 local function admit(player: Player)
-	if Config.Places.run == 0 or Config.Places.lobby == 0 then
+	if not linked() then
 		return -- local play (Studio, or places not created yet): everyone is in
 	end
 	if Party.admits(admitted, player.UserId) then
@@ -325,7 +332,7 @@ end
 -- Run place: yields until the party is known and here (or arrivalWaitSeconds pass), then returns the
 -- run's tier name. Returns nil in local play, where Present picks the tier itself.
 function Lobby.waitForParty(): string?
-	if IS_LOBBY or Config.Places.run == 0 or Config.Places.lobby == 0 then
+	if IS_LOBBY or not linked() then
 		return nil
 	end
 	if #admitted == 0 then
@@ -350,7 +357,7 @@ end
 -- Run place, after the bank: everyone goes back to the lobby (Diagram B). Returns true if they were
 -- sent; false in local play, where the next run starts here.
 function Lobby.runEnded(): boolean
-	if IS_LOBBY or Config.Places.run == 0 or Config.Places.lobby == 0 then
+	if IS_LOBBY or not linked() then
 		return false
 	end
 	for _, player in Players:GetPlayers() do
