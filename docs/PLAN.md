@@ -726,12 +726,12 @@ One paper layer on one cube, no textures, no loot.
 - [ ] **Gate B playtest:** a party of 2 completes a run end to end and sees their shelf (deferred to the first two-player lobby playtest, DECISIONS.md)
 
 ### Phase 3: Lobby, economy
-- [ ] Lobby built to the plan in Art bible B; pads, party of 4, teleport
+- [ ] Lobby built to the plan in Art bible B; pads, party of 4, teleport (lobby, solo teleport and return verified live; party of 4 deferred to the first two-player playtest with Gate B)
 - [x] Cash, gems, daily and group rewards, class spin with the launch odds (group reward waits for the group id)
-- [ ] Gamepasses and dev products wired, with the invariant 6 check in code review
+- [ ] Gamepasses and dev products wired, with the invariant 6 check in code review (all ids wired and on sale; invariant 6 review passed, DECISIONS.md; one Studio test purchase left)
 - [x] HUD complete per the table in Art bible B (Night timer and down state are wired; Phase 4 sends them)
 - [x] Prestige to Christmas tier
-- [ ] Start pads: solo, party, join anyone
+- [ ] Start pads: solo, party, join anyone (solo verified live; party and join anyone deferred to the first two-player playtest with Gate B)
 - [x] Owned classes with pick-before-run and duplicate refund
 - [x] Permanent track (Pockets, Night Eyes), login streak, bring-a-friend gems
 - [x] Prestige run counts per tier, vault crate with reclaims, replay any unlocked tier at reduced gems

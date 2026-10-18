@@ -2,6 +2,7 @@
 
 Date · change · who. Newest first. Prune monthly.
 
+- 2026-10-17 · Both places published and tested live (solo pad, run, bank, return to lobby); invariant 6 review passed; two-player pad checks deferred with Gate B · Claude Code
 - 2026-10-17 · All four passes on sale (199 / 299 / 149 / 399), gem products 100 / 500 / 1200 created at 99 / 399 / 799 with managed pricing off, product ids in Config; 75 specs pass · Claude Code
 - 2026-10-17 · Auto-tools logged; Extra Tool Slot replaced by Tool Keeper (scissors in every kit, tools kept when downed in Phase 4); Lucky party-wide, non-stacking, with a 🍀 on the party panel; all four pass ids in Config (off sale until priced); 75 specs pass · Claude Code
 - 2026-10-17 · Run place created, place ids and 2x Cash / Big Shelf pass ids in Config; Studio always uses local play; 75 specs pass · Claude Code
