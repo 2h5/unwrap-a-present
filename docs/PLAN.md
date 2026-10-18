@@ -737,10 +737,10 @@ One paper layer on one cube, no textures, no loot.
 - [x] Prestige run counts per tier, vault crate with reclaims, replay any unlocked tier at reduced gems
 
 ### Phase 4: Night and Jack
-- [ ] Tick side box placement (blocking and non-blocking) and ticking audio ramp
-- [ ] Night lighting, Jack movement, line of sight blocked by lids
-- [ ] Hide and shutter, downs, revives, auto-revive solo, wipe
-- [ ] Night ends on timer or core reached
+- [x] Tick side box placement (blocking and non-blocking) and ticking audio ramp
+- [x] Night lighting, Jack movement, line of sight blocked by lids
+- [x] Hide and shutter, downs, revives, auto-revive solo, wipe (teammate revive, two-player wipe and the dropped tool are checked in the playtest below)
+- [x] Night ends on timer or core reached
 - [ ] **Playtest:** Night survived using shutter only
 
 ### Phase 5: Art and polish

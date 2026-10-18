@@ -2,7 +2,7 @@
 	Lobby (server system)
 	Owns: Start pads, party of up to 4, teleport to run place, booths, lobby night clock.
 	Must never: Hold any loot or cash logic. It mirrors shelves for display and moves players.
-	Lobby place: builds the field (Field.luau), wires pads (Party.luau) and booths, mirrors each
+	Lobby place: builds Unwrapping Plaza (Field.luau), wires pads (Party.luau) and booths, mirrors each
 	player's shelf and vault crate, teleports a party with a token (N9, N19) and offers a rejoin (N10).
 	Run place: admits only players named by a valid token, holds the run until the party arrives, and
 	sends everyone back after the bank. In Studio, or with place ids still 0, both sides fall back to local play.
@@ -159,7 +159,7 @@ local function rejoin(player: Player)
 	end
 end
 
--- Mirrors each player's shelf onto a board in the shelf row (the client Shelf system draws it).
+-- Mirrors each player's shelf onto a board in the shelf gallery (the client Shelf system draws it).
 local function mirrorShelf(player: Player)
 	if not field then
 		return
@@ -173,16 +173,17 @@ local function mirrorShelf(player: Player)
 		local slot = #field.shelves:GetChildren() + 1
 		model = Instance.new("Model")
 		model.Name = `Shelf_{player.UserId}`
-		local spot = Field.shelfSpot(slot)
+		local spot = Field.shelfSpot(slot) -- +X out of the shelf's front, toward the gallery lane
 		local back = Instance.new("Part")
 		back.Name = "Board"
 		back.Anchored = true
 		back.Size = Vector3.new(1, 6, 6)
-		back.Position = spot + Vector3.new(-0.5, 3, 0)
+		back.CFrame = spot * CFrame.new(-0.5, 3, 0)
 		back.Material = Enum.Material.WoodPlanks
 		back.Color = Color3.fromHex(Config.Palette.cardboard)
 		back.Parent = model
 		model.PrimaryPart = back
+		Field.dressShelf(model, back)
 		model:SetAttribute("OwnerId", player.UserId)
 		model:SetAttribute("OwnerName", player.DisplayName)
 		model.Parent = field.shelves
@@ -195,6 +196,8 @@ local function mirrorShelf(player: Player)
 		crate.Position = field.porch.Position + Vector3.new(-6 + (slot - 1) * 3 % 12, 1.75, 2)
 		crate.Material = Enum.Material.Cardboard
 		crate.Color = Color3.fromHex(Config.Palette.cardboard)
+		crate.Orientation = Vector3.new(0, 180, 0) -- its printed face toward the lawn
+		crate:SetAttribute("Print", true)
 		crate:SetAttribute("OwnerId", player.UserId)
 		crate.Parent = field.folder
 		Field.label(crate, `{player.DisplayName}'s vault`, 2.5)

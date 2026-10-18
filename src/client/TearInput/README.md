@@ -13,8 +13,9 @@ Must never: Decide that a panel is gone.
 - `TearInput.init()` — press (touch or left mouse) on a panel sends `TearRequest("Begin", …)`; release
   sends `"End"`. Draws one rip line per panel from `TearState`: it grows from the touch point to both
   panel edges over the panel time and stays where it stopped on release. Greybox line: `Config.Greybox`.
-- Sounds: crinkle (`Config.Sounds.tearHoldStart`) when any player starts a hold, rip (`tearRelease`) when
-  a panel tears. Preloads every clip at start.
+- Sounds: crinkle (`Config.Sounds.tearHoldStart`) when any player starts a hold; on a tear, by the
+  part's `Kind`: tape zip (`tapeCut`), ribbon or bow snip (`ribbonSnip`), else rip (`tearRelease`); a
+  lifted lid slides (`lidLift`). Preloads every clip at start.
 - Lids use `LidLift`, everything else `TearRequest`. Only the current layer (`Present` attribute
   `CurrentDepth`) can be tapped; deeper layers show through holes but are skipped. The rip line grows
   along the part's longer side. `Refused` reasons go to `HUD.toast`.

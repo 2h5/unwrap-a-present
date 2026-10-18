@@ -1,7 +1,7 @@
 --[=[
 	Nest (pure logic, server)
 	Owns: building the Nest (ordered layers, outside in) from a seed, a tier and the layer table, and
-	each layer's size in studs.
+	each layer's size in studs, and which middle-third layer holds the Tick (placeTick).
 	Rules (PLAN.md › Mechanics A; PLAN-TABLES.txt Table 4, Table 9): tier sets the layer count; depth 0
 	is Paper; each other layer is picked by its band weight; a type never follows itself; at least one
 	BoxLid sits in the middle third; the last two layers are BoxLid (never preceded by a third lid).
@@ -9,7 +9,7 @@
 	Read first: src/server/Present/README.md
 ]=]
 
-export type Layer = { layerType: string, depth: number, tapeStrips: { TapeStrip }? }
+export type Layer = { layerType: string, depth: number, tapeStrips: { TapeStrip }?, tick: { blocking: boolean }? }
 
 export type Nest = { seed: number, tier: string, layers: { Layer } }
 
@@ -163,6 +163,32 @@ function Nest.tape(
 		end
 	end
 	return nest
+end
+
+-- Places the Tick (Q1) in one middle-third layer, from its own stream (seed + 2) so layer types and
+-- tape never change with it. Blocking (`blockingChance`): fused across a middle-third BoxLid's seam,
+-- so that lid cannot lift until the Tick is opened. Not blocking: beside a middle-third Paper or
+-- BoxLid layer (a Ribbon has no shell to sit by). Sets layer.tick; returns the Tick's depth.
+function Nest.placeTick(nest: Nest, blockingChance: number, Rng: RngApi): number
+	local rng = Rng.new(nest.seed + 2)
+	local count = #nest.layers
+	local lids, beside = {}, {}
+	for _, layer in nest.layers do
+		if Nest.band(layer.depth, count) == 2 and layer.depth < count - LIDS_AT_END then
+			if layer.layerType == LID then
+				table.insert(lids, layer)
+			end
+			if layer.layerType ~= RIBBON then
+				table.insert(beside, layer)
+			end
+		end
+	end
+	assert(#lids > 0, "Nest: no middle-third lid for the Tick (N27)")
+	local blocking = Rng.next(rng) < blockingChance
+	local pool = if blocking then lids else beside
+	local layer = pool[Rng.int(rng, 1, #pool)]
+	layer.tick = { blocking = blocking }
+	return layer.depth
 end
 
 -- Size in studs of every layer, by depth. Shells shrink evenly from `outerStuds` (depth 0) to

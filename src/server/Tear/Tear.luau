@@ -4,8 +4,9 @@
 	Must never: Trust a client position or timer. Timing uses the server clock; reach uses the
 	server's own character position; the client's touch point only places the rip line.
 	Pure, tested logic: PanelGrid, LayerModel, LayerGeometry, TearSession, LidSession, Tools, RateLimit.
-	This file is the Roblox glue: builds the run's layers as greybox Parts (Workspace.Present), routes
-	TearRequest / LidLift, advances depth when a layer clears, spawns the scissors pickup after depth 0.
+	This file is the Roblox glue: builds the run's layers as Parts (Workspace.Present) with the look
+	attributes the client draws (Pattern, Print), routes TearRequest / LidLift, advances depth when a
+	layer clears, spawns the scissors pickup after depth 0.
 	Read first: src/server/Tear/README.md
 ]=]
 
@@ -15,6 +16,7 @@ local RunService = game:GetService("RunService")
 
 local Config = require(ReplicatedStorage.Shared.Config.Config)
 local Remotes = require(ReplicatedStorage.Shared.Remotes.Remotes)
+local ToolModels = require(ReplicatedStorage.Shared.Art.ToolModels)
 local Economy = require(script.Parent.Parent.Economy.Economy)
 local RunState = require(script.Parent.Parent.Present.RunState)
 local PanelGrid = require(script.Parent.PanelGrid)
@@ -88,10 +90,18 @@ end
 
 ---------------------------------------------------------------- building
 
-local function paperColor(depth: number): (Color3, Color3)
+-- A paper layer's colour and its pattern: each launch colour owns one pattern (Table 12), picked
+-- from the seed so a seed always wraps the same way.
+local function paperLook(depth: number): (Color3, string)
 	local palette = Config.Palette.paper
-	local base = Color3.fromHex(palette[(run.nest.seed + depth) % #palette + 1])
-	return base, base:Lerp(Color3.new(1, 1, 1), Config.Greybox.checkerLighten)
+	local i = (run.nest.seed + depth) % #palette + 1
+	return Color3.fromHex(palette[i]), Config.PaperLook.patterns[i]
+end
+
+-- Satin gold or satin crimson (Table 12), from the seed.
+local function ribbonColor(depth: number): Color3
+	local colors = Config.Palette.ribbon.colors
+	return Color3.fromHex(colors[(run.nest.seed + depth) % #colors + 1])
 end
 
 local function makePart(p: LayerGeometry.Placement, center: Vector3, parent: Instance): Part
@@ -129,7 +139,8 @@ local function build(depth: number)
 	folder:SetAttribute("Depth", depth)
 	local thickness = Config.Greybox.panelThickness
 	local center = layerCenter(depth)
-	local light, dark = paperColor(depth)
+	local paper, pattern = paperLook(depth)
+	-- Looks are attributes the client draws (Debris/PaperLook): Pattern on paper, Print on cardboard.
 	for id, item in model.items do
 		if not item.bottom then
 			local p = LayerGeometry.place(model, id, size, thickness, Config.TapeOverlay.stripStuds)
@@ -139,17 +150,20 @@ local function build(depth: number)
 			part:SetAttribute("Depth", depth)
 			part:SetAttribute("Kind", item.kind)
 			if item.kind == "Panel" then
-				part.Color = if ((item.row :: number) + (item.col :: number)) % 2 == 0 then light else dark
+				part.Color = paper
+				part:SetAttribute("Pattern", pattern)
 			elseif item.kind == "Tape" then
 				part.Color = Color3.fromHex(Config.Palette.tape.color)
 				part.Transparency = Config.Palette.tape.transparency
 				part.Reflectance = Config.Palette.tape.reflectance
+				part.Material = Enum.Material[Config.Palette.tape.material]
 			elseif item.kind == "Segment" or item.kind == "Bow" then
-				part.Color = Color3.fromHex(Config.Palette.ribbon.color)
+				part.Color = ribbonColor(depth)
 				part.Reflectance = Config.Palette.ribbon.reflectance
 			elseif item.kind == "Lid" then
 				part.Color = Color3.fromHex(Config.Palette.cardboard)
 				part.Material = Enum.Material.Cardboard
+				part:SetAttribute("Print", true)
 			end
 			run.parts[depth][id] = part
 		end
@@ -162,6 +176,7 @@ local function build(depth: number)
 				wall.Name = "Wall"
 				wall.Color = Color3.fromHex(Config.Palette.cardboard)
 				wall.Material = Enum.Material.Cardboard
+				wall:SetAttribute("Print", true)
 				table.insert(run.walls[depth], wall)
 			end
 		end
@@ -188,11 +203,10 @@ local function spawnScissors()
 	pickup.Name = "ScissorsPickup"
 	pickup.Anchored = true
 	pickup.CanCollide = false
-	pickup.Material = Enum.Material.Neon
-	pickup.Color = Color3.fromHex(Config.Greybox.pickupColor)
 	pickup.Size = Vector3.new(s, s / 2, s)
 	local half = run.sizes[0] / 2
 	pickup.Position = run.base + Vector3.new(half, s / 4, half + Config.Panels.panelStuds)
+	ToolModels.dress(pickup, "Scissors")
 	pickup.Touched:Connect(function(other)
 		local player = Players:GetPlayerFromCharacter(other.Parent)
 		if player and not player:GetAttribute("Tool_Scissors") then
@@ -356,6 +370,9 @@ local function validate(player: Player, depth: any, id: any): (any, BasePart?)
 	if not run or run.done or typeof(depth) ~= "number" or typeof(id) ~= "number" or depth ~= run.current then
 		return nil, nil
 	end
+	if player:GetAttribute("Down") then
+		return nil, nil -- a downed player waits for a revive (Night)
+	end
 	local model = run.models[depth]
 	local part = run.parts[depth] and run.parts[depth][id]
 	if not model or not part then
@@ -374,6 +391,12 @@ local function validate(player: Player, depth: any, id: any): (any, BasePart?)
 		return nil, nil
 	end
 	return model.items[id], part
+end
+
+-- A blocking Tick is fused across this lid's seam and has not been opened (Q1).
+local function tickSealed(depth: number): boolean
+	local tick = run.nest.layers[depth + 1].tick
+	return tick ~= nil and tick.blocking and not run.tickOpen
 end
 
 local function toolHint(grade: number): string
@@ -419,6 +442,10 @@ local function beginLid(player: Player, depth: any, id: any)
 	if not item or item.kind ~= "Lid" then
 		return
 	end
+	if tickSealed(depth) then
+		refuse(player, "Open the Tick first")
+		return
+	end
 	local seconds = Tools.best(owned(player), item.action, item.grade, Config.Tools, timeScale(player))
 	if not seconds then
 		return
@@ -448,6 +475,10 @@ local function devClear()
 	end
 	local depth = run.current
 	local model = run.models[depth]
+	if tickSealed(depth) then
+		warn("DevClear: open the Tick first (Workspace attribute DevNight)")
+		return
+	end
 	if model.items[1].kind == "Lid" then
 		for id = 2, model.count do
 			PanelGrid.setTorn(model :: any, id, true)
@@ -481,12 +512,25 @@ function Tear.getModel(depth: number): LayerModel.Model?
 	return run and run.models[depth]
 end
 
--- What Loot needs to place gifts: the Nest, layer sizes by depth, the floor point under the present.
-function Tear.getRunInfo(): { nest: any, sizes: { [number]: number }, base: Vector3, tierNumber: number }?
+-- What Loot and Night need: the Nest, layer sizes by depth, the floor point under the present, the
+-- current depth and the server-enforced reach (N37).
+function Tear.getRunInfo(): { nest: any, sizes: { [number]: number }, base: Vector3, tierNumber: number, current: number, reach: number }?
 	if not run then
 		return nil
 	end
-	return { nest = run.nest, sizes = run.sizes, base = run.base, tierNumber = run.tierNumber }
+	return { nest = run.nest, sizes = run.sizes, base = run.base, tierNumber = run.tierNumber, current = run.current, reach = run.reach }
+end
+
+-- Night opened the Tick: a blocking Tick no longer holds its lid down.
+function Tear.openTick()
+	if run then
+		run.tickOpen = true
+	end
+end
+
+-- Ends a player's hold as if they let go (progress kept). Night calls it when the player goes down.
+function Tear.cancelHold(player: Player)
+	endHold(player, os.clock())
 end
 
 -- Replaces the present with a fresh one built from `nest` (Present -> Tear: Nest).
@@ -530,17 +574,22 @@ function Tear.loadNest(nest: any, sizes: { [number]: number }, tierNumber: numbe
 		ripPoints = {},
 		current = 0,
 		lidsLifted = 0,
+		tickOpen = false,
 		done = false,
 	}
-	-- Layer colours for the HUD's depth stack (the client never works out a layer's colour).
-	local colors = {}
+	-- Layer colours for the HUD's depth stack and patterns for the Tick (the client never works out a
+	-- layer's look).
+	local colors, patterns = {}, {}
 	for _, layer in nest.layers do
-		local hex = if layer.layerType == "Paper" then paperColor(layer.depth):ToHex()
-			elseif layer.layerType == "Ribbon" then Config.Palette.ribbon.color
+		local paper, pattern = paperLook(layer.depth)
+		local hex = if layer.layerType == "Paper" then paper:ToHex()
+			elseif layer.layerType == "Ribbon" then ribbonColor(layer.depth):ToHex()
 			else Config.Palette.cardboard
 		table.insert(colors, (string.gsub(hex, "#", "")))
+		table.insert(patterns, if layer.layerType == "Paper" then pattern else "")
 	end
 	present:SetAttribute("LayerColors", table.concat(colors, ","))
+	present:SetAttribute("LayerPatterns", table.concat(patterns, ","))
 	buildVisible()
 	present.Parent = workspace
 	props.Parent = workspace

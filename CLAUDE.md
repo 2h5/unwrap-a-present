@@ -33,7 +33,7 @@ the plan does not describe, check Art bible B budgets, play one full run on a ph
 3. `docs/DECISIONS.md` — anything **Proposed** waiting on a human.
 4. The `README.md` inside the system folder you are touching (`src/server/<System>/`, etc.).
 
-Current phase: **Phase 3 — Lobby, economy** (Phases 0–2 done; Gate B and the two-player pad checks deferred, see DECISIONS.md; build order: PLAN-TABLES.txt Diagram E). No fixed dates.
+Current phase: **Phase 5 — Art and polish**, run beside Phase 4 (first pass built with code-drawn placeholders; the lobby is Unwrapping Plaza since 2026-10-18, do not restore the old field; final assets in [docs/art/assets.md](docs/art/assets.md), and one final testing pass that includes Phase 4's shutter-only playtest, are open. Phase 3 still has Gate B, the two-player pad checks and one test purchase open, see DECISIONS.md; build order: PLAN-TABLES.txt Diagram E). No fixed dates.
 
 ## Layout
 

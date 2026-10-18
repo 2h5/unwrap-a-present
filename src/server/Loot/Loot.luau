@@ -5,7 +5,8 @@
 	server-seeded Rng; the client is told what happened.
 	Pure, tested logic: Rarity, Shelf, Index, Bank. This file is the Roblox glue: side-gifts pop from a
 	cleared layer and fly to the nearest player (cash on pickup, N32), the shared RunBag, the core
-	reveal, the bank (every finisher banks a copy, N14) and the bank screen's sell / replace choices.
+	reveal, the bank (every finisher banks a copy, N14), the bank screen's sell / replace choices, and
+	the Night's hooks (the Tick's side-gifts, downs, the solo cost, the wipe).
 	Read first: src/server/Loot/README.md
 ]=]
 
@@ -16,6 +17,7 @@ local TweenService = game:GetService("TweenService")
 
 local Config = require(ReplicatedStorage.Shared.Config.Config)
 local Gifts = require(ReplicatedStorage.Shared.Gifts.Gifts)
+local GiftModels = require(ReplicatedStorage.Shared.Art.GiftModels)
 local Remotes = require(ReplicatedStorage.Shared.Remotes.Remotes)
 local Rng = require(ReplicatedStorage.Shared.Rng.Rng)
 local Data = require(script.Parent.Parent.Data.Data)
@@ -102,33 +104,29 @@ local function rarityColor(rarity: string): Color3
 	return if hex then Color3.fromHex(hex) else Color3.new(1, 1, 1)
 end
 
--- A greybox gift: a glowing Neon block in its rarity color (Secret sweeps the hue).
-local function giftPart(studs: number, rarity: string): Part
-	local part = Instance.new("Part")
-	part.Anchored = true
-	part.CanCollide = false
-	part.CanQuery = false
-	part.CanTouch = false
-	part.Material = Enum.Material.Neon
-	part.Color = rarityColor(rarity)
-	part.Size = Vector3.one * studs
+-- A gift as its chunky toy (Shared/Art/GiftModels) with its rarity glow and a trail for the arc to the
+-- bag. The anchored Root carries the welded toy: moving the Root moves the gift. A Secret's hue sweep is
+-- drawn on each client (HUD LootView), never replicated every frame.
+local function giftModel(giftId: string, rarity: string, studs: number, kind: string, mutation: string?): (Model, BasePart)
+	local model = GiftModels.build(giftId, rarity, { studs = studs, mutation = mutation })
+	model:SetAttribute("Kind", kind)
+	local root = model.PrimaryPart :: BasePart
 	local light = Instance.new("PointLight")
-	light.Range = Config.Greybox.giftLightRange
-	light.Color = part.Color
-	light.Parent = part
-	if rarity == "Secret" then
-		local connection
-		connection = RunService.Heartbeat:Connect(function()
-			if not part.Parent then
-				connection:Disconnect()
-				return
-			end
-			local color = Color3.fromHSV((os.clock() / Config.Greybox.secretHueSeconds) % 1, 0.6, 1)
-			part.Color = color
-			light.Color = color
-		end)
-	end
-	return part
+	light.Range = Config.LootLook.glowRange
+	light.Color = rarityColor(rarity)
+	light.Parent = root
+	local a0, a1 = Instance.new("Attachment"), Instance.new("Attachment")
+	a0.Position, a1.Position = Vector3.new(0, studs * 0.8, 0), Vector3.new(0, studs * 0.2, 0)
+	a0.Parent, a1.Parent = root, root
+	local trail = Instance.new("Trail")
+	trail.Attachment0, trail.Attachment1 = a0, a1
+	trail.Color = ColorSequence.new(rarityColor(rarity))
+	trail.Transparency = NumberSequence.new(0.3, 1)
+	trail.Lifetime = Config.Vfx.giftTrailSeconds / 2
+	trail.LightEmission = 0.6
+	trail.Enabled = false
+	trail.Parent = root
+	return model, root
 end
 
 local function rootOf(player: Player): BasePart?
@@ -150,17 +148,22 @@ local function nearestPlayer(position: Vector3): Player?
 	return best
 end
 
--- Arcs `part` into `player` over `seconds`, following them as they move.
+-- Arcs `part` (a gift's Root) into `player` over `seconds`, following them as they move.
 local function flyTo(part: BasePart, player: Player, seconds: number)
 	local start = part.Position
 	local began = os.clock()
-	while part.Parent do
+	local trail = part:FindFirstChildOfClass("Trail")
+	if trail then
+		trail.Enabled = true
+	end
+	while part.Parent and part:IsDescendantOf(workspace) do
 		local root = rootOf(player)
 		if not root then
 			return
 		end
 		local a = math.min((os.clock() - began) / seconds, 1)
-		part.Position = start:Lerp(root.Position, a) + Vector3.yAxis * math.sin(a * math.pi) * Config.Greybox.giftPopStuds
+		local spin = CFrame.Angles(0, a * math.pi * 2, 0)
+		part.CFrame = CFrame.new(start:Lerp(root.Position, a) + Vector3.yAxis * math.sin(a * math.pi) * Config.Greybox.giftPopStuds) * spin
 		if a >= 1 then
 			return
 		end
@@ -192,20 +195,19 @@ local function spawnSide(thisRun: any, item: BagItem, slot: number, of: number)
 	end
 	local size = info.sizes[item.depth]
 	local angle = slot / of * 2 * math.pi
-	local start = info.base + Vector3.new(math.cos(angle) * size / 4, size + Config.Greybox.sideGiftStuds, math.sin(angle) * size / 4)
-	local part = giftPart(Config.Greybox.sideGiftStuds, item.rarity)
-	part.Name = item.giftId
-	part.Position = start
-	part.Parent = giftsFolder
+	local start = info.base + Vector3.new(math.cos(angle) * size / 4, size + Config.LootLook.sideGiftStuds / 2, math.sin(angle) * size / 4)
+	local model, part = giftModel(item.giftId, item.rarity, Config.LootLook.sideGiftStuds, "Side")
+	part.CFrame = CFrame.new(start)
+	model.Parent = giftsFolder
 	TweenService:Create(part, TweenInfo.new(Config.Loot.flyToBagDelay, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-		Position = start + Vector3.yAxis * Config.Greybox.giftPopStuds,
+		CFrame = CFrame.new(start + Vector3.yAxis * Config.Greybox.giftPopStuds) * CFrame.Angles(0, math.pi, 0),
 	}):Play()
 	task.wait(Config.Loot.flyToBagDelay)
 	local player = nearestPlayer(part.Position)
 	if player then
 		flyTo(part, player, Config.Loot.flySeconds)
 	end
-	part:Destroy()
+	model:Destroy()
 	if run ~= thisRun then
 		return -- the run ended while it flew
 	end
@@ -223,6 +225,20 @@ local function spawnSide(thisRun: any, item: BagItem, slot: number, of: number)
 		toUserId = if player then player.UserId else nil,
 		cash = cash,
 	})
+end
+
+-- Rolls `count` side-gifts from depth band `band` and pops them from the layer at `depth`.
+local function dropSides(depth: number, band: number, count: number)
+	local lucky = false
+	for _, player in Players:GetPlayers() do
+		lucky = lucky or Economy.hasPass(player, "Lucky")
+	end
+	for slot = 1, count do
+		-- Lucky (any player in the run owns it): roll twice, keep the better. Never the core (invariant 6).
+		local rarity = Rarity.rollSide(run.rng, RARITY, run.tier, band, lucky, Rng)
+		local gift = pickSide(run.rng)
+		task.spawn(spawnSide, run, { giftId = gift.id, rarity = rarity, kind = "Side", depth = depth }, slot, count)
+	end
 end
 
 local function layerCleared(depth: number, layerType: string)
@@ -247,16 +263,7 @@ local function layerCleared(depth: number, layerType: string)
 	if layerType == "BoxLid" and teamHas("Collector") then
 		count += Config.Classes.Collector.lidSideGifts
 	end
-	local lucky = false
-	for _, player in Players:GetPlayers() do
-		lucky = lucky or Economy.hasPass(player, "Lucky")
-	end
-	for slot = 1, count do
-		-- Lucky (any player in the run owns it): roll twice, keep the better. Never the core (invariant 6).
-		local rarity = Rarity.rollSide(run.rng, RARITY, run.tier, band, lucky, Rng)
-		local gift = pickSide(run.rng)
-		task.spawn(spawnSide, run, { giftId = gift.id, rarity = rarity, kind = "Side", depth = depth }, slot, count)
-	end
+	dropSides(depth, band, count)
 end
 
 ---------------------------------------------------------------- bank
@@ -338,10 +345,13 @@ local function bankRun()
 				end
 				table.insert(outcomes, { giftId = item.giftId, rarity = item.rarity, mutation = item.mutation, kind = item.kind, outcome = outcome })
 			end
-			-- No downs until the Night exists (Phase 4), so every completed run is a no-downs run.
-			local base = Bank.runGems(GEMS, 0, false, data.tier > run.tierNumber)
+			-- Downs and the Tick are the whole party's (Night tells Loot).
+			local base = Bank.runGems(GEMS, run.downs, run.tickSurvived, data.tier > run.tierNumber)
 			local gems = Economy.bankRun(player, data, base, #Players:GetPlayers(), run.tierNumber)
 			data.stats.completions += 1
+			if run.tickSurvived then
+				data.stats.ticksSurvived += 1
+			end
 			if run.tier == "Birthday" and (data.stats.fastestBirthdayRunSeconds == 0 or seconds < data.stats.fastestBirthdayRunSeconds) then
 				data.stats.fastestBirthdayRunSeconds = seconds
 			end
@@ -442,15 +452,28 @@ local function reveal()
 
 	local info = Tear.getRunInfo()
 	if info then
+		-- The core rises out of its box for the 3 s reveal, turning once; a Mythic keeps turning and
+		-- bobbing (its idle animation). The light shaft and drift are drawn on each client (LootView).
 		local coreSize = info.sizes[depth]
-		local studs = Config.Greybox.coreGiftStuds
-		local part = giftPart(studs, rarity)
-		part.Name = "CoreGift"
-		part.Position = info.base + Vector3.yAxis * studs / 2
-		part.Parent = giftsFolder
-		TweenService:Create(part, TweenInfo.new(Config.Loot.coreRevealSeconds, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-			Position = info.base + Vector3.yAxis * (coreSize + studs),
-		}):Play()
+		local studs = Config.LootLook.coreGiftStuds
+		local model, root = giftModel(gift.id, rarity, studs, "Core")
+		model.Name = "CoreGift"
+		local from, to = info.base, info.base + Vector3.yAxis * coreSize
+		root.CFrame = CFrame.new(from)
+		model.Parent = giftsFolder
+		task.spawn(function()
+			local began = os.clock()
+			local L = Config.LootLook
+			while model.Parent do
+				local t = os.clock() - began
+				local a = math.min(t / Config.Loot.coreRevealSeconds, 1)
+				local eased = 1 - (1 - a) ^ 2
+				local turns = if rarity == "Mythic" then t / L.mythicSpinSeconds else eased
+				local bob = if rarity == "Mythic" then math.sin(t * 2) * L.mythicBobStuds else 0
+				root.CFrame = CFrame.new(from:Lerp(to, eased) + Vector3.yAxis * bob) * CFrame.Angles(0, turns * 2 * math.pi, 0)
+				RunService.Heartbeat:Wait()
+			end
+		end)
 	end
 	task.wait(Config.Loot.coreRevealSeconds + Config.Loot.revealBeatSeconds)
 	if run == thisRun then
@@ -469,6 +492,8 @@ function Loot.startRun(nest: any, tierNumber: number)
 		rng = Rng.new(Random.new():NextInteger(1, 2 ^ 31 - 1)),
 		bag = {},
 		startedAt = os.clock(),
+		downs = 0,
+		tickSurvived = false,
 	}
 	banking = {}
 	giftsFolder:ClearAllChildren()
@@ -485,9 +510,70 @@ function Loot.getBag(): { BagItem }
 	return run and run.bag or {}
 end
 
--- Called once every banking player is done (or has left). Until Lobby exists, Present starts the next run.
+-- Called when the run is over: every banking player is done (or has left), or a wipe's screen has
+-- been shown. Present sends the party to the lobby, or in local play starts the next run.
 function Loot.onBankDone(listener: () -> ())
 	table.insert(bankDoneListeners, listener)
+end
+
+---------------------------------------------------------------- night (Night -> Loot)
+
+-- The Tick was opened: it drops the run's best side-gifts (the most a layer rolls, from the
+-- inner-third table) from the layer it sat in.
+function Loot.tickOpened(depth: number)
+	if run then
+		dropSides(depth, Config.Tick.sideGiftBand, Config.Tick.sideGifts)
+	end
+end
+
+-- A player went down this run (bank gems: no 5 for no downs).
+function Loot.noteDown()
+	if run then
+		run.downs += 1
+	end
+end
+
+-- The party lived through the Night (bank gems: 8, stats.ticksSurvived).
+function Loot.noteTickSurvived()
+	if run then
+		run.tickSurvived = true
+	end
+end
+
+-- A solo auto-revive costs one Common side-gift from the bag, if there is one (Table 20).
+function Loot.removeCommon()
+	if not run then
+		return
+	end
+	for i = #run.bag, 1, -1 do
+		local item = run.bag[i]
+		if item.kind == "Side" and item.rarity == "Common" then
+			table.remove(run.bag, i)
+			lootEvent:FireAllClients({ type = "Lost", giftId = item.giftId, rarity = item.rarity })
+			return
+		end
+	end
+end
+
+-- Every player went down at once: the run bag is lost, the Index keeps what was seen (it recorded
+-- each gift as it landed), the shelf is untouched (invariant 10). The run is over after the screen.
+function Loot.wipe()
+	if not run then
+		return
+	end
+	run = nil -- gifts still flying land nowhere
+	for _, player in Players:GetPlayers() do
+		local data = Data.get(player)
+		if data then
+			data.stats.wipes += 1
+		end
+	end
+	lootEvent:FireAllClients({ type = "Wipe", seconds = Config.Night.wipeScreenSeconds })
+	task.delay(Config.Night.wipeScreenSeconds, function()
+		for _, listener in bankDoneListeners do
+			task.spawn(listener)
+		end
+	end)
 end
 
 function Loot.init()

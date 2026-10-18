@@ -14,6 +14,9 @@ Must never: Trust a client position or timer.
   (Present → Tear). Builds the current layer, the one inside it, and the layer a ribbon wraps.
 - `Tear.onLayerCleared(fn(depth, layerType))`, `Tear.onRunComplete(fn())` — listeners (Loot in Phase 2).
 - `Tear.getModel(depth): Model?` — a layer's LayerModel.
+- `Tear.getRunInfo()` — nest, sizes, base, tierNumber, `current` depth and `reach` (Loot, Night).
+- `Tear.openTick()` (Night) — a blocking Tick no longer holds its lid; `Tear.cancelHold(player)` ends a
+  hold as if let go (Night, on a down).
 - Pure, tested in `tests/Tear`: [PanelGrid](PanelGrid.luau) (`gridPerFace(layerStuds)`, bitfield,
   `faceAxes`, `TOP`/`BOTTOM`), [LayerModel](LayerModel.luau) (`build`, `canStart`, `remaining`,
   `isCleared`, `dropBottom`), [LayerGeometry](LayerGeometry.luau) (`place`, `walls`),
@@ -30,7 +33,7 @@ Must never: Trust a client position or timer.
   position (N37).
 - Down `TearState { depth, panelId, state, progress, seconds, u, v }` to everyone; state is
   "Holding" | "Released" | "Torn" | "Lifted". To one player: `{ state = "Refused", reason }`
-  ("Needs scissors", "Cut the tape first", "Needs 2 players").
+  ("Needs scissors", "Cut the tape first", "Needs 2 players", "Open the Tick first").
 
 ## Invariants and rules
 
@@ -46,8 +49,13 @@ Must never: Trust a client position or timer.
   walls go. The scissors pickup spawns when depth 0 clears (N26) and gives every player who touches it
   `Tool_Scissors`. Tools and upgrades are player attributes set by Economy or the pickup.
 - Each finished item pays `Economy.cashPerPanel(tier)` to the player(s) who finished it.
-- Greybox: server Parts (DECISIONS.md); real meshes come in Phase 5.
-- Begin is ignored unless `RunState.canTear()`. Studio only: Workspace `DevClear` clears the current layer.
+- Look (Phase 5): server parts carry look attributes the client draws (Debris/PaperLook). Paper panels
+  are one colour with `Pattern` = the paper's pattern (colour and pattern from the seed and depth, Table
+  12); the Present carries `LayerPatterns`. Tape is Glass; ribbon is gold or crimson from the seed; lids
+  and box walls carry `Print`. The scissors pickup is a tool prop (`Shared/Art/ToolModels`).
+- Begin is ignored unless `RunState.canTear()`, and for a downed player (attribute `Down`). A lid with a
+  sealed blocking Tick (Q1) refuses to lift. Studio only: Workspace `DevClear` clears the current layer
+  (not a lid a sealed Tick holds: use `DevNight`).
 
 ## How to add a new one
 

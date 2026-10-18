@@ -5,7 +5,8 @@
 	on "Torn" it hands the panel to Debris.spawn.
 	Touch and mouse share one path (invariant 3): press on a panel, hold, release.
 	Rip line: grows from the touch point to both panel edges over the panel time; stays on release.
-	Sounds: crinkle on hold start, rip on tear. Haptic: one light tap on this player's tear (touch only).
+	Sounds: crinkle on hold start; on release a rip (paper), a zip (tape) or a snip (ribbon); a lid
+	slide when a lid lifts. Haptic: one light tap on this player's tear (touch only).
 	Read first: src/client/TearInput/README.md
 ]=]
 
@@ -113,6 +114,12 @@ local function onTearState(state: { [string]: any })
 			line.part:Destroy()
 			lines[key] = nil
 		end
+		local lid = findPanel(state.depth, state.panelId)
+		local present = workspace:FindFirstChild("Present")
+		local at = if lid then lid.Position elseif present and present:IsA("Model") then present:GetPivot().Position else nil
+		if at then
+			Sfx.playAt(Config.Sounds.lidLift, at)
+		end
 		return
 	end
 	if state.state == "Torn" then
@@ -122,7 +129,10 @@ local function onTearState(state: { [string]: any })
 		end
 		local panel = findPanel(state.depth, state.panelId)
 		if panel then
-			Sfx.playAt(Config.Sounds.tearRelease, panel.Position)
+			-- Table 14: tape cuts zip, ribbon snips, paper rips.
+			local kind = panel:GetAttribute("Kind")
+			local clips = if kind == "Tape" then Config.Sounds.tapeCut elseif kind == "Segment" or kind == "Bow" then Config.Sounds.ribbonSnip else Config.Sounds.tearRelease
+			Sfx.playAt(clips, panel.Position)
 			Debris.spawn(panel)
 		end
 		if key == myKey then

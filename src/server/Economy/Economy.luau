@@ -18,6 +18,7 @@ local StarterPlayer = game:GetService("StarterPlayer")
 local Config = require(ReplicatedStorage.Shared.Config.Config)
 local Remotes = require(ReplicatedStorage.Shared.Remotes.Remotes)
 local Rng = require(ReplicatedStorage.Shared.Rng.Rng)
+local Props = require(ReplicatedStorage.Shared.Art.Props)
 local Data = require(script.Parent.Parent.Data.Data)
 local Shelf = require(script.Parent.Parent.Loot.Shelf)
 local RateLimit = require(script.Parent.Parent.Tear.RateLimit)
@@ -411,6 +412,18 @@ function Economy.setupShop(roomCenter: Vector3)
 	counter.Size = Vector3.new(Config.Panels.panelStuds * 2, Config.Panels.panelStuds, Config.Panels.panelStuds)
 	counter.Position = roomCenter + Vector3.new(-corner, Config.Panels.panelStuds / 2, corner)
 	counter.Material = Enum.Material.WoodPlanks
+	counter.Color = Color3.fromHex(Config.RunRoom.colors.wainscot)
+	-- Dressing (Phase 5): a top, a kick plate and a gift-tag sign hung from the ceiling, facing the room.
+	local top = counter.Position + Vector3.yAxis * (counter.Size.Y / 2 + 0.25)
+	Props.trim(counter, "CounterTop", Vector3.new(counter.Size.X + 0.8, 0.5, counter.Size.Z + 0.8), CFrame.new(top), Config.RunRoom.colors.trim, "Wood")
+	Props.trim(counter, "KickPlate", Vector3.new(counter.Size.X + 0.2, 0.6, counter.Size.Z + 0.2), CFrame.new(counter.Position - Vector3.yAxis * (counter.Size.Y / 2 - 0.3)), Config.RunRoom.colors.trim, "Wood")
+	local signAt = counter.Position + Vector3.yAxis * 9
+	local facing = CFrame.lookAt(signAt, Vector3.new(roomCenter.X, signAt.Y, roomCenter.Z))
+	Props.tag(counter, facing, 6, 2.4, "Shop", "Tools for this run")
+	for _, side in { -1, 1 } do
+		local hook = facing * CFrame.new(side * 2.4, 1.2, 0)
+		Props.twine(counter, hook.Position, hook.Position + Vector3.yAxis * (Config.RunRoom.wallStuds - hook.Position.Y + roomCenter.Y))
+	end
 	local prompt = Instance.new("ProximityPrompt")
 	prompt.Name = "ShopPrompt"
 	prompt.ActionText = "Shop"

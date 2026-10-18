@@ -18,9 +18,18 @@ Must never: Roll on the client or re-roll on request.
 - [Index.luau](Index.luau) (pure): `key(giftId, mutation?)`, `record(index, key, depth, now, rarity?, order?)`, `has`.
 - [Bank.luau](Bank.luau) (pure): `runGems(config, downs, tickSurvived, belowHighestTier)`, `sellGems(rates, rarity, count?)`.
 - `Loot.startRun(nest, tierNumber)` (Present) — empty shared RunBag, fresh server seed; `stats.runs` +1.
-- `Loot.getBag()`, `Loot.onBankDone(fn)` (Present starts the next run until Lobby exists).
+- `Loot.getBag()`, `Loot.onBankDone(fn)` — the run is over (bank done, or a wipe's screen shown); Present
+  sends the party to the lobby or starts the next run.
+- Night → Loot: `tickOpened(depth)` (the Tick's side-gifts: `Config.Tick.sideGifts` from the inner-third
+  table), `noteDown()`, `noteTickSurvived()`, `removeCommon()` (solo auto-revive), `wipe()` (bag lost,
+  `stats.wipes`, `LootEvent Wipe`, run over after `Config.Night.wipeScreenSeconds`).
+- Look (Phase 5): every gift in `Workspace.Gifts` is its toy model ([Shared/Art/GiftModels](../../shared/Art/GiftModels.luau),
+  attributes `GiftId`, `Rarity`; core: `Kind = "Core"`) with a rarity glow and a trail lit during the
+  0.8 s arc. The core rises out of its box; Mythic spins and bobs. Pop, shaft, drift, sting and the Secret
+  sweep are drawn by the client (HUD LootView). Placeholder models: [assets.md](../../../docs/art/assets.md).
 - Down `LootEvent`: `Side` (to all: giftId, rarity, to, toUserId, cash), `Core` (per player, with their
-  mutation), `Bank` (items with outcome, gems, pending), `BankPending`, `Refused`. Down `ShelfState`
+  mutation), `Bank` (items with outcome, gems, pending), `BankPending`, `Refused`, `Lost` (giftId,
+  rarity), `Wipe` (seconds). Down `ShelfState`
   `{ capacity, items, gems, indexCount }`. Up `BankChoice("Sell", i)`, `("Replace", i, slotIndex)`, `("Done")`.
 
 ## Invariants and rules
@@ -33,6 +42,8 @@ Must never: Roll on the client or re-roll on request.
 - Index records on sight for everyone in the run; the shelf changes only at bank. Every finisher banks
   a copy of the bag and the core (N14). Overflow: sell (gems, N33) or replace; Secrets go to the vault.
 - Lucky: any player in the run owning the pass makes side-gifts roll twice (party-wide, non-stacking).
+- Bank gems use the run's downs and Tick (8 Tick survived, 5 no downs, 3 completed); a survived Tick
+  adds `stats.ticksSurvived`.
 
 ## How to add a new one
 

@@ -4,7 +4,7 @@
 	Must never: Be called by the client. The seed is rolled here, on the server, never sent up.
 	Nest rules are pure and tested: Nest.luau. This file rolls the seed, lays the tape, sizes the
 	layers, hands the Nest to Tear and Loot, sets RunState, and until Lobby exists starts a new
-	Birthday run when the bank is done.
+	Birthday run when the bank is done. The run room itself is built once by Room.luau.
 	Read first: src/server/Present/README.md
 ]=]
 
@@ -19,7 +19,9 @@ local Tear = require(script.Parent.Parent.Tear.Tear)
 local Economy = require(script.Parent.Parent.Economy.Economy)
 local Loot = require(script.Parent.Parent.Loot.Loot)
 local Lobby = require(script.Parent.Parent.Lobby.Lobby)
+local Night = require(script.Parent.Parent.Night.Night)
 local RunState = require(script.Parent.RunState)
+local Room = require(script.Parent.Room)
 
 local Present = {}
 
@@ -69,9 +71,11 @@ function Present.startRun(tier: string, seed: number?)
 	local sizes = Nest.sizes(nest, Config.Tiers[tier].presentStuds, Config.Tiers.coreBoxStuds)
 	local tierNumber = table.find(Config.Tiers.order, tier) or 1
 	Nest.tape(nest, sizes, perFaceOf, Config.TapeOverlay, PanelGrid.faceCount, PanelGrid.BOTTOM, Rng, tierNumber)
+	local tickDepth = Nest.placeTick(nest, Config.TickBlockingChance, Rng)
 	Economy.resetRun(tierNumber)
 	Tear.loadNest(nest, sizes, tierNumber, presentBase(tier))
 	Loot.startRun(nest, tierNumber)
+	Night.startRun(presentBase("Birthday")) -- the room is centred where the Birthday present sits
 	RunState.set("Unwrapping")
 
 	local names = {}
@@ -79,7 +83,8 @@ function Present.startRun(tier: string, seed: number?)
 		local strips = layer.tapeStrips and ` (tape {#layer.tapeStrips})` or ""
 		table.insert(names, layer.layerType .. strips)
 	end
-	print(`Present: seed {nest.seed}, {nest.tier}: {table.concat(names, " > ")}`)
+	local tick = nest.layers[tickDepth + 1].tick
+	print(`Present: seed {nest.seed}, {nest.tier}: {table.concat(names, " > ")}; Tick at depth {tickDepth}{if tick and tick.blocking then " (blocking)" else ""}`)
 end
 
 function Present.init()
@@ -90,6 +95,7 @@ function Present.init()
 		end
 	end)
 	task.defer(function()
+		Room.build(presentBase("Birthday")) -- the room is centred where the Birthday present sits
 		Economy.setupShop(presentBase("Birthday"))
 		-- The run place waits for its party and uses their tier (N13); local play starts at once.
 		Present.startRun(Lobby.waitForParty() or "Birthday")

@@ -16,6 +16,13 @@ Must never: Exceed the budget.
   until recycled. Called by TearInput on `TearState` "Torn". Plays one soft thud (`Config.Sounds.paperLand`) on its first
   contact with anything but the present or a player.
 - `Debris.liveCount()` — live pieces, never above `Config.Tear.maxLiveDebris`.
+- Phase 5 effects (Table 14): a piece keeps its panel's pattern (`Patterns.copy`); each tear emits 6 paper
+  flecks (`Config.Vfx.tearFlecks`) from one shared emitter; a cleared layer (Present `CurrentDepth`)
+  bursts 40 confetti in its colour from `LayerColors` with a 0.6 s light pulse.
+- [PaperLook.luau](PaperLook.luau) — draws the present's looks on this client from server attributes:
+  `Pattern` (+ `PatternRepeats`) paper patterns, `Print` cardboard arrows and barcode, and `Kind = "Bow"`
+  loops and tails (local parts, `Kind = "BowLoop"`). Hidden while the part is transparent. Drawing:
+  [Shared/Art/Patterns](../../shared/Art/Patterns.luau). Placeholders and finals: [assets.md](../../../docs/art/assets.md).
 - [DebrisPool.luau](DebrisPool.luau) (pure, tested in `tests/Debris`): `new(max)`, `acquire` (oldest
   recycled first), `release`, `liveCount`.
 

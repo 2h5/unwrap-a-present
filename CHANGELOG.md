@@ -2,6 +2,10 @@
 
 Date · change · who. Newest first. Prune monthly.
 
+- 2026-10-18 · Lobby revamped as Unwrapping Plaza, a snowy gift village at dusk (user request, supersedes the old Diagram D field and Christmas-only snow): ribbon-inlaid plaza, spawn facing the pads, giant half-unwrapped present behind them, hatbox / stacked-box / open-box pavilions, covered shelf gallery (24 under roof), cottage and porch, terrace ring, backdrop village, forest and peaks, terrain snow; snowfall, drifting paper, swaying tags, breathing pad rims (Shelf/Ambience); shelves placed by CFrame; Christmas adds a door wreath. Built and route-checked in Lune only, nothing looked at in Studio; 90 specs pass · Claude Code
+
+- 2026-10-18 · Phase 5 first pass, code-built placeholders, nothing tested in Studio: six drawn paper patterns and the launch palette, 50 toy gift models, Jack and tool props, the Table 14 effects, the 24-clip sound set (reveal sting a placeholder), the lobby and run room built and lit, every HUD screen in one wooden kit with code-drawn icons; image registry `Shared/Art/Art.luau` and [asset list](docs/art/assets.md); no Phase 5 criterion ticked; 90 specs pass · Claude Code
+- 2026-10-17 · Phase 4 criteria 1–4: Tick placement and ticking ramp, Night lighting, Jack with line of sight, hide and shutter, downs, revives, solo auto-revive, wipe, Night ends on timer or core; hold prompts by touch · Claude Code
 - 2026-10-17 · Both places published and tested live (solo pad, run, bank, return to lobby); invariant 6 review passed; two-player pad checks deferred with Gate B · Claude Code
 - 2026-10-17 · All four passes on sale (199 / 299 / 149 / 399), gem products 100 / 500 / 1200 created at 99 / 399 / 799 with managed pricing off, product ids in Config; 75 specs pass · Claude Code
 - 2026-10-17 · Auto-tools logged; Extra Tool Slot replaced by Tool Keeper (scissors in every kit, tools kept when downed in Phase 4); Lucky party-wide, non-stacking, with a 🍀 on the party panel; all four pass ids in Config (off sale until priced); 75 specs pass · Claude Code

@@ -20,7 +20,8 @@ Must never: Grant a gift for Robux.
 - `hasPass(player, name)`, `shelfCapacity(player, data)`, `bankRun(player, data, baseGems, partySize, tierNumber)`
   (Loot's bank: Collector +10%, bring-a-friend, prestige run count, vault reclaims), `nextRunTier()`,
   `refresh(player, message?)`, `onProfileChanged(fn)` (Loot resends the shelf).
-- `setupShop(roomCenter)` — the run room counter. Up `ShopBuy(item)` while tearing is allowed.
+- `setupShop(roomCenter)` — the run room counter (wainscot wood, top and kick plate, a "Shop" gift-tag
+  sign hung on twine). Up `ShopBuy(item)` while tearing is allowed.
 - Up `EconomyRequest(kind, arg)`: DailyClaim, GroupClaim, ClassPick, TrackBuy, ShelfSlots, Prestige,
   TierPick, VaultReclaim. Up `ClassSpin()`. Down `ProfileState` (everything the Classes, Rewards and
   Shop screens show, with costs and waits computed here, and an optional message).

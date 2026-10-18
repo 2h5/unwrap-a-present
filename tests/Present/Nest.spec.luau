@@ -237,6 +237,47 @@ return function(test, expectEqual)
 		end
 	end)
 
+	test("tick: one per nest, middle third, blocking only on a lid, never a ribbon or a final lid", function()
+		eachNest(Config.LaunchLayerTypes, function(nest, tier, seed)
+			local depth = Nest.placeTick(nest, Config.TickBlockingChance, Rng)
+			local count, found = #nest.layers, 0
+			for _, layer in nest.layers do
+				if layer.tick then
+					found += 1
+					expectEqual(layer.depth, depth, `{tier} {seed} depth`)
+					expectEqual(Nest.band(layer.depth, count), 2, `{tier} {seed} band`)
+					assert(layer.layerType ~= "Ribbon", `{tier} {seed}: tick on a ribbon`)
+					assert(layer.depth < count - 2, `{tier} {seed}: tick on a final lid`)
+					if layer.tick.blocking then
+						expectEqual(layer.layerType, "BoxLid", `{tier} {seed} blocking type`)
+					end
+				end
+			end
+			expectEqual(found, 1, `{tier} {seed} ticks`)
+		end)
+	end)
+
+	test("tick: about 40% blocking, same seed same place, layer types unchanged", function()
+		local cfg = config(Config.LaunchLayerTypes)
+		local blocking, n = 0, 0
+		for i = 1, 2000 do
+			local seed = (i * 104729 * 7919) % (2 ^ 31 - 1) -- spread like live seeds (1 to 2^31 - 1)
+			local a = Nest.generate(seed, "Christmas", cfg, Rng)
+			local b = Nest.generate(seed, "Christmas", cfg, Rng)
+			local da, db = Nest.placeTick(a, Config.TickBlockingChance, Rng), Nest.placeTick(b, Config.TickBlockingChance, Rng)
+			expectEqual(da, db, `{seed} depth`)
+			expectEqual(a.layers[da + 1].tick.blocking, b.layers[db + 1].tick.blocking, `{seed} flag`)
+			local plain = Nest.generate(seed, "Christmas", cfg, Rng)
+			for i, layer in a.layers do
+				expectEqual(layer.layerType, plain.layers[i].layerType, `{seed} layer {i}`)
+			end
+			n += 1
+			blocking += if a.layers[da + 1].tick.blocking then 1 else 0
+		end
+		local share = blocking / n
+		assert(math.abs(share - Config.TickBlockingChance) < 0.04, `blocking share {share}`)
+	end)
+
 	test("depth bands split the nest in thirds", function()
 		local bands = {}
 		for depth = 0, 5 do

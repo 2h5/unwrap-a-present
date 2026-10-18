@@ -5,7 +5,7 @@ Must never: Touch Secret items or a player below Naughty 8.
 
 - **Built in:** Phase 6, build order in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E
 - **Rules:** [PLAN.md](../../../docs/PLAN.md), Mechanics C (Steal, Naughty, Krampus)
-- **Numbers:** [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt), Table 21 (Steal, Naughty, Krampus), Diagram D (Krampus walk, shelf row), Table 8 (Krampus's Kid)
+- **Numbers:** [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt), Table 21 (Steal, Naughty, Krampus), Diagram D (Krampus walk down the shelf gallery lane), Table 8 (Krampus's Kid)
 - **Code reads numbers from:** [Config.luau](../../shared/Config/Config.luau), never inline
 
 ## Public API

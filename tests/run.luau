@@ -18,6 +18,7 @@ local SPECS = {
 	{ name = "Data/Schema", run = require("./Data/Schema.spec") },
 	{ name = "Economy/Meta", run = require("./Economy/Meta.spec") },
 	{ name = "Lobby/Party", run = require("./Lobby/Party.spec") },
+	{ name = "Night/Night", run = require("./Night/Night.spec") },
 }
 
 local passed, failed = 0, 0

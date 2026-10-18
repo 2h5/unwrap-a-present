@@ -91,26 +91,109 @@ Config.Greybox = {
 -- Layer palette (PLAN-TABLES.txt TABLE 12). Hex strings; the client and server convert with Color3.fromHex.
 Config.Palette = {
 	paper = { "#E23D3D", "#5FD3A0", "#2F5BD9", "#F2C230", "#F06BA8", "#2FB8C9" },
-	tape = { color = "#FFF3C4", transparency = 0.35, reflectance = 0 }, -- "specular only": no reflectance in greybox
-	ribbon = { color = "#E0B13A", reflectance = 0.6 },
+	tape = { color = "#FFF3C4", transparency = 0.35, reflectance = 0, material = "Glass" }, -- warm gloss, specular only
+	ribbon = { color = "#E0B13A", colors = { "#E0B13A", "#B52A3C" }, reflectance = 0.6 }, -- satin gold, satin crimson
 	cardboard = "#B98A52",
 }
 
+-- Present look (Phase 5, PLAN-TABLES.txt Table 12 build line). Each paper colour owns one pattern, in
+-- Table 12's order. Until the 512 px tiles exist (Shared/Art), the client draws them in code.
+Config.PaperLook = {
+	patterns = { "Stripes", "PolkaDots", "Snowflakes", "Zigzag", "Stars", "Plaid" },
+	repeatsPerPanel = 2, -- a drawn pattern repeats this often across one panel, so neighbours line up
+	step = 0.22, -- the lighter and darker steps of the paper's own hue (never a second hue)
+	seamTransparency = 0.55, -- each panel's edge in the darker step, so the grid of tear targets reads
+	pixelsPerStud = 20, -- drawn patterns and prints
+	maxDrawStuds = 160, -- drawn patterns fade out past this camera distance
+	printColor = "#5A3B1E", -- cardboard print: arrows and a barcode
+	bowLoopStuds = 0.7, -- each bow loop, as a share of the bow's width
+}
+
 -- Run room (PLAN-TABLES.txt DIAGRAM D): one interior, present centred, shop counter in one corner.
+-- Build numbers (Phase 5, Diagram D build line): walls clear The Package's 28-stud present.
 Config.RunRoom = {
 	sizeStuds = 60,
 	shopInsetStuds = 6, -- the counter sits this far in from its corner
+	wallStuds = 36,
+	wallThickness = 2,
+	wainscotStuds = 7,
+	beamStuds = 2,
+	beamSpacingStuds = 15,
+	window = { wall = "East", widthStuds = 30, heightStuds = 14, sillStuds = 7, mullions = 3 }, -- the one wide window
+	door = { widthStuds = 6, heightStuds = 10 }, -- in the south wall, behind the spawn
+	windowLight = { color = "#FFE2B0", brightness = 3, range = 60, angle = 80 },
+	lampLight = { color = "#FFD7A0", brightness = 1.1, range = 34 },
+	lampCount = 4,
+	colors = {
+		floor = "#B5793F",
+		wall = "#EADBC0",
+		wainscot = "#9A6438",
+		trim = "#5C3A22",
+		beam = "#6B4428",
+		ceiling = "#C99A66",
+		glass = "#CFE8F7",
+		outside = "#6FBF4A",
+	},
 }
 
--- HUD greybox (Phase 1): colors from the palette, Art bible B UI style comes in Phase 5.
+-- HUD (Table 13). Colours of the wooden chrome are in Config.UI.
 Config.HUD = {
 	toastSeconds = 2,
 	feedSeconds = 3, -- a side-gift line in the loot feed
 	tileTextMax = 22, -- shelf tiles share one text size cap
 	nightTimerColor = "#E23D3D", -- Table 13: the Night timer is red (candy red from the palette)
-	barColor = "#2B1E14", -- dark wood
-	shopColor = "#B98A52", -- cardboard
-	buttonColor = "#F2C230", -- sun yellow
+}
+
+-- UI style (Phase 5, PLAN-TABLES.txt Table 13 build line): wooden panels, rounded corners, one bold
+-- rounded sans at three sizes, a twine gift-tag accent. Chrome never uses a present or rarity colour.
+Config.UI = {
+	font = "FredokaOne",
+	textSizes = { 18, 26, 40 }, -- small, medium, large (pixels at most; text scales down on small screens)
+	cornerPx = 14,
+	strokePx = 3,
+	woodDark = "#4A2E1C", -- outlines and text stroke
+	woodMid = "#8B5A35", -- frames
+	woodLight = "#C68E5A", -- panel faces
+	parchment = "#F3E3C3", -- cards and slots
+	ink = "#3B2416", -- text on parchment
+	cream = "#FFF6E6", -- text on wood
+	twine = "#E9D3A6", -- gift-tag string and the ribbon accent on titles
+	action = "#E8803A", -- primary buttons
+	close = "#B8432F",
+	disabled = "#9A8A7A",
+	keys = { Shelf = "F", Shop = "B", Classes = "C", Rewards = "R" }, -- the letter under each right-edge button
+}
+
+-- Lighting (Phase 5): the lobby at early winter dusk (cool sky light, a warm low sun, restrained bloom),
+-- the run room in warm daylight. NightView scales exposure from the run room's.
+Config.Lighting = {
+	Lobby = {
+		clockTime = 16.7,
+		brightness = 2.1,
+		ambient = "#6C7286",
+		outdoorAmbient = "#8E98B2",
+		colorShiftTop = "#FFC48F",
+		colorShiftBottom = "#7A88B0",
+		atmosphere = { density = 0.33, haze = 1.7, color = "#C9D4E8", decay = "#E6A27E", glare = 0.25 },
+		bloom = { intensity = 0.35, size = 24, threshold = 1.5 },
+		clouds = { cover = 0.55, density = 0.45, color = "#E8DCE6" },
+	},
+	Run = { clockTime = 14.5, brightness = 2.4, ambient = "#7E6A58", outdoorAmbient = "#9A8672", colorShiftTop = "#FFE2B8", atmosphere = { density = 0.2, haze = 0.8, color = "#F2D9B8", decay = "#B88E6A" } },
+}
+
+-- VFX (PLAN-TABLES.txt Table 14): every count is per emitter, per event.
+Config.Vfx = {
+	tearFlecks = 6,
+	clearConfetti = 40,
+	clearSeconds = 0.6,
+	giftPop = 12,
+	giftTrailSeconds = 0.8, -- the arc to the bag
+	revealDrift = 30,
+	revealShaftStuds = 24, -- the light shaft out of the core box
+	revealShaftWidth = 5,
+	lungePuffs = 8,
+	tickShimmerTransparency = 0.9, -- the Tick's faint heat shimmer: a Neon shell, no particles
+	clearLightBrightness = 3,
 }
 
 -- Cash (PLAN-TABLES.txt TABLE 7): per panel torn = the tier number (N35); per side-gift on pickup, paid
@@ -122,6 +205,23 @@ Config.Cash = {
 
 -- The Tick is a side box in one middle-third layer; 40% of nests fuse it across the lid seam.
 Config.TickBlockingChance = 0.4
+
+-- The Tick's build numbers (PLAN-TABLES.txt TABLE 20, build line; DECISIONS.md).
+Config.Tick = {
+	studs = 1, -- side-gift sized (Art bible A: 1 to 2 studs); small enough to hide between shells
+	openSeconds = 1.2, -- hold to open: the hands time, it is wrapped in paper
+	promptStuds = 3, -- the Open prompt hangs this high under the Tick (prompts off screen are hidden)
+	sideGifts = 3, -- opening it drops the run's best side-gifts: the most a layer rolls ...
+	sideGiftBand = 3, -- ... from the inner-third table (the run's best)
+	seamColor = "#FF4D2E", -- Table 12: Neon seams
+	seamPulseSeconds = 0.8,
+	volumeMax = 0.8, -- ticking at its own layer
+	volumeFalloff = 0.5, -- each layer still between the team and the Tick halves it
+	volumeMin = 0.05,
+	rimLightColor = "#7FD8FF", -- the cold rim light from the Tick box (ice inner Neon, Table 12)
+	rimLightRange = 16,
+	rimLightBrightness = 2,
+}
 
 -- Tools: grade (0 hands to 3 chainsaw), per-panel seconds, and actions with optional per-action override seconds.
 Config.Tools = {
@@ -151,6 +251,19 @@ Config.Sounds = {
 	tearHoldStart = { "rbxassetid://9113248978", "rbxassetid://9113249956", "rbxassetid://9113249814" },
 	tearRelease = { "rbxassetid://9125724621", "rbxassetid://9117624703", "rbxassetid://9117624735" },
 	paperLand = { "rbxassetid://9114121637", "rbxassetid://15675037413", "rbxassetid://9125723208" },
+	-- Night: APM "Ticking (b)", ProSoundEffects toy wind-up, comic ratchet and wood impact (Roblox-licensed).
+	tickLoop = { "rbxassetid://1839847326" },
+	jackCrank = { "rbxassetid://9120225609" },
+	jackLunge = { "rbxassetid://9118043063" },
+	playerDown = { "rbxassetid://9120915492" },
+	-- Phase 5, completing the 24-clip launch set (ProSoundEffects, Roblox-licensed): cloth-rip zips for
+	-- tape, squeaky scissor snips for ribbon, cardboard box slides for lids, mouth pops for side-gifts.
+	tapeCut = { "rbxassetid://9113836687", "rbxassetid://9113836714" },
+	ribbonSnip = { "rbxassetid://9118831072", "rbxassetid://9118831088" },
+	lidLift = { "rbxassetid://9113578867", "rbxassetid://9114054266", "rbxassetid://9113578876" },
+	giftPop = { "rbxassetid://9117847793", "rbxassetid://9117848338", "rbxassetid://9117848644" },
+	-- Placeholder until a licensed sting is chosen: Daily Sounds "Coin Pickup" (synthesized, free).
+	coreSting = { "rbxassetid://130378474223829" },
 }
 
 -- Mechanics B: rarity
@@ -190,6 +303,42 @@ Config.Loot = {
 	sellGems = { Common = 1, Uncommon = 2, Rare = 4, Epic = 8, Mythic = 20 }, -- N33; Secret cannot be sold
 }
 
+-- Jack's model (Phase 5, Table 20 build line): a toy jack-in-the-box, mild (N17).
+Config.JackLook = {
+	face = "#FFF3DC",
+	blush = "#F4A6A0",
+	nose = "#D9453B",
+	ink = "#2B1E14",
+	collar = "#B52A3C",
+	hat = { "#B52A3C", "#E0B13A" },
+	spring = "#E0B13A",
+	springDark = "#B8902E",
+	crank = "#C9CED6",
+	springRings = 6,
+	springStuds = 1.1, -- ring diameter
+	flapOpenDegrees = 50,
+	lungeStretch = 1.35, -- the spring stretches this much while he lunges
+}
+
+-- Tool props (Phase 5): the scissors pickup and a dropped tool lie on a soft glowing ring.
+Config.ToolLook = { metal = "#C9CED6", grip = "#D9573B", body = "#E8A33A", ink = "#2B1E14", glow = "#FFF6E6" }
+
+-- Loot look (Phase 5, PLAN-TABLES.txt Table 12 build line): chunky toys in their rarity colour plus one
+-- accent, built from blocks and balls (Shared/Art/GiftModels) until the commissioned models exist (N7).
+Config.LootLook = {
+	sideGiftStuds = 1.5, -- Art bible A: 1 to 2 studs
+	coreGiftStuds = 4, -- Art bible A: 3 to 6 studs
+	shelfFill = 0.8, -- a gift fills this share of its shelf cell
+	accent = "#FFF3DC", -- the one accent on every toy
+	ink = "#2B1E14", -- eyes, wheels, buttons
+	shade = 0.25, -- the rarity colour's darker step for a second body colour
+	golden = { color = "#E0B13A", reflectance = 0.5 }, -- mutation Golden
+	giantScale = 2, -- mutation Giant
+	mythicSpinSeconds = 6, -- Mythic core gifts turn slowly (idle animation)
+	mythicBobStuds = 0.3,
+	glowRange = 8, -- the rarity glow (PointLight)
+}
+
 Config.Shelf = {
 	startSlots = 12,
 	gemSlotsMax = 24,
@@ -208,6 +357,19 @@ Config.Night = {
 	shutterMaxSeconds = 4,
 	reviveHoldSeconds = 3,
 	soloAutoReviveSeconds = 10,
+	-- Build numbers (PLAN-TABLES.txt TABLE 20, build line; DECISIONS.md)
+	desaturate = 0.4, -- Table 12: paper desaturated 40% at Night
+	nightRibbonReflectance = 0.2,
+	jackLungeSpeed = 16, -- studs per second, a walking player's speed: a lunge covers 24 studs
+	jackHitStuds = 3, -- a lunge connects within this far (floor distance) of a player
+	jackRadiusStuds = 1.5, -- Jack stops short of the present and of lids by this much
+	jackHeadStuds = 5, -- Jack looks from this height (head the size of a player, on a spring)
+	jackBoxStuds = 2.5,
+	shutterOffsetStuds = 3, -- a held lid stands this far from its holders, toward Jack
+	reachStuds = 10, -- revive and shutter prompts
+	holdSlackSeconds = 0.25, -- a prompt hold may finish this much early (network), never more
+	wipeScreenSeconds = 4,
+	downGrey = -1, -- the downed player's screen saturation (greyscale)
 }
 
 Config.Steal = {
@@ -293,24 +455,85 @@ Config.Data = {
 -- Which place this is comes from the Workspace attribute PlaceKind ("Lobby"; absent = the run place).
 Config.Places = { lobby = 96472302491903, run = 98807937316780 }
 
--- Lobby greybox (Diagram D; numbers set in the build, DECISIONS.md). x grows east, z grows south.
+-- Lobby: Unwrapping Plaza, a snowy gift village at early dusk (Diagram D as revised 2026-10-18,
+-- DECISIONS.md). x grows east, z grows south; the plaza's centre is (0, 0, 0). A bearing is degrees
+-- clockwise from north (-z).
 Config.Lobby = {
-	fieldStuds = { 100, 80 }, -- x, z
-	spawn = { 0, 30 }, -- centre-bottom, facing the pads (east)
-	padsX = 12, -- Diagram D: the pads are 12 studs from spawn
+	plazaRadius = 46, -- the paved plaza, ribbon inlay crossing at its centre
+	spawn = { 0, 24 }, -- south of centre, facing north: the pads, then the giant present behind them
+	padsZ = -12, -- the three Start a Run pads in a row before the giant present
+	padsX = { -14, 0, 14 }, -- solo, party, join anyone
 	padStuds = 8,
-	padGapStuds = 4,
 	padColors = { "#5FD3A0", "#2F5BD9", "#F2C230" }, -- solo, party, join anyone
-	boothsZ = -30, -- along the top
-	boothsX = { -15, 0, 15 }, -- rewards, classes, shop
-	house = { -38, -28 }, -- top-left, porch on its south side
-	shelfRow = { -40, -2 }, -- first shelf, clear of the porch; the row runs south
-	shelfSpacingStuds = 7,
-	updateBoard = { 40, -32 }, -- top-right corner
+	-- The signature landmark: a half-unwrapped present on a round terrace north of the pads (decor only).
+	landmark = { center = { 0, -46 }, terraceRadius = 18, terraceStuds = 3, presentStuds = 20, yawDeg = 10, lidLiftDeg = 20, paper = 6, glowRange = 28, glowBrightness = 1.1 },
+	-- Pavilions: { bearing, distance from the centre }; each faces the centre.
+	pavilions = { Rewards = { 270, 36 }, Classes = { 90, 36 }, Shop = { 135, 36 } },
+	house = { -40, -40 }, -- the cottage, porch on its south side facing the plaza (vault crates, tier decoration)
+	updateBoard = { 28, -30 }, -- beside the pads, room for the leaderboards later (Table 19)
+	-- The shelf gallery: a covered lane running west from the plaza, shelves on both sides facing the lane;
+	-- the lane's middle is the Krampus walk. Slot 1 is nearest the plaza, odd slots north, even south.
+	gallery = { startX = -40, z = 24, laneStuds = 12, bayStuds = 7, bays = 12, roofStuds = 10 }, -- 24 shelves under roof
+	-- A raised snowy terrace ring framing the plaza, open where the landmark, cottage and gallery meet it.
+	terrace = { outer = 62, heightStuds = 2.5, gaps = { { 292, 25 }, { 214, 264 } }, steps = { 180, 60 } },
+	village = { houses = 9, ring = { 80, 118 } }, -- backdrop cottages, windows lit, nobody goes in
+	forest = { trees = 50, ring = { 68, 165 } },
+	hills = { count = 16, ring = { 190, 300 }, radius = { 30, 55 } }, -- terrain snow hills
+	mountains = { count = 11, ring = { 430, 560 } }, -- far peaks, hazed by the atmosphere
+	snowfieldStuds = 1600, -- terrain snow under everything
 	padPollSeconds = 0.25,
 	tokenSeconds = 120, -- a party token lives this long in MemoryStore (N9)
 	arrivalWaitSeconds = 15, -- the run place waits this long for the whole party before starting
-	colors = { field = "#6FBF4A", house = "#E8D9C0", roof = "#8E3B2F", tree = "#2E7D4F" }, -- world tier, stock materials
+	colors = { house = "#E8D9C0", roof = "#8E3B2F", tree = "#2E7D4F" }, -- world tier, stock materials
+	-- Client motion (Shelf/Ambience): snow around the camera, a few drifting paper scraps, tags and
+	-- ribbons that sway, the pads' rims and the landmark's glow breathing.
+	ambience = {
+		snowRate = 40, -- flakes per second from one emitter that follows the camera
+		snowLifetime = { 7, 9 },
+		snowSpeed = { 3, 5 },
+		snowSize = 0.28,
+		snowBoxStuds = 110,
+		snowHeightStuds = 36,
+		paperMax = 3, -- drifting paper scraps alive at once
+		paperEverySeconds = { 5, 9 },
+		paperFallSeconds = 8,
+		paperRadiusStuds = 30,
+		swaySeconds = 3.2, -- one full swing of a tag or ribbon
+		pulseSeconds = 2.4, -- pads' rims and the landmark's glow
+	},
+	dress = {
+		wood = "#9A6438",
+		woodDark = "#5C3A22",
+		plank = "#C08A55",
+		wall = "#D9B88A",
+		trim = "#F3E3C3",
+		leaves = { "#3E9A4F", "#4FB35A", "#2E7D4F" }, -- the run room garden's trees (Props.tree)
+		trunk = "#6B4428",
+		lantern = "#FFC97A",
+		sign = "#E9C99A",
+		ink = "#3B2416",
+		glass = "#BFE3F2", -- house windows
+		chimney = "#8E6E5A",
+		gem = "#7FD8FF", -- the gem cluster on the Shop booth
+		-- Snowy village (2026-10-18): cool blue-white snow, warm windows, red / gold / teal gift accents.
+		snow = "#EEF3FA",
+		snowShade = "#D5DEEC", -- snow in shadow and on the far peaks
+		stone = "#A7A29C", -- retaining walls, terraces
+		stoneDark = "#7E7A78",
+		paving = "#C6C0B8",
+		pavingBand = "#B2ABA2",
+		ribbonRed = "#B52A3C", -- the plaza's ribbon inlay (Table 12 crimson)
+		ribbonGold = "#E0B13A", -- its edging and the landmark's ribbon (Table 12 gold)
+		teal = "#2FB8C9",
+		red = "#E23D3D",
+		cream = "#F3E3C3",
+		fir = { "#2C5A45", "#346B50", "#25503D" },
+		window = "#FFC46B", -- lit windows (Neon)
+		walls = { "#D9B88A", "#C9A27A", "#E2CDB0", "#B98B6A" }, -- backdrop cottages
+		roofs = { "#8E3B2F", "#5E4A6E", "#3F5E6E", "#7A4A32" },
+		rock = "#8C8F96",
+		glow = "#FFC873", -- the warm light inside the landmark
+	},
 }
 
 -- Two places (DECISIONS.md N10, N11)

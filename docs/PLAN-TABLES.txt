@@ -213,7 +213,7 @@ Krampus's Kid; rarity=Mythic, 1.5%; passive=immune to Krampus, Naughty does not 
 TABLE 9. PRESTIGE TIERS (tier; layers; Night length; loot table shift; lobby change)
 ==================================================================
 Birthday; layers=6; Night=90 s; loot shift=base; lobby=balloons on the porch
-Christmas; layers=9; Night=110 s; loot shift=Rare +6%, Epic +3%; lobby=snow, tree, lights
+Christmas; layers=9; Night=110 s; loot shift=Rare +6%, Epic +3%; lobby=tree, lights, wreath on the door (snow is in every tier's lobby since 2026-10-18, DECISIONS.md)
 Wedding; layers=12; Night=130 s; loot shift=Rare +10%, Epic +6%, Mythic +2%; lobby=white drapes, cake on the porch
 The Package; layers=16; Night=150 s; loot shift=core table only, Secret 1%; lobby=brown paper, barcode, no decoration
 Prestige rule: completed runs needed at the current tier = 3 (Birthday to Christmas), 6 (Christmas to Wedding), 10 (Wedding to The Package); no Index requirement. Prestige shrinks the shelf to 12 slots; the rest go to a vault, shown as a crate on the porch, and 3 items per run can be reclaimed. Index, gems, classes, passes, stats and the permanent track are never touched. Unlocks the next tier's present, loot table and lobby decoration. Players can run any unlocked tier.
@@ -281,27 +281,33 @@ Cardboard; colors=kraft brown; hex=#B98A52; pattern=Roblox Cardboard, printed ar
 Tick box; colors=same as its ring; hex=same; pattern=Neon seams #FF4D2E pulsing 0.8 s; night=seams at full brightness
 Rarity colors: Common=#9AA0A6; Uncommon=#4CC96B; Rare=#3C8DFF; Epic=#A857F0; Mythic=#FFC23D; Secret=animated hue sweep, never a fixed color.
 Loot style: one dot relief tile at 0.25 studs per dot; flat base colors from the rarity family plus one accent; no gradients. Side-gift 1 to 2 studs; core gift 3 to 6 studs; Mythic core gifts get a slow idle animation. Mutations: Giant=2x scale; Golden=base color #E0B13A, reflectance 0.5; Frosted=Ice shell; Glitched=UV offset every 0.5 s.
+Build numbers (Phase 5, DECISIONS.md): each launch paper color owns one pattern in the order above (red stripes, mint polka dots, blue snowflakes, yellow zigzag, pink stars, teal plaid); a layer's paper is (seed + depth) mod 6, its ribbon gold or crimson the same way; a pattern repeats 2 times across a panel; the lighter and darker steps move saturation and value by 0.22 (darker: saturation +0.11); each panel's edge is drawn in the darker step at 55% transparency so the tear grid reads; drawn at 20 px per stud and not drawn past 160 studs; cardboard print ink #5A3B1E; tape uses the Glass material; each bow loop is 0.7 of the bow's width. Loot: side-gift 1.5 studs, core gift 4 studs, a shelf toy fills 80% of its cell; the one accent #FFF3DC, eyes and wheels #2B1E14, a second body color 25% darker than the rarity color; rarity glow range 8; Mythic core gifts turn once per 6 s and bob 0.3 studs.
 
 ==================================================================
 DIAGRAM D. LOBBY PLAN (top-down)
 ==================================================================
-Field: one open area. Spawn is center-bottom, facing the Start a Run pads 12 studs away on the right. Shelf row and porch are on the left. Booths are straight ahead along the top. Update board is beside the pads.
+Revised 2026-10-18 by the user's request (DECISIONS.md, "Lobby revamp"): the lobby is Unwrapping Plaza, a snowy gift village at early winter dusk. This supersedes the earlier "one open field" plan and its greybox numbers (field 100 x 80, spawn at (0, 30) facing east, pads east of spawn, booths along the top, shelf row running south, Christmas-only snow). Do not restore them.
+
+Plaza: a round paved plaza framed by a raised terrace ring, the pavilions and the village. A crimson ribbon inlay edged in gold crosses at the centre under a gold medallion, so the plaza reads as the top of a wrapped present; its north-south band is the route from the spawn to the Start a Run pads and the landmark. Spawn is south of centre and faces north: the three pads straight ahead, the giant present behind them, Rewards ahead-left, Classes ahead-right, the cottage and the shelf gallery to the left, the Shop to the right.
 
 Zones:
-  House and porch (top-left): demo present half torn, paper on the ground; tier decoration swaps here; each player's vault crate sits on the porch
-  Shelf row (left, below the house): one shelf per player; Naughty 10+ glows red; steal prompt on approach; one like button per shelf, no comments
-  Krampus walk: a path along the front of the shelf row, left to right; every 20 minutes, 60 seconds
-  Rewards booth (top, left of center): daily, group
-  Classes booth (top center): 25-gem spin; odds board
-  Shop booth (top, right of center): gems, passes, paper packs
-  Update board (top-right corner): "??? arrives in" countdown and poster; beside it the most-liked shelves board and the three leaderboards (TABLE 19)
-  Start a Run (right side, tall zone): three pads stacked vertically: solo pad, party pad (friends, up to 4), join-anyone pad (waits up to 20 s to fill a team of 4, then starts with whoever is there, even one player; no backfill into a running run)
-  Spawn (center-bottom): faces the pads
-Zone count is 7: house and porch, shelf row, rewards, classes, shop, update board, Start a Run. Spawn and the Krampus walk are markers, not zones.
+  Start a Run (north of centre): three pads in a row, left to right solo pad, party pad (friends, up to 4), join-anyone pad (waits up to 20 s to fill a team of 4, then starts with whoever is there, even one player; no backfill into a running run); each pad has a glowing rim and a gift tag on a post behind it
+  Landmark (north, behind the pads): an oversized half-unwrapped present on a round stone terrace with broad steps; lifted lid, big bow, curled paper, a warm glow inside, the "Start a Run" tag hung on its front. Decoration only: no prompt, no reward
+  House and porch (north-west, facing the plaza): the cottage; tier decoration swaps on the porch; each player's vault crate sits on the porch
+  Shelf gallery (west, a covered lane leaving the plaza): one shelf per player on both sides of the lane facing it, nearest the plaza first; Naughty 10+ glows red; steal prompt on approach; one like button per shelf, no comments
+  Krampus walk: the middle of the gallery lane, along the front of the shelves; every 20 minutes, 60 seconds
+  Rewards pavilion (west edge of the plaza): daily, group; a round hatbox rotunda with a red lid, gold ribbon and bow
+  Classes pavilion (east edge): 25-gem spin; odds board; a tower of stacked wrapped boxes, the bottom one open as the booth
+  Shop pavilion (south-east edge): gems, passes, paper packs; an open cardboard box with its flaps folded out as awnings and a big gem on a post
+  Update board (beside the pads, north-east): "??? arrives in" countdown and poster; beside it the most-liked shelves board and the three leaderboards (TABLE 19)
+  Spawn (south of centre): a round dais facing the pads
+Zone count is 7: house and porch, shelf gallery, rewards, classes, shop, update board, Start a Run. Spawn, the landmark and the Krampus walk are markers, not zones. The terrace, the backdrop cottages, the forest and the far peaks are scenery: nobody goes in, nothing to do there.
 
-Greybox numbers set in the build (DECISIONS.md): field 100 x 80 studs; spawn at (0, 30) facing east; pads 8 studs square, 4 apart, stacked north from the spawn line, 12 studs east of spawn; booths along z = -30 at x = -15, 0, 15; house 16 x 12 x 12 at (-38, -28) with an 8-stud porch on its south side; shelf row from (-40, -2) running south, 7 studs apart; update board at (40, -32); party token 120 s; the run place waits 15 s for the party.
+Build numbers (2026-10-18, DECISIONS.md; x grows east, z grows south, the plaza's centre is (0, 0, 0), a bearing is degrees clockwise from north): plaza radius 46; spawn at (0, 24) facing north; pads 8 studs square at z = -12, x = -14, 0, 14; landmark terrace radius 18, 3 high, centred (0, -46), present 20 studs, turned 10 degrees, lid lifted 20 degrees, teal plaid paper (paper 6), glow #FFC873 range 28 brightness 1.1; pavilions at bearing and distance Rewards 270 / 36, Classes 90 / 36, Shop 135 / 36, each facing the centre; cottage 16 x 12 x 12 at (-40, -40), 8-stud porch on its south side; update board at (28, -30); shelf gallery lane from x = -40 running west at z = 24, lane 12 wide, bays 7 studs, 12 bays a side (24 shelves under roof; slot 25 on continues west), roof at 10; terrace ring to radius 62, 2.5 high, open from bearing 292 to 25 (cottage and landmark) and 214 to 264 (gallery), steps at bearings 180 and 60; 9 backdrop cottages at 80 to 118 studs; 50 firs at 68 to 165; 16 terrain hills at 190 to 300 (radius 30 to 55); 11 far peaks at 430 to 560; terrain snow field 1600 studs across; party token 120 s; the run place waits 15 s for the party.
 
 Run room: single interior 60 by 60 studs, warm wood floor, one wide window with daylight, present centered and scaled to tier (Birthday 16 studs across, Christmas 20, Wedding 24, The Package 28). No props except the shop counter in one corner and the lid props the team creates. Night drops window light and adds a cold rim light from the Tick box.
+
+Build numbers (Phase 5, DECISIONS.md). Run room: walls 36 studs high and 2 thick, wainscot 7 studs, beams 2 studs every 15; the window in the east wall, 30 x 14 studs on a 7-stud sill, 3 mullions, daylight #FFE2B0 brightness 3, range 60, angle 80; a 6 x 10 door in the south wall; 4 lamps hung from the ceiling, #FFD7A0 brightness 1.1, range 34; colors floor #B5793F, wall #EADBC0, wainscot #9A6438, trim #5C3A22, beam #6B4428, ceiling #C99A66, glass #CFE8F7, garden outside #6FBF4A. Lobby colors (the 2026-10-18 snowy village keeps the wood and sign colors): wood #9A6438, dark wood #5C3A22, planks #C08A55, walls #D9B88A, trim #F3E3C3, trunks #6B4428, lanterns (and the shelf tree's star) #FFC97A, signs #E9C99A, sign ink #3B2416, unlit glass #BFE3F2, chimney #8E6E5A, gems #7FD8FF; snow #EEF3FA, snow in shade and far peaks #D5DEEC, stone #A7A29C, dark stone #7E7A78, paving #C6C0B8 and #B2ABA2, ribbon inlay #B52A3C edged #E0B13A, accents teal #2FB8C9, red #E23D3D, cream #F3E3C3, firs #2C5A45 #346B50 #25503D, lit windows #FFC46B (Neon), backdrop walls #D9B88A #C9A27A #E2CDB0 #B98B6A, roofs #8E3B2F #5E4A6E #3F5E6E #7A4A32, rock #8C8F96. Lighting: lobby at early dusk, clock 16.7, brightness 2.1, ambient #6C7286, outdoor ambient #8E98B2, color shift top #FFC48F, bottom #7A88B0, atmosphere density 0.33, haze 1.7, glare 0.25, #C9D4E8 with decay #E6A27E, bloom intensity 0.35, size 24, threshold 1.5, clouds cover 0.55, density 0.45, #E8DCE6; run room clock 14.5, brightness 2.4, ambient #7E6A58, outdoor ambient #9A8672, color shift #FFE2B8, atmosphere density 0.2, haze 0.8, #F2D9B8 with decay #B88E6A.
 
 ==================================================================
 TABLE 13. HUD (element; where; shows)
@@ -313,6 +319,7 @@ Tool; where=bottom center; shows=current tool, hold ring fills during a tear
 Party; where=left edge; shows=up to 4 names, down state, class icon
 Prompt; where=bottom third; shows=one line, one key, never two prompts at once
 UI style: wooden panels with rounded corners, leaf or ribbon accent on tabs, big round icon buttons on the right edge (Shelf, Shop, Classes, Rewards) with the key letter under each, Chop a Forest proportions; one bold rounded sans at 3 sizes; present colors only on rarity and layer indicators, never on panel chrome.
+Build numbers (Phase 5, DECISIONS.md): font FredokaOne at 18, 26 and 40 px at most; corners 14 px; outlines 3 px; dark wood #4A2E1C, frame wood #8B5A35, face wood #C68E5A, parchment #F3E3C3, ink #3B2416, cream text #FFF6E6, twine #E9D3A6, action buttons #E8803A, close #B8432F, disabled #9A8A7A; keys Shelf F, Shop B, Classes C, Rewards R (shown only with a keyboard); the gift-tag title with twine is the ribbon accent.
 
 ==================================================================
 TABLE 14. VFX LIST (event; effect; budget per emitter per event)
@@ -327,7 +334,10 @@ Player down; effect=greyscale vignette for that player; budget=post-process only
 Krampus walk; effect=footprints that fade, sack jingle; budget=2 decals per step
 Steal success; effect=item lifts, red flash on the victim's shelf; budget=1 flash
 SFX launch set, 24 clips: tear hold start x3, tear release x3, paper land x3, tape cut x2, ribbon snip x2, lid lift x3, side-gift pop x3, core reveal sting x1, Tick ticking loop x1, Jack crank x1, Jack lunge x1, player down x1. All under 2 s except the two loops. Pitch randomized within 10%.
-SFX chosen so far (DECISIONS.md; Roblox-licensed ProSoundEffects plus one Roblox UI clip): tear hold start=9113248978, 9113249956, 9113249814; tear release=9125724621, 9117624703, 9117624735; paper land=9114121637, 15675037413, 9125723208.
+SFX chosen so far (DECISIONS.md; Roblox-licensed ProSoundEffects plus one Roblox UI clip): tear hold start=9113248978, 9113249956, 9113249814; tear release=9125724621, 9117624703, 9117624735; paper land=9114121637, 15675037413, 9125723208. Night placeholders until Phase 5 (Roblox-licensed APM and ProSoundEffects): Tick ticking loop=1839847326; Jack crank=9120225609; Jack lunge=9118043063; player down=9120915492.
+Phase 5 completes the 24 (DECISIONS.md; Roblox-licensed ProSoundEffects; the four Night clips above are kept): tape cut=9113836687, 9113836714; ribbon snip=9118831072, 9118831088; lid lift=9113578867, 9114054266, 9113578876; side-gift pop=9117847793, 9117848338, 9117848644; core reveal sting=130378474223829 (placeholder: Daily Sounds "Coin Pickup", until a licensed sting is chosen).
+Lobby ambience (2026-10-18, DECISIONS.md; drawn on each client, lobby place only): snowfall from one emitter that follows the camera, 40 flakes per second, 7 to 9 s, falling 3 to 5 studs per second, 0.28 studs, over a 110-stud square 36 studs up; at most 3 drifting paper scraps, one every 5 to 9 s, 8 s to fall; tags, bunting and the landmark's ribbon swing a few degrees on a 3.2 s cycle; the pads' rims and the landmark's glow breathe on a 2.4 s cycle; on the server, 3 warm motes a second rise from the landmark and one chimney smokes at 1.2 a second. Three emitters in all; 11 PointLights in the whole lobby; most lanterns, bollards and windows glow with Neon only.
+VFX build numbers (Phase 5): flecks, confetti and sparkles use engine particle textures until finals exist; the layer-cleared light pulse peaks at brightness 3; the core reveal shaft is a Neon column 24 studs tall and 5 wide that fades over the 3 s; the Tick's shimmer is a Neon shell 1.5x the box at 90% transparency at its brightest.
 
 ==================================================================
 TABLE 15. PERFORMANCE BUDGETS, hard limits (budget; limit; checked by)
@@ -412,6 +422,8 @@ Hide or shutter; any lifted box lid stays as a prop; shutter holds a lid up as a
 Revive; a teammate holds E (touch: hold-to-use button) for 3 s
 Solo down; auto-revive after 10 s, one Common side-gift removed from the bag
 Wipe; every living player down at once; run bag lost, index keeps what was seen
+Build numbers (Phase 4, DECISIONS.md): Tick 1 stud, opened by a 1.2 s hold, drops 3 side-gifts from the inner-third table; ticking volume 0.8 at its own layer, halved per layer still in the way, floor 0.05; seams pulse 0.8 s, #FF4D2E; cold rim light #7FD8FF, range 16, brightness 2. Jack lunge 16 studs/s (24 studs per lunge), connects within 3 studs, stops 1.5 studs short of the present and of lids, looks from 5 studs high, box 2.5 studs. Shutter holds a lid 3 studs from its holders toward Jack. Revive and shutter prompts reach 10 studs; prompt holds may end 0.25 s early (network). Night lighting = 30% (Flashlight 60%) + Night Eyes, capped at 100%; paper desaturated 40%, ribbon reflectance 0.2. Spare lid 6 studs. Wipe screen 4 s. Downed screen greyscale.
+Jack's look (Phase 5, DECISIONS.md): a toy jack-in-the-box; face #FFF3DC, blush #F4A6A0, nose #D9453B, eyes and grin #2B1E14, ruff #B52A3C, jester cap #B52A3C and #E0B13A, spring #E0B13A and #B8902E, crank #C9CED6; 6 spring rings 1.1 studs across, stretched 1.35x during a lunge; box flaps open 50 degrees. Tool props: metal #C9CED6, grip #D9573B, body #E8A33A, ink #2B1E14, glow ring #FFF6E6.
 
 ==================================================================
 TABLE 21. STEAL, NAUGHTY AND KRAMPUS (Mechanics C) (rule; number)

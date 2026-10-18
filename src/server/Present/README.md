@@ -4,21 +4,26 @@ Seed, Nest generation, layer table, Tick placement.
 Must never: Be called by the client.
 
 - **Built in:** Phase 1, build order in [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt) Diagram E
-- **Rules:** [PLAN.md](../../../docs/PLAN.md), Mechanics A (present generation)
+- **Rules:** [PLAN.md](../../../docs/PLAN.md), Mechanics A (present generation), Mechanics C and Q1 (Tick placement)
 - **Numbers:** [PLAN-TABLES.txt](../../../docs/PLAN-TABLES.txt), Table 4 (layer table), Diagram C (cross-section), Table 9 (layers per tier)
 - **Code reads numbers from:** [Config.luau](../../shared/Config/Config.luau), never inline
 
 ## Public API
 
 - `Present.init()` — until Lobby and Data exist (Phase 3), runs Birthday presents back to back.
-- `Present.startRun(tier, seed?)` — Nest, `Nest.tape`, `Nest.sizes`, `Economy.resetRun`, `Tear.loadNest`,
-  `Loot.startRun`; RunState Building → Unwrapping. Studio only: Workspace `NextSeed`, `NextTier`.
+- `Present.startRun(tier, seed?)` — Nest, `Nest.tape`, `Nest.placeTick`, `Nest.sizes`, `Economy.resetRun`, `Tear.loadNest`,
+  `Loot.startRun`, `Night.startRun`; RunState Building → Unwrapping. Studio only: Workspace `NextSeed`, `NextTier`.
 - [RunState.luau](RunState.luau): `get()`, `set(state)` (Workspace attribute + Down `RunState`),
   `canTear()` (Unwrapping, Night, CoreLid). Every up remote checks it (N21).
   Studio only: Workspace attribute `NextSeed` replays a seed on the next run.
 - `Present.newNest(tier, seed?): Nest` — builds the run's Nest from a server-rolled seed (or a given one).
 - `Present.getNest(): Nest?` — the current run's Nest.
-- [Nest.luau](Nest.luau) (pure, tested in `tests/Present`): `generate(seed, tier, config, Rng)`, `tape(...)`, `sizes(...)`, `band`.
+- [Room.luau](Room.luau) (Phase 5): `Room.build(center)` — the run room around the present (Diagram D,
+  `Config.RunRoom`): floor, walls with wainscot, rail and base boards, corner posts, beams and ridge, the
+  one wide east window (`Room.Glass`, SurfaceLight `WindowLight`, which NightView turns off at Night) with
+  a garden outside, a door, four hanging lamps, and `RoomSpawn`. Warm lighting from `Config.Lighting.Run`;
+  removes the template baseplate. Nothing on the floor but the counter and lid props.
+- [Nest.luau](Nest.luau) (pure, tested in `tests/Present`): `generate(seed, tier, config, Rng)`, `tape(...)`, `placeTick(nest, blockingChance, Rng)`, `sizes(...)`, `band`.
 
 ## Invariants and rules
 
@@ -33,6 +38,9 @@ Must never: Be called by the client.
   layer it wraps (N29, N30).
 - `Nest.tape(..., Rng, tierNumber?)`: paper tape from the seed; from tier 2 every BoxLid gets one strip
   per side across its seam (N36).
+- `Nest.placeTick`: one Tick per nest in a middle-third layer, from its own stream (seed + 2): blocking
+  (`Config.TickBlockingChance`) on a middle-third BoxLid, else beside a middle-third Paper or BoxLid; never
+  a Ribbon or a final lid (Q1). Sets `layer.tick = { blocking }`.
 
 ## How to add a new one
 
